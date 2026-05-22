@@ -27,9 +27,14 @@ const corsOptions = {
     origin: function (origin, callback) {
         // Cho phép các request không có header origin (ví dụ: công cụ kiểm thử hoặc mobile app)
         if (!origin) return callback(null, true);
+        
+        // Ghi log để chẩn đoán lỗi CORS trên Render
+        console.log(`[CORS Check] Yêu cầu từ Origin: "${origin}"`);
+        
         if (allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.includes('*')) {
             callback(null, true);
         } else {
+            console.error(`[CORS Blocked] Origin "${origin}" không nằm trong danh sách ALLOWED_ORIGIN:`, allowedOrigins);
             callback(new Error('Bị chặn bởi cấu hình bảo mật CORS'));
         }
     },
@@ -49,7 +54,13 @@ app.use('/api/admin', adminRoutes);
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: allowedOrigins,
+        origin: function (origin, callback) {
+            if (!origin || allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.includes('*')) {
+                callback(null, true);
+            } else {
+                callback(new Error('Bị chặn bởi cấu hình bảo mật CORS (Socket.io)'));
+            }
+        },
         methods: ["GET", "POST"],
         credentials: true
     }
