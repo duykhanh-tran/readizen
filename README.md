@@ -226,6 +226,7 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 *   **Developer:** Duy Khanh Tran
 *   **GitHub:** [duykhanh-tran](https://github.com/duykhanh-tran)
+
 *   **LinkedIn:** [Your LinkedIn Profile](https://linkedin.com)
 *   **Email:** [duytran2005@gmail.com](mailto:duytran2005@gmail.com)
 
