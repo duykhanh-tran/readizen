@@ -31,7 +31,7 @@ const corsOptions = {
         // Ghi log để chẩn đoán lỗi CORS trên Render
         console.log(`[CORS Check] Yêu cầu từ Origin: "${origin}"`);
         
-        if (allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.includes('*')) {
+        if (allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true);
         } else {
             console.error(`[CORS Blocked] Origin "${origin}" không nằm trong danh sách ALLOWED_ORIGIN:`, allowedOrigins);
@@ -55,7 +55,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
         origin: function (origin, callback) {
-            if (!origin || allowedOrigins.indexOf(origin) !== -1 || allowedOrigins.includes('*')) {
+            if (!origin || allowedOrigins.indexOf(origin) !== -1) {
                 callback(null, true);
             } else {
                 callback(new Error('Bị chặn bởi cấu hình bảo mật CORS (Socket.io)'));
@@ -107,6 +107,12 @@ io.on('connection', (socket) => {
         // Bảo mật thêm: Kiểm tra sender có khớp với role trong token không để chống giả mạo
         if (socket.user.role !== sender && !(socket.user.role === 'client' && sender === 'user')) {
             console.log(`⚠️ Cảnh báo: Phát hiện giả mạo danh tính người gửi!`);
+            return;
+        }
+
+        // Tối ưu bảo mật (Vá lỗi BOLA/IDOR): Nếu là Client, chỉ được phép gửi tin nhắn vào phòng của chính mình
+        if (socket.user.role === 'client' && socket.user.id !== userId) {
+            console.log(`⚠️ Cảnh báo: Client ${socket.user.id} cố ý gửi tin nhắn vào phòng của người khác (${userId})!`);
             return;
         }
 
