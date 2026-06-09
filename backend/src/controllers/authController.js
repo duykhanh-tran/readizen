@@ -147,7 +147,7 @@ export const logout = async (req, res) => {
     }
 };
 
-// API cấp lại Access Token mới dựa trên Refresh Token
+// API cấp lại Access Token mới và xoay vòng Refresh Token (RTR)
 export const refreshToken = async (req, res) => {
     try {
         const token = req.cookies?.refreshToken;
@@ -157,7 +157,7 @@ export const refreshToken = async (req, res) => {
 
         const session = await Session.findOne({ refreshToken: token });
         if (!session) {
-            // Nếu token có trong cookie nhưng không có trong DB -> có thể đã bị xóa khi logout hoặc hết hạn
+            // Nếu token có trong cookie nhưng không có trong DB -> có thể đã bị xóa hoặc hết hạn
             res.clearCookie("refreshToken", {
                 httpOnly: true,
                 secure: true,
@@ -166,8 +166,10 @@ export const refreshToken = async (req, res) => {
             return res.status(403).json({ message: 'Refresh Token không hợp lệ hoặc đã hết hạn.' });
         }
 
-        jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
+        jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, async (err, decoded) => {
             if (err) {
+                // Token không hợp lệ về mặt chữ ký hoặc hết hạn -> xóa khỏi DB
+                await Session.deleteOne({ refreshToken: token });
                 res.clearCookie("refreshToken", {
                     httpOnly: true,
                     secure: true,
@@ -176,12 +178,21 @@ export const refreshToken = async (req, res) => {
                 return res.status(403).json({ message: 'Refresh Token đã hết hạn, vui lòng đăng nhập lại.' });
             }
 
-            // Tạo access token mới
-            const newAccessToken = jwt.sign(
-                { id: decoded.id, role: decoded.role },
-                process.env.JWT_SECRET,
-                { expiresIn: '15m' }
-            );
+            // Tạo cặp token mới (Xoay vòng Refresh Token Rotation)
+            const { accessToken: newAccessToken, refreshToken: newRefreshToken } = generateTokens(decoded.id, decoded.role);
+
+            // Cập nhật lại session trong DB với token mới
+            session.refreshToken = newRefreshToken;
+            session.expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 ngày mới
+            await session.save();
+
+            // Cập nhật Cookie
+            res.cookie('refreshToken', newRefreshToken, {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'none',
+                maxAge: 7 * 24 * 60 * 60 * 1000
+            });
 
             res.status(200).json({ accessToken: newAccessToken });
         });
