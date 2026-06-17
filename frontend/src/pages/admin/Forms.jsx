@@ -160,7 +160,7 @@ export default function Forms() {
                 {filteredForms.length > 0 ? (
                   filteredForms.map((form) => (
                     <tr key={form._id} className="hover:bg-gray-50/50 transition align-top">
-                      <td className="p-4 pl-6">
+                      <td className="p-4 pl-6 whitespace-nowrap">
                         <div className="font-bold text-gray-800 text-sm">
                           {form.userId?.fullName || 'Khách vãng lai'}
                         </div>
@@ -172,7 +172,7 @@ export default function Forms() {
                           Gửi: {new Date(form.createdAt).toLocaleString('vi-VN')}
                         </div>
                       </td>
-                      <td className="p-4">
+                      <td className="p-4 whitespace-nowrap">
                         <div className="flex items-center gap-1.5 text-gray-700 font-bold">
                           <Phone className="w-3.5 h-3.5 text-gray-400" />
                           <span className="font-mono">{form.phone}</span>
@@ -181,20 +181,20 @@ export default function Forms() {
                           {form.currentLevel}
                         </div>
                       </td>
-                      <td className="p-4 text-gray-700 font-bold">
+                      <td className="p-4 text-gray-700 font-bold whitespace-nowrap">
                         {form.courseInterest}
                       </td>
-                      <td className="p-4">
+                      <td className="p-4 min-w-[200px]">
                         <p className="text-gray-500 leading-relaxed max-w-xs break-words whitespace-pre-line text-[11px]">
                           {form.message || 'Không có ghi chú thêm.'}
                         </p>
                       </td>
-                      <td className="p-4">
+                      <td className="p-4 whitespace-nowrap">
                         <span className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-full border ${statusMap[form.status].color}`}>
                           {statusMap[form.status].label}
                         </span>
                       </td>
-                      <td className="p-4 pr-6">
+                      <td className="p-4 pr-6 whitespace-nowrap">
                         <div className="flex items-center justify-center">
                           <select
                             value={form.status}

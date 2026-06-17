@@ -3,7 +3,7 @@ import { Check, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import Header from '../components/Header.jsx';
-import Footer from '../components/Footer.jsx';  
+import Footer from '../components/Footer.jsx';
 import SafeImage from '../components/shared/SafeImage.jsx';
 import FeatureCard from '../components/shared/FeatureCard.jsx';
 import SectionHeader from '../components/shared/SectionHeader.jsx';
@@ -15,7 +15,7 @@ export default function Tech() {
       <Header />
 
       {/* ================= SECTION 1: HERO ================= */}
-      <header className="relative w-full py-8 lg:py-14 min-h-[550px] flex items-center overflow-hidden font-sans">
+      <header className="relative w-full py-16 lg:py-24 min-h-[680px] flex items-center overflow-hidden font-sans">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <SafeImage
@@ -33,77 +33,68 @@ export default function Tech() {
           <div className="max-w-3xl text-left">
             <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/80 backdrop-blur-sm border border-brand-green/20 text-brand-green text-base font-bold mb-4 shadow-sm">
               <Check className="w-5 h-5" />
-              Công nghệ phía sau luyện đọc
+              Công nghệ Readizen
             </div>
-            
+
             <h1 className="text-4xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-5 tracking-tight">
-              Công nghệ Readizen giúp luyện đọc hấp dẫn và hiệu quả
+              Công nghệ giúp con tự đọc thành công tại nhà
             </h1>
-            
+
             <p className="text-xl lg:text-2xl text-gray-800 mb-8 max-w-2xl leading-relaxed font-medium">
-              Phía sau bộ truyện là hệ thống quản lý học tập, Speech AI, phản hồi từ giáo viên và gamification, giúp mỗi cuốn sách trở thành một hành trình đọc có mẫu, có luyện tập và có tiến trình rõ ràng tại nhà.
+              Phía sau mỗi cuốn Readizen là App quản lý học tập, Công nghệ Speech AI của Microsoft.
             </p>
-            
+
             <div className="flex flex-wrap items-center gap-4 mb-8">
-              <Link 
-                to="/learn" 
+              <Link
+                to="/learn"
                 className="bg-brand-green hover:bg-brand-dark transition-all duration-300 text-white px-10 py-4 rounded-full font-bold text-lg text-center shadow-lg hover:shadow-xl hover:-translate-y-0.5"
               >
                 Xem công nghệ cốt lõi
               </Link>
-              <Link 
-                to="/product" 
+              <Link
+                to="/product"
                 className="bg-white/90 backdrop-blur-sm border-2 border-transparent hover:border-brand-green transition-all duration-300 text-gray-800 hover:text-brand-green px-10 py-4 rounded-full font-bold text-lg text-center shadow-md hover:shadow-lg"
               >
                 Trải nghiệm với Set 1
               </Link>
             </div>
 
-            <p className="text-base text-gray-700 max-w-lg font-medium">
-              Công nghệ Readizen không thay thế sách hay phụ huynh. Công nghệ giúp việc đọc tại nhà dễ bắt đầu, dễ theo dõi và dễ duy trì hơn.
-            </p>
           </div>
         </div>
       </header>
 
-      {/* ================= SECTION 2: 4 CÔNG NGHỆ CỐT LÕI ================= */}
+      {/* ================= SECTION 2: 3 CÔNG NGHỆ CỐT LÕI ================= */}
       <section className="bg-white py-24 relative z-20 rounded-t-[3rem] -mt-8 shadow-[0_-10px_40px_rgba(0,0,0,0.03)]">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center">
           <SectionHeader
-            badge="4 lớp công nghệ cốt lõi"
-            title="4 trụ cột giải pháp"
-            subtitle="Mỗi lớp công nghệ có một vai trò rõ ràng: quản lý lộ trình, hỗ trợ luyện phát âm, kết nối giáo viên phản hồi và tạo động lực để trẻ quay lại đọc tiếp."
+            badge="Giải pháp công nghệ"
+            title="3 trụ cột giải pháp"
+            subtitle="Mỗi lớp công nghệ có một vai trò rõ ràng: quản lý lộ trình, hỗ trợ luyện phát âm, kết nối giáo viên thực và tạo động lực để trẻ quay lại đọc tiếp."
           />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
+          {/* Đã sửa lg:grid-cols- bị lỗi thành md:grid-cols-3 và thêm max-w-5xl mx-auto */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left max-w-5xl mx-auto">
             <FeatureCard
               emoji="🧭"
-              title="Hệ thống Quản lý học tập"
-              description="Lưu sách đã kích hoạt, tiến trình đọc, hoạt động đã hoàn thành và bài nói của con để phụ huynh dễ theo dõi."
+              title="App Quản lý học tập"
+              description="Quản lý đầu sách, tiến trình đọc, hoạt động và bài nói của con để phụ huynh dễ theo dõi."
               iconBg="bg-gray-50"
               iconBorder="border-gray-100"
             />
-            
+
+            {/* Đã gộp title lên cùng 1 dòng để tránh lỗi cú pháp JSX */}
             <FeatureCard
               emoji="🎙️"
-              title="Hệ thống Speech AI"
+              title="Speech AI - Chấm điểm ngữ âm"
               description="Hỗ trợ con ghi âm, luyện đọc thành tiếng và nhận phản hồi ban đầu sau khi đọc."
               iconBg="bg-gray-50"
               iconBorder="border-gray-100"
             />
-            
-            <FeatureCard
-              emoji="👨‍🏫"
-              title="Hệ thống phản hồi Giáo viên"
-              description="Luân chuyển bài nói lại câu chuyện và chuyển đến giáo viên để nhận xét, giúp ba mẹ biết con cần luyện thêm gì."
-              iconBg="bg-gray-50"
-              iconBorder="border-gray-100"
-            />
-            
+
             <FeatureCard
               emoji="🌱"
-              title="Hệ thống Gamification"
-              description="Ghi nhận nỗ lực bằng XP, Hạt Giống, cây xanh và Green Map để con thấy hành trình đọc của mình đang lớn lên."
+              title="Gamification - Kiến tạo động lực"
+              description="Ghi nhận nỗ lực và kết quả học tập để con thấy hành trình đọc của mình đang lớn lên."
               iconBg="bg-green-50"
               iconBorder="border-green-100"
             />
@@ -116,36 +107,32 @@ export default function Tech() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="rounded-[2rem] p-4 sm:p-8 lg:p-16 relative">
             <SectionHeader
-              badge="Chuỗi học tập với công nghệ Readizen"
-              title="Workflow học tập tại Readizen"
-              subtitle="Con vẫn bắt đầu từ sách giấy. Công nghệ chỉ xuất hiện đúng lúc để hỗ trợ những phần cần mẫu đọc, ghi âm, phản hồi và ghi nhận tiến trình."
+              badge="Học tập với Readizen"
+              title="Công nghệ trong luyện đọc"
+              subtitle="Hệ thống mã QRCode thông minh được đặt tại các học phần trong sách. Con bắt đầu học từ sách, sử dụng công nghệ để hỗ trợ khi con cần."
             />
 
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 relative text-left">
+            {/* Đổi grid-cols-2 lg:grid-cols-3 thành grid-cols-3 để luôn có 3 cột. Giảm gap trên mobile (gap-2) */}
+            <div className="grid grid-cols-3 gap-2 sm:gap-6 relative text-left">
               <div className="hidden lg:block absolute top-12 left-10 right-10 h-[1px] border-b border-dashed border-gray-300 z-0"></div>
 
-              <div className="bg-white border border-gray-100 rounded-2xl p-4 sm:p-6 shadow-sm relative z-10 h-full hover:shadow-md transition-shadow">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-brand-green text-white flex items-center justify-center font-bold text-xs sm:text-sm mb-3 sm:mb-4">1</div>
-                <h4 className="font-bold text-gray-900 mb-1.5 sm:mb-2 text-xs sm:text-sm">Mở sách và nghe mẫu</h4>
-                <p className="text-gray-500 text-[11px] sm:text-xs leading-relaxed">Con nhìn tranh, đọc câu chuyện và dùng app để nghe mẫu những câu cần luyện.</p>
+              {/* Giảm padding trên mobile (p-2.5) để tiết kiệm không gian */}
+              <div className="bg-white border border-gray-100 rounded-2xl p-2.5 sm:p-6 shadow-sm relative z-10 h-full hover:shadow-md transition-shadow">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-brand-green text-white flex items-center justify-center font-bold text-[10px] sm:text-sm mb-2 sm:mb-4">1</div>
+                <h4 className="font-bold text-gray-900 mb-1 sm:mb-2 text-[11px] sm:text-sm">Before</h4>
+                <p className="text-gray-500 text-[9px] sm:text-xs leading-relaxed">Con làm quen từ vựng và câu chuyện thông qua việc nghe, xem nội dung và làm nhiệm vụ trên App.</p>
               </div>
-              
-              <div className="bg-white border border-gray-100 rounded-2xl p-4 sm:p-6 shadow-sm relative z-10 h-full hover:shadow-md transition-shadow">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-brand-green text-white flex items-center justify-center font-bold text-xs sm:text-sm mb-3 sm:mb-4">2</div>
-                <h4 className="font-bold text-gray-900 mb-1.5 sm:mb-2 text-xs sm:text-sm">Luyện đọc cùng AI</h4>
-                <p className="text-gray-500 text-[11px] sm:text-xs leading-relaxed">Con luyện đọc thành tiếng, ghi lại phần đọc và nghe lại chính mình. Hệ thống ghi nhận tiến trình.</p>
+
+              <div className="bg-white border border-gray-100 rounded-2xl p-2.5 sm:p-6 shadow-sm relative z-10 h-full hover:shadow-md transition-shadow">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-brand-green text-white flex items-center justify-center font-bold text-[10px] sm:text-sm mb-2 sm:mb-4">2</div>
+                <h4 className="font-bold text-gray-900 mb-1 sm:mb-2 text-[11px] sm:text-sm">Reading</h4>
+                <p className="text-gray-500 text-[9px] sm:text-xs leading-relaxed">Con sử dụng hướng dẫn luyện đọc từng câu, từng chữ để giúp con không bị bối rối khi bắt đầu.</p>
               </div>
-              
-              <div className="bg-white border border-gray-100 rounded-2xl p-4 sm:p-6 shadow-sm relative z-10 h-full hover:shadow-md transition-shadow">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-brand-green text-white flex items-center justify-center font-bold text-xs sm:text-sm mb-3 sm:mb-4">3</div>
-                <h4 className="font-bold text-gray-900 mb-1.5 sm:mb-2 text-xs sm:text-sm">Nộp bài Thuyết trình</h4>
-                <p className="text-gray-500 text-[11px] sm:text-xs leading-relaxed">Con tự chuẩn bị trình tự bài nói theo cách con muốn. Nói, quay và up video lên hệ thống.</p>
-              </div>
-              
-              <div className="bg-white border border-gray-100 rounded-2xl p-4 sm:p-6 shadow-sm relative z-10 h-full hover:shadow-md transition-shadow">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-brand-green text-white flex items-center justify-center font-bold text-xs sm:text-sm mb-3 sm:mb-4">4</div>
-                <h4 className="font-bold text-gray-900 mb-1.5 sm:mb-2 text-xs sm:text-sm">Giáo viên phản hồi</h4>
-                <p className="text-gray-500 text-[11px] sm:text-xs leading-relaxed">Phản hồi video bài nói của con, giúp bố mẹ và con nhận ra những điểm được, chưa được.</p>
+
+              <div className="bg-white border border-gray-100 rounded-2xl p-2.5 sm:p-6 shadow-sm relative z-10 h-full hover:shadow-md transition-shadow">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-brand-green text-white flex items-center justify-center font-bold text-[10px] sm:text-sm mb-2 sm:mb-4">3</div>
+                <h4 className="font-bold text-gray-900 mb-1 sm:mb-2 text-[11px] sm:text-sm">After</h4>
+                <p className="text-gray-500 text-[9px] sm:text-xs leading-relaxed">Thực hành đọc chấm điểm phát âm với AI, upload video bài nói và xem phản hồi từ Giáo viên.</p>
               </div>
             </div>
           </div>
@@ -156,18 +143,18 @@ export default function Tech() {
       <section className="bg-gradient-to-b from-brand-dark to-brand-darker py-20 text-white">
         <div className="max-w-6xl mx-auto px-6 lg:px-8 text-center">
           <div className="inline-block bg-white/10 text-brand-light text-xs font-bold px-3 py-1 rounded-md uppercase tracking-wider mb-6">
-            Ba lớp tạo niềm tin
+            Ba thành phần chịu tác động
           </div>
           <h2 className="text-3xl lg:text-4xl font-bold mb-6 leading-tight">
-            AI, Giáo viên và Green Map có vai trò<br />khác nhau trong hành trình đọc
+            Phát âm, Phản hồi và Động lực
           </h2>
           <p className="text-brand-light opacity-80 max-w-2xl mx-auto mb-16 text-sm">
-            Readizen không dùng công nghệ để thay thế con người. Mỗi lớp được thiết kế để hỗ trợ một phần cụ thể trong việc luyện đọc tại nhà.
+            Readizen không dùng công nghệ để thay thế con người. Readizen sử dụng công nghệ để tăng cường giá trị cho các thành phần trong việc luyện đọc tại nhà.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
             <div className="bg-white/5 border border-white/10 rounded-2xl p-6 lg:p-8 hover:bg-white/10 transition">
-              <h3 className="text-lg font-bold mb-3 text-brand-light">Speech AI giúp con luyện lại nhanh hơn</h3>
+              <h3 className="text-lg font-bold mb-3 text-brand-light">Phát âm <br /> Phân tích âm bằng Speech AI</h3>
               <p className="text-sm text-gray-300 mb-6 min-h-[60px]">AI phản hồi ban đầu sau khi con đọc. Vai trò của AI là giúp con có tín hiệu để luyện lại, không phải tạo áp lực điểm số.</p>
               <div className="space-y-3">
                 <div className="bg-white/10 px-4 py-2.5 rounded-xl text-sm font-medium text-brand-light border border-white/5">Ghi âm phần đọc</div>
@@ -177,8 +164,8 @@ export default function Tech() {
             </div>
 
             <div className="bg-white/5 border border-white/10 rounded-2xl p-6 lg:p-8 hover:bg-white/10 transition">
-              <h3 className="text-lg font-bold mb-3 text-brand-light">Giáo viên giúp ba mẹ hiểu con tiến bộ ra sao</h3>
-              <p className="text-sm text-gray-300 mb-6 min-h-[60px]">Giáo viên phản hồi phần con nói lại câu chuyện, giúp phụ huynh biết con dùng từ, nói ý và cần luyện thêm điểm nào.</p>
+              <h3 className="text-lg font-bold mb-3 text-brand-light">Phản hồi<br />Thông tin trực quan, liên tục</h3>
+              <p className="text-sm text-gray-300 mb-6 min-h-[60px]">Các phản hồi của AI và Giáo viên đối với bài đọc của con trở nên minh bạch, lưu giữ trực quan.</p>
               <div className="space-y-3">
                 <div className="bg-white/10 px-4 py-2.5 rounded-xl text-sm font-medium text-brand-light border border-white/5">Nhận xét bài nói</div>
                 <div className="bg-white/10 px-4 py-2.5 rounded-xl text-sm font-medium text-brand-light border border-white/5">Gợi ý điểm cần luyện</div>
@@ -187,7 +174,7 @@ export default function Tech() {
             </div>
 
             <div className="bg-white/5 border border-white/10 rounded-2xl p-6 lg:p-8 hover:bg-white/10 transition">
-              <h3 className="text-lg font-bold mb-3 text-brand-light">Green Map tạo động lực để theo đuổi việc đọc</h3>
+              <h3 className="text-lg font-bold mb-3 text-brand-light">Động lực <br /> Ý nghĩa hơn với Green Map</h3>
               <p className="text-sm text-gray-300 mb-6 min-h-[60px]">Hoạt động hoàn thành được chuyển thành XP, Hạt Giống và cây xanh để con nhìn thấy hành trình học của mình lớn dần.</p>
               <div className="space-y-3">
                 <div className="bg-white/10 px-4 py-2.5 rounded-xl text-sm font-medium text-brand-light border border-white/5">Ghi nhận nỗ lực</div>
@@ -291,9 +278,9 @@ export default function Tech() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
             <div className="w-full flex justify-center">
               <div className="bg-white rounded-[2.5rem] p-3 sm:p-5 shadow-sm border border-gray-100 w-full relative">
-                <SafeImage 
-                  src="/assets/home3.png" 
-                  alt="Trải nghiệm phương pháp Readizen" 
+                <SafeImage
+                  src="/assets/home3.png"
+                  alt="Trải nghiệm phương pháp Readizen"
                   className="w-full h-auto object-cover rounded-[1.5rem]"
                 />
               </div>
@@ -337,7 +324,7 @@ export default function Tech() {
               </div>
             </div>
           </div>
-          
+
           <div className="pt-10 text-center">
             <Link to="/learn" className="inline-block bg-brand-yellow hover:bg-yellow-500 text-gray-900 font-bold text-xs sm:text-sm px-6 py-2.5 rounded-full shadow-lg transition-transform hover:-translate-y-0.5">
               Xem thêm Phương pháp Readizen
@@ -366,7 +353,7 @@ export default function Tech() {
                 Sách + LMS
               </span>
             </div>
-            
+
             <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col items-start hover:shadow-md transition">
               <div className="w-full aspect-[2/1] bg-brand-light rounded-xl mb-4 flex items-center justify-center text-3xl border border-dashed border-green-200">
                 🎙️
@@ -377,7 +364,7 @@ export default function Tech() {
                 Speech AI
               </span>
             </div>
-            
+
             <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col items-start hover:shadow-md transition">
               <div className="w-full aspect-[2/1] bg-brand-light rounded-xl mb-4 flex items-center justify-center text-3xl border border-dashed border-green-200">
                 📝

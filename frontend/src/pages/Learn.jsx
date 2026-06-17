@@ -15,9 +15,9 @@ export default function Learn() {
   return (
     <div className="min-h-screen bg-brand-cream text-gray-800 font-sans antialiased selection:bg-brand-light/40 overflow-x-hidden">
       <Header />
-      
+
       {/* ================= SECTION 1: HERO ================= */}
-      <header className="relative w-full py-8 lg:py-14 min-h-[550px] flex items-center overflow-hidden font-sans">
+      <header className="relative w-full py-16 lg:py-24 min-h-[680px] flex items-center overflow-hidden font-sans">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <SafeImage
@@ -35,35 +35,32 @@ export default function Learn() {
           <div className="max-w-3xl text-left">
             <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/80 backdrop-blur-sm border border-brand-green/20 text-brand-green text-base font-bold mb-4 shadow-sm">
               <Check className="w-5 h-5" />
-              Phương pháp Readizen
+              Học phần của Sách
             </div>
-            
+
             <h1 className="text-5xl lg:text-7xl font-extrabold text-gray-900 leading-tight mb-4 tracking-tight">
-              5 học phần trong<br />mỗi cuốn truyện
+              5 học phần trong <br />mỗi cuốn Readizen
             </h1>
-            
+
             <p className="text-xl lg:text-2xl text-gray-800 mb-8 max-w-2xl leading-relaxed font-medium">
-              Khi mở một cuốn truyện Readizen, con không chỉ đọc vài câu rồi đóng sách. Con đi qua 5 phần: làm quen từ mới, đọc câu chuyện, hiểu ý nghĩa, luyện nói và trình bày lại điều đã học.
+              Với Readizen, con không chỉ đọc, mà còn tương tác và thực hành kỹ năng nói với phụ huynh.
             </p>
-            
+
             <div className="flex flex-wrap items-center gap-4">
-              <Link 
-                to="/product" 
+              <Link
+                to="/product"
                 className="bg-brand-green hover:bg-brand-dark transition-all duration-300 text-white px-10 py-4 rounded-full font-bold text-lg text-center shadow-lg hover:shadow-xl hover:-translate-y-0.5"
               >
                 Xem ví dụ một cuốn sách
               </Link>
-              <Link 
-                to="/product" 
+              <Link
+                to="/product"
                 className="bg-white/90 backdrop-blur-sm border-2 border-transparent hover:border-brand-green transition-all duration-300 text-gray-800 hover:text-brand-green px-10 py-4 rounded-full font-bold text-lg text-center shadow-md hover:shadow-lg"
               >
                 Bắt đầu với Set 1
               </Link>
             </div>
-            
-            <p className="text-base text-gray-700 mt-8 mb-6 max-w-lg font-medium">
-              Trang này chứng minh Readizen triển khai "luyện đọc có hướng dẫn" như thế nào trong từng cuốn sách.
-            </p>
+
           </div>
         </div>
       </header>
@@ -72,9 +69,9 @@ export default function Learn() {
       <section className="bg-white py-24 rounded-t-[3rem] -mt-8 relative z-20">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <SectionHeader
-            badge="Tổng quan 5 bước"
-            title="Hành trình từ đọc, hiểu và nói"
-            subtitle="5 bước giúp con không bị bỏ rơi với cuốn sách: con được chuẩn bị, được đọc, được luyện, được phản hồi và có đầu ra sau khi đọc."
+            badge="Tổng quan 5 học phần"
+            title="Hành trình từ làm quen đến đọc, hiểu và nói"
+            subtitle="5 học phần giúp con từng bước hoàn thành đọc sách. Con làm quen từ mới, đọc truyện, thực hành ngôn ngữ và tạo kết quả đầu ra sau khi đọc."
           />
 
           {/* Grid 5 columns */}
@@ -89,7 +86,7 @@ export default function Learn() {
             <FeatureCard
               emoji="📚"
               title="Story"
-              description="Đọc câu chuyện ngắn, câu vừa sức, có nhân vật và tình huống."
+              description="Đọc câu chuyện ngắn, phù hợp trình độ, có nhân vật và tình huống."
               iconBg="bg-green-50"
               iconBorder="border-green-100"
             />
@@ -103,14 +100,14 @@ export default function Learn() {
             <FeatureCard
               emoji="💬"
               title="Speak"
-              description="Ba mẹ và Con cùng thực hành câu thoại trong truyện."
+              description="Phụ huynh và Con cùng thực hành hội thoại theo nội dung trong sách."
               iconBg="bg-gray-50"
               iconBorder="border-gray-200"
             />
             <FeatureCard
               emoji="🎤"
-              title="Presentation"
-              description="Tạo bài thuyết trình cá nhân hóa và luyện nói."
+              title="Show & Tell"
+              description="Tạo bài nói cá nhân hóa dựa nội dung chung của sách."
               iconBg="bg-purple-50"
               iconBorder="border-purple-100"
             />
@@ -124,12 +121,12 @@ export default function Learn() {
           <div className="bg-white rounded-[2.5rem] p-8 lg:p-12 shadow-xl border border-gray-100 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Video Player */}
             <div className="w-full aspect-video bg-gray-900 rounded-3xl relative overflow-hidden flex items-center justify-center shadow-lg border-4 border-white">
-              <iframe 
+              <iframe
                 className="w-full h-full"
-                src="https://www.youtube.com/embed/yvlLzTVeKTk" 
-                title="YouTube video player" 
-                frameBorder="0" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                src="https://www.youtube.com/embed/yvlLzTVeKTk"
+                title="YouTube video player"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
               ></iframe>
             </div>
@@ -140,10 +137,10 @@ export default function Learn() {
                 Video demo
               </div>
               <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-                The Little Land
+                A Little Plant
               </h2>
               <p className="text-gray-600 mb-8 text-lg">
-                Video thực tế con đọc câu chuyện về The Little Land.
+                Video thực tế con đọc câu chuyện về A Little Plant.
               </p>
 
               <ul className="space-y-4 mb-8">
@@ -172,7 +169,7 @@ export default function Learn() {
                 <ArrowRight className="w-4 h-4 ml-1" />
               </a>
             </div>
-          </div> 
+          </div>
         </div>
       </section>
 
@@ -180,7 +177,7 @@ export default function Learn() {
       <section className="bg-white py-24">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center">
           <SectionHeader
-            badge="4 lớp hỗ trợ"
+            badge="Hỗ trợ học tập "
             title="4 trụ cột đồng hành cùng con"
             subtitle="Sách, app, phụ huynh và giáo viên phối hợp để giúp con bắt đầu nhẹ nhàng hơn, luyện tập đều hơn và có phản hồi rõ hơn."
           />
@@ -189,28 +186,28 @@ export default function Learn() {
             <FeatureCard
               emoji="📚"
               title="Sách"
-              description="Cho con câu chuyện, tranh, nhân vật và câu đọc vừa sức."
+              description="Cho con câu chuyện, tranh, nhân vật và câu đọc vừa trình độ."
               iconBg="bg-green-50"
               iconBorder="border-green-100"
             />
             <FeatureCard
               emoji="📱"
               title="App"
-              description="Đọc mẫu, ghi âm, hỗ trợ feedback và dẫn con qua hoạt động."
+              description="Giúp việc đọc trở nên hấp dẫn và hiệu quả hơn với AI."
               iconBg="bg-blue-50"
               iconBorder="border-blue-100"
             />
             <FeatureCard
               emoji="👨‍👩‍👧"
               title="Phụ huynh"
-              description="Ngồi cùng con, hỏi câu đơn giản, khích lệ và duy trì thói quen."
+              description="Tương tác, khích lệ và duy trì thói quen cho con."
               iconBg="bg-yellow-50"
               iconBorder="border-yellow-100"
             />
             <FeatureCard
               emoji="👩‍🏫"
               title="Giáo viên"
-              description="Nhận xét bài Presentation để phụ huynh biết con cần cải thiện gì."
+              description="Nhận xét bài đọc để phụ huynh biết con cần cải thiện gì."
               iconBg="bg-purple-50"
               iconBorder="border-purple-100"
             />
@@ -222,9 +219,9 @@ export default function Learn() {
       <section className="bg-brand-cream py-24 relative">
         <div className="max-w-6xl mx-auto px-6 lg:px-8">
           <SectionHeader
-            badge="Sau mỗi cuốn"
+            badge="Kết quả đọc"
             title="Luyện đọc để luyện nói"
-            subtitle="Mỗi cuốn Readizen nên để lại một kết quả nhỏ nhưng rõ ràng: con đọc được, hiểu được, nói lại được và có lý do để đọc tiếp."
+            subtitle="Mỗi cuốn Readizen đều hướng đến mục tiêu nhỏ nhưng rõ ràng: đọc, hiểu và nói lại câu truyện đã đọc."
           />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
@@ -267,18 +264,18 @@ export default function Learn() {
 
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-            
+
             {/* Cột Nội dung */}
             <div className="w-full lg:col-span-6 order-2 lg:order-1 text-left">
               <div className="inline-flex items-center bg-white/10 backdrop-blur-sm border border-white/20 text-brand-yellow text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider mb-6">
                 Bắt đầu bằng gì?
               </div>
-              
+
               <h2 className="text-3xl lg:text-4xl xl:text-5xl font-extrabold text-white mb-6 leading-tight tracking-tight">
                 Readizen Set 1<br />
-                <span className="text-brand-yellow">Bộ 5 truyện</span> tiếng Anh đầu tiên cho trẻ 5+
+
               </h2>
-              
+
               <p className="text-green-100/90 mb-8 text-lg leading-relaxed font-medium">
                 Set 1 giúp con làm quen với việc luyện đọc có hướng dẫn: đọc sách, nghe mẫu, luyện đọc, thực hành nói và nhận phản hồi chuẩn xác.
               </p>
@@ -324,9 +321,9 @@ export default function Learn() {
             {/* Cột Hình ảnh */}
             <div className="w-full lg:col-span-6 order-1 lg:order-2">
               <div className="w-full aspect-[4/3] md:aspect-square lg:aspect-square bg-brand-darker rounded-[2.5rem] overflow-hidden relative shadow-2xl border-4 border-white/10 group">
-                <SafeImage 
-                  src="/assets/home2.jpg" 
-                  alt="Set 1 Readizen" 
+                <SafeImage
+                  src="/assets/home2.jpg"
+                  alt="Set 1 Readizen"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none"></div>
@@ -353,7 +350,7 @@ export default function Learn() {
         secondaryText="Luyện đọc có hướng dẫn là gì?"
         secondaryHref="/practice"
       />
-      
+
       <Footer />
     </div>
   );

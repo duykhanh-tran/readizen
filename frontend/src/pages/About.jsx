@@ -15,9 +15,9 @@ export default function About() {
   return (
     <div className="font-sans text-gray-800 bg-brand-cream min-h-screen selection:bg-brand-light/40 overflow-x-hidden">
       <Header />
-      
+
       {/* ================= SECTION 1: HERO ================= */}
-      <header className="relative w-full py-8 lg:py-14 min-h-[550px] flex items-center overflow-hidden font-sans">
+      <header className="relative w-full py-16 lg:py-24 min-h-[680px] flex items-center overflow-hidden font-sans">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <SafeImage
@@ -37,24 +37,24 @@ export default function About() {
               <Check className="w-5 h-5" />
               Về Readizen
             </div>
-            
+
             <h1 className="text-4xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-5 tracking-tight">
-              Readizen giúp trẻ em đọc, hiểu và nói tiếng Anh tốt hơn.
+              Nâng cao năng lực đọc sách tiếng Anh cho trẻ em Việt Nam ngay tại nhà
             </h1>
-            
+
             <p className="text-xl lg:text-2xl text-gray-800 mb-8 max-w-2xl leading-relaxed font-medium">
-              Chúng tôi tin rằng trẻ không chỉ cần học thêm từ vựng hay làm thêm bài tập tiếng Anh. Trẻ cần những câu chuyện vừa sức, một cách đọc có người dẫn đường, và cơ hội nói lại điều mình đã hiểu sau khi đọc.
+              Kỹ năng đọc là nền tảng quan trọng để trẻ hiểu ngôn ngữ, tích lũy cách diễn đạt và tự tin nói tiếng Anh.
             </p>
-            
-            <div className="flex flex-wrap items-center gap-4"> 
-              <Link 
-                to="/learn" 
+
+            <div className="flex flex-wrap items-center gap-4">
+              <Link
+                to="/learn"
                 className="bg-brand-green hover:bg-brand-dark transition-all duration-300 text-white px-10 py-4 rounded-full font-bold text-lg text-center shadow-lg hover:shadow-xl hover:-translate-y-0.5"
               >
                 Tìm hiểu cách học Readizen
               </Link>
-              <Link 
-                to="/product" 
+              <Link
+                to="/product"
                 className="bg-white/90 backdrop-blur-sm border-2 border-transparent hover:border-brand-green transition-all duration-300 text-gray-800 hover:text-brand-green px-10 py-4 rounded-full font-bold text-lg text-center shadow-md hover:shadow-lg"
               >
                 Xem Readizen Set 1
@@ -71,9 +71,9 @@ export default function About() {
           <div className="w-full h-full min-h-[400px] lg:min-h-full">
             <div className="relative w-full h-full min-h-[450px] bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-gray-100 overflow-hidden flex flex-col items-center justify-center text-center transition-all duration-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] group">
               <div className="absolute inset-0 w-full h-full">
-                <SafeImage 
+                <SafeImage
                   src="/assets/home2.jpg"
-                  alt="Founder Story" 
+                  alt="Founder Story"
                   className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent"></div>
@@ -86,34 +86,33 @@ export default function About() {
             <div className="inline-block self-start bg-brand-light text-brand-green text-xs font-bold px-3 py-1 rounded-md uppercase tracking-wider mb-4">
               Câu chuyện nhà sáng lập
             </div>
-            
+
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6 leading-tight">
-              Làm sao để trẻ thật sự <br /> đọc tiếng Anh?
+              Làm sao để trẻ đọc được các câu truyện tiếng Anh?
             </h2>
-            
+
             <div className="text-gray-600 space-y-4 text-[15px] leading-relaxed mb-8">
               <p>
-                Nhiều trẻ học tiếng Anh từ sớm, biết từ vựng, biết hát, biết trả lời vài mẫu câu. Nhưng khi cầm một cuốn truyện tiếng Anh, các em vẫn lúng túng: không biết bắt đầu từ đâu, đọc câu thế nào, và đọc xong thì làm gì tiếp.
+                Nhiều trẻ học tiếng Anh từ sớm, biết từ vựng, biết hát, biết trả lời vài mẫu câu. Nhưng khi cầm một cuốn truyện tiếng Anh, các em vẫn lúng túng: không biết bắt đầu từ đâu, đọc câu thế nào, và đọc xong thì làm gì tiếp.              </p>
+              <p>
+                Readizen được xây dựng từ niềm tin rằng trẻ không cần thêm áp lực. Trẻ cần những câu chuyện phù hợp, có tranh để hiểu, có âm mẫu để nghe, có cơ hội đọc lại, và có Giáo viên phản hồi bài đọc của trẻ.
               </p>
               <p>
-                Readizen được xây dựng từ niềm tin rằng trẻ không cần thêm áp lực. Trẻ cần những câu chuyện vừa sức, có tranh để hiểu, có mẫu để nghe, có cơ hội đọc lại, và có người phản hồi sau khi con nói điều mình hiểu.
-              </p>
-              <p>
-                Vì vậy, Readizen không chọn trở thành một app học tiếng Anh thuần túy. Chúng tôi bắt đầu từ sách giấy, rồi dùng công nghệ và giáo viên để giúp mỗi cuốn sách trở thành một trải nghiệm đọc có hướng dẫn tại nhà.
+                Readizen bắt đầu từ sách giấy, rồi dùng công nghệ và giáo viên hỗ trợ từ xa để giúp trẻ tự mình đọc được các cuốn sách tiếng Anh.
               </p>
             </div>
 
             {/* Quote Block */}
             <div className="border-l-4 border-brand-green bg-brand-light rounded-r-2xl p-6 relative mt-auto">
-              <svg 
-                className="w-8 h-8 text-brand-green opacity-20 absolute top-4 left-4" 
-                fill="currentColor" 
+              <svg
+                className="w-8 h-8 text-brand-green opacity-20 absolute top-4 left-4"
+                fill="currentColor"
                 viewBox="0 0 24 24"
               >
                 <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
               </svg>
               <p className="font-bold text-brand-darker text-[15px] relative z-10 italic mb-3 leading-relaxed pl-2">
-                "Tôi không muốn trẻ chỉ có thêm một cuốn sách tiếng Anh trên kệ. Tôi muốn mỗi cuốn sách trở thành một trải nghiệm đọc mà con có thể bắt đầu, hiểu và nói lại theo cách của mình."
+                "Tôi không muốn trẻ chỉ đơn giản có thêm một cuốn sách tiếng Anh trên kệ. Tôi muốn mỗi cuốn sách trở thành một trải nghiệm đọc mà con có thể đọc, hiểu và nói lại theo cách của mình."
               </p>
               <span className="text-sm text-brand-green font-semibold pl-2">- Mai Linh | Founder</span>
             </div>
@@ -125,27 +124,18 @@ export default function About() {
       <section className="bg-brand-cream py-24">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center">
           <SectionHeader
-            badge="Vấn đề Readizen nhận ra"
-            title="Các câu chuyện giúp con hiểu sâu, nhớ lâu và tự tin nói"
+            badge="Vấn đề luyện đọc"
+            title="Đọc sách quan trọng hơn những gì bạn nghĩ"
             subtitle="Khi tiếng Anh chỉ nằm trong từ vựng, bài tập hoặc mẫu câu rời rạc, trẻ dễ nhớ rồi quên, biết từ nhưng khó dùng. Những câu chuyện vừa sức giúp con gặp ngôn ngữ trong bối cảnh, hiểu điều đang xảy ra và có nội dung để nói lại."
           />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-50 relative overflow-hidden group hover:shadow-md transition">
               <div className="absolute -bottom-4 -right-2 text-[100px] font-black text-gray-50 opacity-60 z-0 leading-none group-hover:scale-110 transition-transform">01</div>
               <div className="relative z-10">
                 <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center mb-4 text-xl">🧩</div>
-                <h4 className="font-bold text-green-900 mb-2 text-sm ">Từ vựng không còn rời rạc</h4>
-                <p className="text-gray-500 text-xs leading-relaxed">Con gặp từ mới trong nhân vật, tranh và tình huống, nên dễ hiểu cách dùng hơn.</p>
-              </div>
-            </div>
-            
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-50 relative overflow-hidden group hover:shadow-md transition">
-              <div className="absolute -bottom-4 -right-2 text-[100px] font-black text-gray-50 opacity-60 z-0 leading-none group-hover:scale-110 transition-transform">02</div>
-              <div className="relative z-10">
-                <div className="w-10 h-10 bg-yellow-50 rounded-xl flex items-center justify-center mb-4 text-xl">🖼️</div>
-                <h4 className="font-bold text-green-900 mb-2 text-sm ">Ngôn ngữ có bối cảnh để hiểu sâu</h4>
-                <p className="text-gray-500 text-xs leading-relaxed">Câu chuyện giúp con hiểu điều đang xảy ra, không chỉ dịch từng từ riêng lẻ.</p>
+                <h4 className="font-bold text-green-900 mb-2 text-sm ">Thẩm thấu ngôn ngữ tự nhiên</h4>
+                <p className="text-gray-500 text-xs leading-relaxed">Câu chuyện giúp con hiểu điều đang xảy ra, không chỉ dịch từng từ riêng lẻ</p>
               </div>
             </div>
 
@@ -153,7 +143,7 @@ export default function About() {
               <div className="absolute -bottom-4 -right-2 text-[100px] font-black text-gray-50 opacity-60 z-0 leading-none group-hover:scale-110 transition-transform">03</div>
               <div className="relative z-10">
                 <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center mb-4 text-xl">🔄</div>
-                <h4 className="font-bold text-green-900 mb-2 text-sm ">Mạch chuyện giúp con nhớ lâu hơn</h4>
+                <h4 className="font-bold text-green-900 mb-2 text-sm ">Câu truyện giúp ghi nhớ</h4>
                 <p className="text-gray-500 text-xs leading-relaxed">Từ và mẫu câu được lặp lại trong một ngữ cảnh, giúp con ghi nhớ tự nhiên hơn.</p>
               </div>
             </div>
@@ -162,7 +152,7 @@ export default function About() {
               <div className="absolute -bottom-4 -right-2 text-[100px] font-black text-gray-50 opacity-60 z-0 leading-none group-hover:scale-110 transition-transform">04</div>
               <div className="relative z-10">
                 <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center mb-4 text-xl">💬</div>
-                <h4 className="font-bold text-green-900 mb-2 text-sm ">Đọc lại giúp con luyện nói tốt hơn</h4>
+                <h4 className="font-bold text-green-900 mb-2 text-sm ">Đọc tăng cường kỹ năng nói</h4>
                 <p className="text-gray-500 text-xs leading-relaxed">Khi hiểu câu chuyện, con có thể kể lại, trả lời và trình bày bằng tiếng Anh đơn giản.</p>
               </div>
             </div>
@@ -175,16 +165,16 @@ export default function About() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center">
           <SectionHeader
             badge="Quan điểm giáo dục"
-            title="Con cần đọc được trước khi đọc giỏi"
+            title="Đọc được trước khi đọc giỏi"
             subtitle="Ở giai đoạn đầu, điều quan trọng nhất không phải là con đọc thật nhiều hay đọc thật khó. Con cần những thành công nhỏ: đọc được một câu, hiểu được một tranh, trả lời được một câu hỏi và nói lại được một ý."
           />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols- gap-6 text-left">
             <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden group hover:shadow-md transition">
               <div className="absolute -bottom-4 -right-2 text-[100px] font-black text-gray-50 opacity-60 z-0 leading-none group-hover:scale-110 transition-transform">01</div>
               <div className="relative z-10">
                 <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center mb-4 text-xl text-brand-green">📖</div>
-                <h4 className="font-bold text-green-900 mb-2 text-sm">Bắt đầu từ câu chuyện đúng trình độ</h4>
+                <h4 className="font-bold text-green-900 mb-2 text-sm">Bắt đầu từ đơn giản</h4>
                 <p className="text-gray-500 text-xs leading-relaxed">Trẻ dễ bước vào reading hơn khi câu chuyện ngắn, tranh rõ và ngôn ngữ nằm trong tình huống con có thể hiểu.</p>
               </div>
             </div>
@@ -193,7 +183,7 @@ export default function About() {
               <div className="absolute -bottom-4 -right-2 text-[100px] font-black text-gray-50 opacity-60 z-0 leading-none group-hover:scale-110 transition-transform">02</div>
               <div className="relative z-10">
                 <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center mb-4 text-xl text-yellow-500">✨</div>
-                <h4 className="font-bold text-green-900 mb-2 text-sm">Thành công nhỏ tạo tự tin lớn</h4>
+                <h4 className="font-bold text-green-900 mb-2 text-sm">Từng bước thành công</h4>
                 <p className="text-gray-500 text-xs leading-relaxed">Khi con đọc được một câu, hoặc trả lời được một câu hỏi, con bắt đầu tin rằng mình có thể đọc tiếp.</p>
               </div>
             </div>
@@ -207,14 +197,6 @@ export default function About() {
               </div>
             </div>
 
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden group hover:shadow-md transition">
-              <div className="absolute -bottom-4 -right-2 text-[100px] font-black text-gray-50 opacity-60 z-0 leading-none group-hover:scale-110 transition-transform">04</div>
-              <div className="relative z-10">
-                <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center mb-4 text-xl">👨‍👩‍👧</div>
-                <h4 className="font-bold text-green-900 mb-2 text-sm">Ba mẹ không cần làm giáo viên</h4>
-                <p className="text-gray-500 text-xs leading-relaxed">Ba mẹ tạo thói quen và khích lệ. Sách, app và phản hồi giúp con được dẫn từng bước khi luyện đọc ở nhà.</p>
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -231,10 +213,10 @@ export default function About() {
               Readizen là gì?
             </div>
             <h2 className="text-4xl lg:text-5xl font-bold mb-6 leading-tight">
-              Readizen là hệ<br />thống truyện tiếng<br />Anh luyện đọc có<br />hướng dẫn cho trẻ<br />5+
+              Readizen là hệ thống sách luyện đọc tiếng Anh tại nhà
             </h2>
             <p className="text-brand-light text-sm opacity-90 leading-relaxed max-w-md">
-              Readizen kết hợp sách giấy, app luyện đọc và hỗ trợ phản hồi để giúp trẻ bắt đầu reading tại nhà theo một quy trình rõ ràng: xem tranh, nghe mẫu, đọc lại, hiểu câu chuyện và nói lại điều đã đọc.
+              Readizen kết hợp Sách giấy, App luyện đọc và Giáo viên thực từ xa để giúp trẻ bắt đầu reading tại nhà theo một quy trình rõ ràng: xem tranh, nghe mẫu, đọc lại, hiểu câu chuyện và nói lại điều đã đọc.
             </p>
           </div>
 
@@ -246,7 +228,7 @@ export default function About() {
                 <p className="text-xs text-gray-500">Truyện ngắn, tranh rõ, đúng trình độ, nội dung gần gũi.</p>
               </div>
             </div>
-            
+
             <div className="bg-white rounded-2xl p-5 flex items-center gap-4 shadow-lg transform translate-x-0 lg:-translate-x-4 hover:-translate-x-6 transition-transform">
               <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center text-xl flex-shrink-0">📱</div>
               <div>
@@ -254,7 +236,7 @@ export default function About() {
                 <p className="text-xs text-gray-500">Nghe âm mẫu, luyện đọc AI, làm nhiệm vụ và theo dõi tiến trình.</p>
               </div>
             </div>
-            
+
             <div className="bg-white rounded-2xl p-5 flex items-center gap-4 shadow-lg transform translate-x-0 lg:-translate-x-8 hover:-translate-x-10 transition-transform">
               <div className="w-12 h-12 bg-yellow-50 rounded-xl flex items-center justify-center text-xl flex-shrink-0">✨</div>
               <div>
@@ -268,7 +250,7 @@ export default function About() {
 
       {/* ================= SECTION BRAND IMAGE BANNER ================= */}
       <section className="relative w-full">
-        <div 
+        <div
           className="relative bg-cover bg-center py-24 lg:py-32"
           style={{ backgroundImage: "url('/assets/about1.png')" }}
         >
@@ -306,14 +288,14 @@ export default function About() {
                 Giúp trẻ 5+ bắt đầu đọc truyện tiếng Anh theo cách nhẹ nhàng, có hướng dẫn và có đầu ra sau khi đọc.
               </p>
             </div>
-            
+
             <div className="bg-white border border-gray-100 rounded-[2rem] p-8 lg:p-10 shadow-sm flex flex-col h-full transform hover:-translate-y-1 transition duration-300">
               <h3 className="font-bold text-brand-green text-xl mb-4">Tầm nhìn</h3>
               <p className="text-gray-600 text-sm leading-relaxed">
                 Readizen hướng tới việc giúp 1 triệu trẻ em Việt Nam hình thành thói quen đọc tiếng Anh từ những cuốn truyện đầu tiên.
               </p>
             </div>
-            
+
             <div className="bg-white border border-gray-100 rounded-[2rem] p-8 lg:p-10 shadow-sm flex flex-col h-full transform hover:-translate-y-1 transition duration-300">
               <h3 className="font-bold text-brand-green text-xl mb-4">Mục tiêu khởi đầu</h3>
               <p className="text-gray-600 text-sm leading-relaxed">

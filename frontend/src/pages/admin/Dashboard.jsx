@@ -182,7 +182,7 @@ export default function Dashboard() {
                 <tbody className="divide-y divide-gray-100">
                   {recentForms.length > 0 ? (
                     recentForms.map((form) => (
-                      <tr key={form._id} className="hover:bg-gray-50/50 transition">
+                      <tr key={form._id} className="hover:bg-gray-50/50 transition whitespace-nowrap">
                         <td className="p-4 pl-6 font-bold text-gray-800">
                           {form.userId?.fullName || 'Khách vãng lai'}
                         </td>

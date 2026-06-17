@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import api from '../../services/axios.js';
 import { useSocket } from '../../context/SocketContext.jsx';
-import { MessageSquare, Send, Search, Shield, AlertCircle } from 'lucide-react';
+import { MessageSquare, Send, Search, Shield, AlertCircle, ChevronLeft } from 'lucide-react';
 
 export default function Chat() {
   const { socket } = useSocket();
@@ -11,6 +11,7 @@ export default function Chat() {
   const [messages, setMessages] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const [mobileShowChat, setMobileShowChat] = useState(false);
   
   const messagesEndRef = useRef(null);
 
@@ -138,7 +139,7 @@ export default function Chat() {
     <div className="h-[calc(100vh-160px)] bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden grid grid-cols-12 items-stretch font-sans text-left">
       
       {/* Rooms Sidebar (Left 4 cols) */}
-      <div className="col-span-4 border-r border-gray-200 flex flex-col h-full bg-gray-50/50">
+      <div className={`col-span-12 md:col-span-4 border-r border-gray-200 flex flex-col h-full bg-gray-50/50 ${mobileShowChat ? 'hidden md:flex' : 'flex'}`}>
         <div className="p-4 border-b border-gray-200 bg-white">
           <h3 className="font-black text-gray-900 text-base mb-3">Hộp thư hỗ trợ</h3>
           <div className="relative">
@@ -170,7 +171,10 @@ export default function Chat() {
               return (
                 <button
                   key={room.userId}
-                  onClick={() => setActiveRoomId(room.userId)}
+                  onClick={() => {
+                    setActiveRoomId(room.userId);
+                    setMobileShowChat(true);
+                  }}
                   className={`w-full flex items-start gap-3 p-3 rounded-xl transition duration-150 text-left cursor-pointer ${
                     isActive 
                       ? 'bg-brand-light/35 border border-brand-green/20' 
@@ -212,12 +216,20 @@ export default function Chat() {
       </div>
 
       {/* Message Area (Right 8 cols) */}
-      <div className="col-span-8 flex flex-col h-full bg-white relative">
+      <div className={`col-span-12 md:col-span-8 flex flex-col h-full bg-white relative ${!mobileShowChat ? 'hidden md:flex' : 'flex'}`}>
         {activeRoom ? (
           <>
             {/* Header */}
-            <div className="px-6 py-3.5 border-b border-gray-200 flex items-center justify-between bg-white z-10 shadow-sm flex-shrink-0">
+            <div className="px-4 lg:px-6 py-3.5 border-b border-gray-200 flex items-center justify-between bg-white z-10 shadow-sm flex-shrink-0">
               <div className="flex items-center gap-3">
+                {/* Mobile Back Button */}
+                <button
+                  onClick={() => setMobileShowChat(false)}
+                  className="md:hidden p-1.5 -ml-2 rounded-lg text-gray-500 hover:bg-gray-100 cursor-pointer"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+
                 {activeRoom.avatarUrl ? (
                   <img src={activeRoom.avatarUrl} alt="Avatar" className="w-9 h-9 rounded-full object-cover shadow-sm border" />
                 ) : (

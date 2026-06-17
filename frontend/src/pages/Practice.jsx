@@ -15,9 +15,9 @@ export default function Practice() {
   return (
     <div className="min-h-screen bg-brand-cream text-gray-800 font-sans antialiased selection:bg-brand-light/40 overflow-x-hidden">
       <Header />
-      
+
       {/* ================= SECTION 1: HERO ================= */}
-      <header className="relative w-full py-8 lg:py-14 min-h-[550px] flex items-center overflow-hidden font-sans">
+      <header className="relative w-full py-16 lg:py-24 min-h-[680px] flex items-center overflow-hidden font-sans">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <SafeImage
@@ -37,24 +37,24 @@ export default function Practice() {
               <Check className="w-5 h-5" />
               Reading cho phụ huynh mới bắt đầu
             </div>
-            
+
             <h1 className="text-5xl lg:text-7xl font-extrabold text-gray-900 leading-tight mb-4 tracking-tight">
-              Luyện đọc có hướng<br />dẫn là gì?
+              Luyện đọc tại nhà
             </h1>
-            
+
             <p className="text-xl lg:text-2xl text-gray-800 mb-8 max-w-2xl leading-relaxed font-medium">
-              Với trẻ mới bắt đầu, đọc tiếng Anh không nên là việc con tự cầm sách rồi loay hoay một mình. Luyện đọc có hướng dẫn giúp con nhìn tranh, nghe mẫu, đọc câu vừa sức, nhận phản hồi và nói lại điều đã hiểu.
+              Trẻ 5+ cần giáo viên hoặc bố mẹ giỏi tiếng Anh để dạy con đọc. Hoặc con cần giải pháp để có thể tự mình luyện tập và đọc thành công sách tiếng Anh.
             </p>
-            
+
             <div className="flex flex-wrap items-center gap-4">
-              <Link 
-                to="/learn" 
+              <Link
+                to="/learn"
                 className="bg-brand-green hover:bg-brand-dark transition-all duration-300 text-white px-10 py-4 rounded-full font-bold text-lg text-center shadow-lg hover:shadow-xl hover:-translate-y-0.5"
               >
                 Hiểu cách luyện đọc trong 3 phút
               </Link>
-              <Link 
-                to="/learn" 
+              <Link
+                to="/learn"
                 className="bg-white/90 backdrop-blur-sm border-2 border-transparent hover:border-brand-green transition-all duration-300 text-gray-800 hover:text-brand-green px-10 py-4 rounded-full font-bold text-lg text-center shadow-md hover:shadow-lg"
               >
                 Xem cách Readizen triển khai
@@ -73,39 +73,39 @@ export default function Practice() {
               Vấn đề thường gặp
             </div>
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6 leading-tight">
-              Con không thiếu<br />sách, con cần một<br />cách để bắt đầu.
+              4-0 khi con tự luyện đọc
             </h2>
             <p className="text-gray-600 text-lg leading-relaxed">
-              Bố mẹ mua sách tiếng Anh cho con, nhưng sau vài hôm sách lại nằm trên kệ. Điều này không có nghĩa là con không thích tiếng Anh. Thường là vì sách quá khó, con không biết phát âm thế nào, không hiểu câu chuyện đang diễn ra, hoặc không có ai hướng dẫn con đọc tiếp sau trang đầu tiên.
+              Theo phương pháp truyền thống, phụ huynh mua sách đọc tiếng Anh cho con, con không đọc. Không phải vì con không thích, mà vì con cảm thấy quá khó để bắt đầu đọc.
             </p>
           </div>
 
-          {/* Right: 4 Cards Grid */} 
+          {/* Right: 4 Cards Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <FeatureCard
               emoji="😔"
-              title="Con nhìn sách nhưng không biết bắt đầu"
+              title="Không biết bắt đầu từ đâu"
               description="Trẻ cần biết nên nghe gì, đọc gì, đọc lại thế nào và khi đọc sai thì sửa ra sao."
               iconBg="bg-yellow-50"
               iconBorder="border-yellow-100"
             />
             <FeatureCard
               emoji="😖"
-              title="Ba mẹ không chắc mình đọc mẫu đúng"
+              title="Không có hướng dẫn nghe, đọc mẫu"
               description="Nhiều phụ huynh muốn đọc cùng con nhưng ngại phát âm sai hoặc không biết nên hỏi gì."
               iconBg="bg-yellow-50"
               iconBorder="border-yellow-100"
             />
             <FeatureCard
               emoji="📸"
-              title="Con biết từ nhưng khó đọc truyện"
+              title="Không tạo được hứng thú để đọc"
               description="Biết từ riêng lẻ không đồng nghĩa với việc con hiểu được một câu chuyện."
               iconBg="bg-blue-50"
               iconBorder="border-blue-100"
             />
             <FeatureCard
               emoji="❓"
-              title="Đọc xong nhưng không biết con hiểu gì"
+              title="Không kết nối được nội dung"
               description="Nếu chỉ đọc vài câu rồi đóng sách, phụ huynh khó biết con hiểu hay chỉ đọc theo âm thanh."
               iconBg="bg-orange-50"
               iconBorder="border-orange-100"
@@ -118,36 +118,35 @@ export default function Practice() {
       <section className="bg-brand-cream py-20">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center">
           <SectionHeader
-            badge="Dấu hiệu dễ nhận ra"
-            title="Khi nào con cần luyện đọc có hướng dẫn?"
-            subtitle="Phụ huynh không cần chờ đến khi con ghét đọc. Nếu thấy các dấu hiệu dưới đây, con có thể cần một cách đọc nhẹ hơn, rõ bước hơn và có phản hồi hơn."
+            badge="Giải pháp mới "
+            title="Đọc tại nhà cùng Readizen"
+            subtitle="Readizen giúp con từng bước làm quen, hiểu, luyện tập và thực hành nói lại câu chuyện đã đọc."
           />
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-6 text-left">
-            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-50">
+          {/* Đã sửa lưới thành chia 4 cột (lg:grid-cols-4), chia 2 cột trên tablet (sm:grid-cols-2) và căn giữa bằng mx-auto, giới hạn max-w-6xl */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 text-left max-w-6xl mx-auto">
+            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-50 hover:shadow-md transition">
               <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center mb-4 text-xl">📚</div>
-              <h4 className="font-bold text-gray-900 mb-2 text-sm">Sách nằm trên kệ</h4>
-              <p className="text-gray-500 text-xs">Con có sách tiếng Anh nhưng hiếm khi tự mở đọc.</p>
+              <h4 className="font-bold text-gray-900 mb-2 text-sm">Nội dung phù hợp</h4>
+              <p className="text-gray-500 text-xs">Câu ngắn, từ vựng có kiểm soát, tranh rõ và nội dung gần gũi.</p>
             </div>
-            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-50">
-              <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center mb-4 text-xl">🧩</div>
-              <h4 className="font-bold text-gray-900 mb-2 text-sm">Biết từ rời rạc</h4>
-              <p className="text-gray-500 text-xs">Con biết vài từ nhưng khó hiểu khi từ nằm trong câu chuyện.</p>
+
+            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-50 hover:shadow-md transition">
+              <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center mb-4 text-xl">💡</div>
+              <h4 className="font-bold text-gray-900 mb-2 text-sm">Luyện đọc từng bước</h4>
+              <p className="text-gray-500 text-xs">Con được nghe trước cách đọc từ và câu, thay vì tự đoán phát âm.</p>
             </div>
-            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-50">
-              <div className="w-10 h-10 bg-yellow-50 rounded-xl flex items-center justify-center mb-4 text-xl">😶</div>
-              <h4 className="font-bold text-gray-900 mb-2 text-sm">Ngại đọc to</h4>
-              <p className="text-gray-500 text-xs">Con sợ sai hoặc không chắc mình phát âm đúng.</p>
+
+            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-50 hover:shadow-md transition">
+              <div className="w-10 h-10 bg-yellow-50 rounded-xl flex items-center justify-center mb-4 text-xl">💬</div>
+              <h4 className="font-bold text-gray-900 mb-2 text-sm">Hoạt động tương tác</h4>
+              <p className="text-gray-500 text-xs">Con nói lại điều đã hiểu, trả lời câu hỏi hoặc làm một nhiệm vụ nhỏ.</p>
             </div>
-            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-50">
-              <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center mb-4 text-xl">🤷‍♀️</div>
-              <h4 className="font-bold text-gray-900 mb-2 text-sm">Ba mẹ lúng túng</h4>
-              <p className="text-gray-500 text-xs">Phụ huynh không biết nên đọc mẫu, sửa lỗi hay hỏi con thế nào.</p>
-            </div>
-            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-50 col-span-2 md:col-span-1 w-full mx-auto md:mx-0">
-              <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center mb-4 text-xl">🏠</div>
-              <h4 className="font-bold text-gray-900 mb-2 text-sm">Thiếu thói quen tại nhà</h4>
-              <p className="text-gray-500 text-xs">Con học tiếng Anh đều nhưng chưa có routine đọc truyện ngắn ở nhà.</p>
+
+            <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-50 hover:shadow-md transition">
+              <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center mb-4 text-xl">✨️</div>
+              <h4 className="font-bold text-gray-900 mb-2 text-sm">Phản hồi bài đọc</h4>
+              <p className="text-gray-500 text-xs">Con hoặc phụ huynh biết phần đọc đang ổn ở đâu, cần luyện thêm ở đâu</p>
             </div>
           </div>
         </div>
@@ -231,7 +230,7 @@ export default function Practice() {
           </div>
         </div>
       </section>
-      
+
       {/* ================= SECTION 6: SO SÁNH NHANH ================= */}
       <section className="bg-white py-12">
         <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
@@ -313,9 +312,9 @@ export default function Practice() {
       {/* ================= PROMO BANNER WITH BACKGROUND ================= */}
       <section className="relative w-full p-8 md:p-12 lg:p-16 overflow-hidden bg-white shadow-sm flex items-center min-h-[460px] text-left">
         <div className="absolute inset-0 z-0 opacity-40 blur-[1px] pointer-events-none select-none">
-          <SafeImage 
-            src="/assets/home1.jpg" 
-            alt="Readizen Set 1 Background" 
+          <SafeImage
+            src="/assets/home1.jpg"
+            alt="Readizen Set 1 Background"
             className="w-full h-full object-cover object-center"
           />
           <div className="absolute inset-0 bg-gradient-to-tr from-amber-100/30 to-transparent"></div>
@@ -326,11 +325,11 @@ export default function Practice() {
             <div className="inline-block bg-brand-light text-brand-green text-xs font-bold px-3 py-1 rounded-md uppercase tracking-wider mb-4">
               Bắt đầu bằng gì?
             </div>
-            
+
             <h2 className="text-3xl lg:text-4xl font-extrabold text-gray-900 mb-4 leading-tight tracking-tight">
               Readizen Set 1 — Bộ 5 truyện tiếng Anh đầu tiên cho trẻ 5+
             </h2>
-            
+
             <p className="text-gray-600 mb-6 text-sm lg:text-base max-w-3xl leading-relaxed">
               Set 1 giúp con làm quen với việc luyện đọc có hướng dẫn: đọc sách, nghe mẫu, luyện đọc, thực hành nói và nhận phản hồi chi tiết từ hệ thống.
             </p>
