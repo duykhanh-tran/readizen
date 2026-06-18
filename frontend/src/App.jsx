@@ -14,7 +14,7 @@ import { faqHome } from './data/faqData.js';
 export function App() {
   const heroImages = [
     '/assets/home1.jpg',
-    '/assets/about1.png',
+    '/assets/about1.webp',
     '/assets/tech1.png'
   ];
   const comparisons = [
@@ -336,7 +336,7 @@ export function App() {
                 <div className="relative bg-white rounded-[2.5rem] overflow-hidden aspect-[4/5] shadow-lg group-hover:shadow-2xl transition-all duration-500 group-hover:-translate-y-2 border border-gray-100">
 
                   {/* Ảnh App */}
-                  <SafeImage src="/assets/home3.png" alt="Học với App" className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-90 group-hover:opacity-100" />
+                  <SafeImage src="/assets/home3.webp" alt="Học với App" className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-90 group-hover:opacity-100" />
 
                   {/* Gradient phủ xanh thương hiệu từ dưới lên */}
                   <div className="absolute inset-0 bg-gradient-to-t from-brand-darker/95 via-brand-dark/65 to-transparent opacity-90 group-hover:opacity-95 transition-opacity duration-500"></div>
@@ -473,7 +473,7 @@ export function App() {
             <div className="bg-white/5 rounded-[2.5rem] p-2 md:p-4 w-full min-h-[400px] md:min-h-[600px] flex items-center justify-center border border-white/10 shadow-2xl backdrop-blur-sm overflow-hidden">
               <div className="w-full h-full bg-black rounded-3xl overflow-hidden relative shadow-inner">
                 <SafeImage
-                  src="/assets/home3.png"
+                  src="/assets/home3.webp"
                   alt="Giao diện App Readizen"
                   className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity duration-500"
                 />
@@ -648,7 +648,7 @@ export function App() {
               className="group relative rounded-3xl overflow-hidden aspect-[4/5] shadow-md hover:shadow-2xl transition-all duration-500 cursor-pointer"
             >
               <SafeImage
-                src="/assets/home3.png"
+                src="/assets/home3.webp"
                 alt="Giao diện App Readizen"
                 className={`absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${activeCard === 2 ? 'scale-110' : ''
                   }`}

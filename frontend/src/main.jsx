@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { Analytics } from '@vercel/analytics/react'
 import './index.css'
 import App from './App.jsx'
 import Learn from './pages/Learn.jsx'
@@ -53,6 +54,7 @@ createRoot(document.getElementById('root')).render(
               <Route path="lessons/edit/:lessonId" element={<EditLesson />} />
             </Route>
           </Routes>
+          <Analytics />
         </SocketProvider>
       </AuthProvider>
     </BrowserRouter>

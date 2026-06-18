@@ -279,7 +279,7 @@ export default function Tech() {
             <div className="w-full flex justify-center">
               <div className="bg-white rounded-[2.5rem] p-3 sm:p-5 shadow-sm border border-gray-100 w-full relative">
                 <SafeImage
-                  src="/assets/home3.png"
+                  src="/assets/home3.webp"
                   alt="Trải nghiệm phương pháp Readizen"
                   className="w-full h-auto object-cover rounded-[1.5rem]"
                 />

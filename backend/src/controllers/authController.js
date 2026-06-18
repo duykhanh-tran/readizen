@@ -13,6 +13,20 @@ const generateTokens = (id, role) => {
     return { accessToken, refreshToken };
 };
 
+// Cấu hình cookie động tùy theo môi trường dev/prod
+const getCookieOptions = () => {
+    const isProd = process.env.NODE_ENV === 'production';
+    const options = {
+        httpOnly: true,
+        secure: true,
+        sameSite: isProd ? 'lax' : 'none',
+    };
+    if (isProd && process.env.COOKIE_DOMAIN) {
+        options.domain = process.env.COOKIE_DOMAIN;
+    }
+    return options;
+};
+
 export const register = async (req, res) => {
     try {
         const { fullName, email, password } = req.body;
@@ -62,11 +76,9 @@ export const login = async (req, res) => {
             expiresAt
         });
 
-        // Đặt cookie cho refresh token (sameSite: 'none' + secure: true để chạy chéo domain Vercel/Render)
+        // Đặt cookie cho refresh token (sameSite: 'lax' trên production, 'none' ở dev)
         res.cookie('refreshToken', refreshToken, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'none',
+            ...getCookieOptions(),
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
@@ -101,9 +113,7 @@ export const adminLogin = async (req, res) => {
         });
 
         res.cookie('refreshToken', refreshToken, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'none',
+            ...getCookieOptions(),
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
@@ -135,11 +145,7 @@ export const logout = async (req, res) => {
         const token = req.cookies?.refreshToken;
         if (token) {
             await Session.deleteOne({ refreshToken: token });
-            res.clearCookie("refreshToken", {
-                httpOnly: true,
-                secure: true,
-                sameSite: 'none'
-            });
+            res.clearCookie("refreshToken", getCookieOptions());
         }
         res.status(200).json({ message: 'Đăng xuất thành công!' });
     } catch (error) {
@@ -158,11 +164,7 @@ export const refreshToken = async (req, res) => {
         const session = await Session.findOne({ refreshToken: token });
         if (!session) {
             // Nếu token có trong cookie nhưng không có trong DB -> có thể đã bị xóa hoặc hết hạn
-            res.clearCookie("refreshToken", {
-                httpOnly: true,
-                secure: true,
-                sameSite: 'none'
-            });
+            res.clearCookie("refreshToken", getCookieOptions());
             return res.status(403).json({ message: 'Refresh Token không hợp lệ hoặc đã hết hạn.' });
         }
 
@@ -170,11 +172,7 @@ export const refreshToken = async (req, res) => {
             if (err) {
                 // Token không hợp lệ về mặt chữ ký hoặc hết hạn -> xóa khỏi DB
                 await Session.deleteOne({ refreshToken: token });
-                res.clearCookie("refreshToken", {
-                    httpOnly: true,
-                    secure: true,
-                    sameSite: 'none'
-                });
+                res.clearCookie("refreshToken", getCookieOptions());
                 return res.status(403).json({ message: 'Refresh Token đã hết hạn, vui lòng đăng nhập lại.' });
             }
 
@@ -188,9 +186,7 @@ export const refreshToken = async (req, res) => {
 
             // Cập nhật Cookie
             res.cookie('refreshToken', newRefreshToken, {
-                httpOnly: true,
-                secure: true,
-                sameSite: 'none',
+                ...getCookieOptions(),
                 maxAge: 7 * 24 * 60 * 60 * 1000
             });
 

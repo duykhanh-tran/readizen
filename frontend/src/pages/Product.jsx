@@ -387,7 +387,7 @@ export default function Product() {
 
             <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex flex-col">
               <div className="w-full aspect-[4/3] rounded-xl mb-4 overflow-hidden">
-                <SafeImage src="/assets/home3.png" alt="Video bé học" className="w-full h-full object-cover" />
+                <SafeImage src="/assets/home3.webp" alt="Video bé học" className="w-full h-full object-cover" />
               </div>
               <h4 className="font-bold text-gray-900 mb-1 text-sm">Video bé học</h4>
               <p className="text-gray-500 text-[10px] mb-3 flex-grow">Mở sách, nghe app, đọc lại, nói lại.</p>
@@ -396,7 +396,7 @@ export default function Product() {
 
             <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex flex-col">
               <div className="w-full aspect-[4/3] rounded-xl mb-4 overflow-hidden">
-                <SafeImage src="/assets/about2.png" alt="UI App" className="w-full h-full object-cover" />
+                <SafeImage src="/assets/about2.webp" alt="UI App" className="w-full h-full object-cover" />
               </div>
               <h4 className="font-bold text-gray-900 mb-1 text-sm">Screenshot app</h4>
               <p className="text-gray-500 text-[10px] mb-3 flex-grow">My Bookshelf, AI Reading, Presentation, Green Map.</p>

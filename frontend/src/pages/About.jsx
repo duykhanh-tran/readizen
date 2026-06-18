@@ -21,7 +21,7 @@ export default function About() {
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <SafeImage
-            src="/assets/about2.png"
+            src="/assets/about2.webp"
             alt="Về Readizen"
             className="w-full h-full object-cover"
           />
@@ -261,7 +261,7 @@ export default function About() {
       <section className="relative w-full">
         <div
           className="relative bg-cover bg-center py-24 lg:py-32"
-          style={{ backgroundImage: "url('/assets/about1.png')" }}
+          style={{ backgroundImage: "url('/assets/about1.webp')" }}
         >
           <div className="absolute inset-0 bg-black/50"></div>
 
