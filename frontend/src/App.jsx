@@ -13,9 +13,9 @@ import { faqHome } from './data/faqData.js';
 
 export function App() {
   const heroImages = [
-    '/assets/home1.jpg',
+    '/assets/m1.jpg',
     '/assets/about1.webp',
-    '/assets/tech1.png'
+    '/assets/m4.png'
   ];
   const comparisons = [
     {
@@ -216,7 +216,7 @@ export function App() {
       {/* ================= SECTION 4: SO SÁNH SÁCH THƯỜNG VS SÁCH READIZEN ================= */}
       <section className="bg-brand-cream py-16 lg:py-24 relative overflow-hidden font-sans">
         <div className="max-w-6xl mx-auto px-6 lg:px-8 text-center relative z-10">
-          
+
           <SectionHeader
             badge="Sách đọc tiếng Anh"
             title="Sách thường vs Sách Readizen"
@@ -224,7 +224,7 @@ export function App() {
           />
 
           <div className="relative mt-12 mb-10 flex flex-col md:flex-row gap-6 md:gap-0 items-center justify-center">
-            
+
             {/* Badge "VS" nằm giữa 2 thẻ (Chỉ đè lên trên ở Desktop, Mobile sẽ nằm giữa 2 khối) */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 hidden md:flex w-12 h-12 bg-white rounded-full shadow-xl items-center justify-center font-black text-gray-300 border border-gray-100">
               VS
@@ -257,7 +257,7 @@ export function App() {
               <h3 className="text-2xl font-black text-brand-green mb-8 pb-4 border-b border-gray-100 flex items-center justify-center gap-2">
                 Readizen
               </h3>
-              
+
               <ul className="space-y-6">
                 {comparisons.map((item, index) => (
                   <li key={index} className="flex items-start gap-4 text-left group cursor-default">
@@ -275,8 +275,8 @@ export function App() {
           </div>
 
           <div className="mt-12">
-            <Link 
-              to="/learn" 
+            <Link
+              to="/learn"
               className="inline-flex items-center gap-2 bg-white px-8 py-4 rounded-full text-brand-green font-black shadow-md border border-gray-100 hover:shadow-lg hover:-translate-y-1 hover:border-brand-green/30 transition-all duration-300"
             >
               Tìm hiểu cách Readizen hoạt động
