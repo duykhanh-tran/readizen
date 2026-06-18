@@ -15,7 +15,7 @@ export function App() {
   const heroImages = [
     '/assets/m1.jpg',
     '/assets/about1.webp',
-    '/assets/m4.png'
+    '/assets/m4.jpg'
   ];
   const comparisons = [
     {
