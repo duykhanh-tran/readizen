@@ -11,9 +11,10 @@ const Footer = () => {
             
           {/* Cột 1: Logo & Info */}
           <div className="lg:col-span-2">
-            <div className="flex items-center gap-2 mb-6">
-              <div className="w-8 h-8 bg-brand-dark rounded flex items-center justify-center font-bold text-xl">🦉</div>
-              <span className="font-bold text-2xl tracking-tight">Readizen</span>
+            <div className="flex items-center mb-6">
+              <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="cursor-pointer">
+                <img src="/assets/logo.png" alt="Readizen Logo" className="h-12 lg:h-14 w-auto object-contain" />
+              </Link>
             </div>
             <p className="text-gray-300 text-sm max-w-sm leading-relaxed">
               Truyện tiếng Anh luyện đọc có hướng dẫn cho trẻ 5+. Small Readers, Big Citizens.
@@ -27,7 +28,7 @@ const Footer = () => {
               <li><Link to="/practice" className="hover:text-brand-yellow transition">Luyện đọc có hướng dẫn</Link></li>
               <li><Link to="/learn" className="hover:text-brand-yellow transition">Cách học Readizen</Link></li>
               <li><Link to="/tech" className="hover:text-brand-yellow transition">Công nghệ Readizen</Link></li>
-              <li><Link to="/product" className="hover:text-brand-yellow transition">Readizen Set 1</Link></li>
+              <li><Link to="/library" className="hover:text-brand-yellow transition">Readizen Set 1</Link></li>
             </ul>
           </div>
 

@@ -17,7 +17,7 @@ export default function Practice() {
       <Header />
 
       {/* ================= SECTION 1: HERO ================= */}
-      <header className="relative w-full py-16 lg:py-24 min-h-[680px] flex items-center overflow-hidden font-sans">
+      <header className="relative w-full py-16 lg:py-20 min-h-[680px] flex items-center overflow-hidden font-sans">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <SafeImage
@@ -362,7 +362,7 @@ export default function Practice() {
             </ul>
 
             <div className="flex flex-wrap items-center gap-5 pt-4 border-t border-gray-100">
-              <Link to="/product" className="bg-brand-green hover:bg-brand-dark transition-all duration-300 text-white px-8 py-3 rounded-full font-bold text-sm shadow-md hover:shadow-lg">
+              <Link to="/library" className="bg-brand-green hover:bg-brand-dark transition-all duration-300 text-white px-8 py-3 rounded-full font-bold text-sm shadow-md hover:shadow-lg">
                 Xem Readizen Set 1
               </Link>
               <Link to="/tech" className="text-brand-green font-bold hover:text-brand-dark transition-colors inline-flex items-center text-sm group">
@@ -420,7 +420,7 @@ export default function Practice() {
         title="Sẵn sàng để con bắt đầu luyện đọc tiếng Anh có hướng dẫn?"
         subtitle="Readizen Set 1 giúp con bắt đầu bằng 5 câu chuyện vừa sức, app đọc mẫu, AI feedback và hoạt động nói lại sau khi đọc."
         primaryText="Bắt đầu với Set 1"
-        primaryHref="/product"
+        primaryHref="/library"
         secondaryText="Xem cách học Readizen"
         secondaryHref="/learn"
       />

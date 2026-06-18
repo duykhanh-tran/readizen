@@ -17,7 +17,7 @@ export default function About() {
       <Header />
 
       {/* ================= SECTION 1: HERO ================= */}
-      <header className="relative w-full py-16 lg:py-24 min-h-[680px] flex items-center overflow-hidden font-sans">
+      <header className="relative w-full py-16 lg:py-20 min-h-[680px] flex items-center overflow-hidden font-sans">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <SafeImage
@@ -54,7 +54,7 @@ export default function About() {
                 Tìm hiểu cách học Readizen
               </Link>
               <Link
-                to="/product"
+                to="/library"
                 className="bg-white/90 backdrop-blur-sm border-2 border-transparent hover:border-brand-green transition-all duration-300 text-gray-800 hover:text-brand-green px-10 py-4 rounded-full font-bold text-lg text-center shadow-md hover:shadow-lg"
               >
                 Xem Readizen Set 1
@@ -72,7 +72,7 @@ export default function About() {
             <div className="relative w-full h-full min-h-[450px] bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-gray-100 overflow-hidden flex flex-col items-center justify-center text-center transition-all duration-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12)] group">
               <div className="absolute inset-0 w-full h-full">
                 <SafeImage
-                  src="/assets/home2.jpg"
+                  src="/assets/m3.jpg"
                   alt="Founder Story"
                   className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                 />
@@ -161,39 +161,48 @@ export default function About() {
       </section>
 
       {/* ================= SECTION 4: QUAN ĐIỂM GIÁO DỤC ================= */}
-      <section className="bg-white py-24">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center">
+      <section className="bg-white py-12 sm:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <SectionHeader
             badge="Quan điểm giáo dục"
             title="Đọc được trước khi đọc giỏi"
             subtitle="Ở giai đoạn đầu, điều quan trọng nhất không phải là con đọc thật nhiều hay đọc thật khó. Con cần những thành công nhỏ: đọc được một câu, hiểu được một tranh, trả lời được một câu hỏi và nói lại được một ý."
           />
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols- gap-6 text-left">
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden group hover:shadow-md transition">
-              <div className="absolute -bottom-4 -right-2 text-[100px] font-black text-gray-50 opacity-60 z-0 leading-none group-hover:scale-110 transition-transform">01</div>
+          {/* SỬA CHÍNH Ở ĐÂY: Dùng grid-cols-3 cho tất cả màn hình, điều chỉnh gap nhỏ trên mobile */}
+          <div className="grid grid-cols-3 gap-2 sm:gap-4 lg:gap-6 text-left">
+
+            {/* Card 01 */}
+            <div className="bg-white p-3 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden group hover:shadow-md transition">
+              {/* Chữ số nền: thu nhỏ trên mobile, phóng to trên web */}
+              <div className="absolute -bottom-2 -right-1 sm:-bottom-4 sm:-right-2 text-[40px] sm:text-[70px] lg:text-[100px] font-black text-gray-50 opacity-60 z-0 leading-none group-hover:scale-110 transition-transform">01</div>
               <div className="relative z-10">
-                <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center mb-4 text-xl text-brand-green">📖</div>
-                <h4 className="font-bold text-green-900 mb-2 text-sm">Bắt đầu từ đơn giản</h4>
-                <p className="text-gray-500 text-xs leading-relaxed">Trẻ dễ bước vào reading hơn khi câu chuyện ngắn, tranh rõ và ngôn ngữ nằm trong tình huống con có thể hiểu.</p>
+                <div className="w-7 h-7 sm:w-10 sm:h-10 bg-gray-50 rounded-lg sm:rounded-xl flex items-center justify-center mb-2 sm:mb-4 text-sm sm:text-xl text-brand-green">📖</div>
+                <h4 className="font-bold text-green-900 mb-1 sm:mb-2 text-[10px] sm:text-sm leading-tight">Bắt đầu từ đơn giản</h4>
+                <p className="text-gray-500 text-[9px] sm:text-xs leading-tight sm:leading-relaxed hidden sm:block">Trẻ dễ bước vào reading hơn khi câu chuyện ngắn, tranh rõ và ngôn ngữ nằm trong tình huống con có thể hiểu.</p>
+                <p className="text-gray-500 text-[9px] leading-tight sm:hidden line-clamp-3">Truyện ngắn, tranh rõ, tình huống dễ hiểu.</p>
               </div>
             </div>
 
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden group hover:shadow-md transition">
-              <div className="absolute -bottom-4 -right-2 text-[100px] font-black text-gray-50 opacity-60 z-0 leading-none group-hover:scale-110 transition-transform">02</div>
+            {/* Card 02 */}
+            <div className="bg-white p-3 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden group hover:shadow-md transition">
+              <div className="absolute -bottom-2 -right-1 sm:-bottom-4 sm:-right-2 text-[40px] sm:text-[70px] lg:text-[100px] font-black text-gray-50 opacity-60 z-0 leading-none group-hover:scale-110 transition-transform">02</div>
               <div className="relative z-10">
-                <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center mb-4 text-xl text-yellow-500">✨</div>
-                <h4 className="font-bold text-green-900 mb-2 text-sm">Từng bước thành công</h4>
-                <p className="text-gray-500 text-xs leading-relaxed">Khi con đọc được một câu, hoặc trả lời được một câu hỏi, con bắt đầu tin rằng mình có thể đọc tiếp.</p>
+                <div className="w-7 h-7 sm:w-10 sm:h-10 bg-gray-50 rounded-lg sm:rounded-xl flex items-center justify-center mb-2 sm:mb-4 text-sm sm:text-xl text-yellow-500">✨</div>
+                <h4 className="font-bold text-green-900 mb-1 sm:mb-2 text-[10px] sm:text-sm leading-tight">Từng bước thành công</h4>
+                <p className="text-gray-500 text-[9px] sm:text-xs leading-tight sm:leading-relaxed hidden sm:block">Khi con đọc được một câu, hoặc trả lời được một câu hỏi, con bắt đầu tin rằng mình có thể đọc tiếp.</p>
+                <p className="text-gray-500 text-[9px] leading-tight sm:hidden line-clamp-3">Đọc 1 câu, trả lời 1 ý giúp con tự tin hơn.</p>
               </div>
             </div>
 
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden group hover:shadow-md transition">
-              <div className="absolute -bottom-4 -right-2 text-[100px] font-black text-gray-50 opacity-60 z-0 leading-none group-hover:scale-110 transition-transform">03</div>
+            {/* Card 03 */}
+            <div className="bg-white p-3 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden group hover:shadow-md transition">
+              <div className="absolute -bottom-2 -right-1 sm:-bottom-4 sm:-right-2 text-[40px] sm:text-[70px] lg:text-[100px] font-black text-gray-50 opacity-60 z-0 leading-none group-hover:scale-110 transition-transform">03</div>
               <div className="relative z-10">
-                <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center mb-4 text-xl text-blue-500">💬</div>
-                <h4 className="font-bold text-green-900 mb-2 text-sm">Đọc hiểu trước, đọc giỏi sau</h4>
-                <p className="text-gray-500 text-xs leading-relaxed">Ở giai đoạn đầu, điều cần thiết là giúp con hiểu điều đang xảy ra trong câu chuyện.</p>
+                <div className="w-7 h-7 sm:w-10 sm:h-10 bg-gray-50 rounded-lg sm:rounded-xl flex items-center justify-center mb-2 sm:mb-4 text-sm sm:text-xl text-blue-500">💬</div>
+                <h4 className="font-bold text-green-900 mb-1 sm:mb-2 text-[10px] sm:text-sm leading-tight">Đọc hiểu trước, đọc giỏi sau</h4>
+                <p className="text-gray-500 text-[9px] sm:text-xs leading-tight sm:leading-relaxed hidden sm:block">Ở giai đoạn đầu, điều cần thiết là giúp con hiểu điều đang xảy ra trong câu chuyện.</p>
+                <p className="text-gray-500 text-[9px] leading-tight sm:hidden line-clamp-3">Ưu tiên hiểu chuyện gì đang xảy ra trước.</p>
               </div>
             </div>
 
@@ -362,7 +371,7 @@ export default function About() {
         title="Bắt đầu luyện đọc tiếng Anh cùng Readizen Set 1"
         subtitle="Khám phá cách Readizen giúp trẻ 5+ đọc truyện tiếng Anh có hướng dẫn tại nhà."
         primaryText="Xem Readizen Set 1"
-        primaryHref="/product"
+        primaryHref="/library"
         secondaryText="Tìm hiểu cách học Readizen"
         secondaryHref="/learn"
       />

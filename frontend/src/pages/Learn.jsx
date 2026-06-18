@@ -17,11 +17,11 @@ export default function Learn() {
       <Header />
 
       {/* ================= SECTION 1: HERO ================= */}
-      <header className="relative w-full py-16 lg:py-24 min-h-[680px] flex items-center overflow-hidden font-sans">
+      <header className="relative w-full py-16 lg:py-20 min-h-[680px] flex items-center overflow-hidden font-sans">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <SafeImage
-            src="/assets/learn1.jpg"
+            src="/assets/m1.jpg"
             alt="Bé gái đang ngồi đọc sách Readizen"
             className="w-full h-full object-cover"
           />
@@ -48,13 +48,13 @@ export default function Learn() {
 
             <div className="flex flex-wrap items-center gap-4">
               <Link
-                to="/product"
+                to="/library"
                 className="bg-brand-green hover:bg-brand-dark transition-all duration-300 text-white px-10 py-4 rounded-full font-bold text-lg text-center shadow-lg hover:shadow-xl hover:-translate-y-0.5"
               >
                 Xem ví dụ một cuốn sách
               </Link>
               <Link
-                to="/product"
+                to="/library"
                 className="bg-white/90 backdrop-blur-sm border-2 border-transparent hover:border-brand-green transition-all duration-300 text-gray-800 hover:text-brand-green px-10 py-4 rounded-full font-bold text-lg text-center shadow-md hover:shadow-lg"
               >
                 Bắt đầu với Set 1
@@ -123,7 +123,7 @@ export default function Learn() {
             <div className="w-full aspect-video bg-gray-900 rounded-3xl relative overflow-hidden flex items-center justify-center shadow-lg border-4 border-white">
               <iframe
                 className="w-full h-full"
-                src="https://www.youtube.com/embed/yvlLzTVeKTk"
+                src="https://www.youtube.com/embed/X0t1Ld1tUGY"
                 title="YouTube video player"
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -308,7 +308,7 @@ export default function Learn() {
               </ul>
 
               <div className="flex flex-wrap items-center gap-5">
-                <Link to="/product" className="bg-brand-yellow hover:bg-yellow-400 text-gray-900 px-8 py-4 rounded-full font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 text-center text-base">
+                <Link to="/library" className="bg-brand-yellow hover:bg-yellow-400 text-gray-900 px-8 py-4 rounded-full font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 text-center text-base">
                   Xem Readizen Set 1
                 </Link>
                 <Link to="/tech" className="text-white font-bold hover:text-brand-yellow transition-colors inline-flex items-center text-sm group/link">
@@ -346,7 +346,7 @@ export default function Learn() {
         title="Sẵn sàng để con học một cuốn truyện tiếng Anh theo cách có hướng dẫn?"
         subtitle="Readizen Set 1 giúp con bắt đầu bằng 5 câu chuyện vừa sức, app đọc mẫu, hoạt động nói lại và phản hồi sau khi đọc."
         primaryText="Bắt đầu với Set 1"
-        primaryHref="/product"
+        primaryHref="/library"
         secondaryText="Luyện đọc có hướng dẫn là gì?"
         secondaryHref="/practice"
       />

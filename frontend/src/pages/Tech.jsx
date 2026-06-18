@@ -15,7 +15,7 @@ export default function Tech() {
       <Header />
 
       {/* ================= SECTION 1: HERO ================= */}
-      <header className="relative w-full py-16 lg:py-24 min-h-[680px] flex items-center overflow-hidden font-sans">
+      <header className="relative w-full py-16 lg:py-20 min-h-[680px] flex items-center overflow-hidden font-sans">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <SafeImage
@@ -52,7 +52,7 @@ export default function Tech() {
                 Xem công nghệ cốt lõi
               </Link>
               <Link
-                to="/product"
+                to="/library"
                 className="bg-white/90 backdrop-blur-sm border-2 border-transparent hover:border-brand-green transition-all duration-300 text-gray-800 hover:text-brand-green px-10 py-4 rounded-full font-bold text-lg text-center shadow-md hover:shadow-lg"
               >
                 Trải nghiệm với Set 1
@@ -384,7 +384,7 @@ export default function Tech() {
         title="Readizen Set 1"
         subtitle="Readizen Set 1 giúp con bắt đầu với 5 truyện tiếng Anh, app luyện đọc, AI feedback, phản hồi từ giáo viên và Green Map tạo động lực đọc tiếp."
         primaryText="Bắt đầu với Set 1"
-        primaryHref="/product"
+        primaryHref="/library"
         secondaryText="Xem cách học Readizen"
         secondaryHref="/learn"
       />

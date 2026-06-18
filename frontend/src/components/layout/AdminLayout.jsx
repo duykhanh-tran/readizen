@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
-import { LayoutDashboard, FileText, MessageSquare, LogOut, Shield, Home, Menu, X } from 'lucide-react';
+import { LayoutDashboard, FileText, MessageSquare, LogOut, Shield, Home, Menu, X, BookOpen } from 'lucide-react';
 
 export default function AdminLayout() {
   const { user, logout } = useAuth();
@@ -21,6 +21,11 @@ export default function AdminLayout() {
       icon: LayoutDashboard
     },
     {
+      name: 'Bài học AI',
+      path: '/admin/lessons',
+      icon: BookOpen
+    },
+    {
       name: 'Form tư vấn',
       path: '/admin/forms',
       icon: FileText
@@ -36,17 +41,16 @@ export default function AdminLayout() {
     <div className="min-h-screen bg-[#F4F6F8] font-sans flex text-left relative overflow-x-hidden">
       {/* Mobile Sidebar Backdrop */}
       {isMobileSidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden transition-opacity" 
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden transition-opacity"
           onClick={() => setIsMobileSidebarOpen(false)}
         />
       )}
 
       {/* Mobile Sidebar Drawer */}
-      <aside 
-        className={`fixed inset-y-0 left-0 w-64 bg-brand-dark text-white flex flex-col z-50 transform transition-transform duration-300 lg:hidden shadow-2xl ${
-          isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+      <aside
+        className={`fixed inset-y-0 left-0 w-64 bg-brand-dark text-white flex flex-col z-50 transform transition-transform duration-300 lg:hidden shadow-2xl ${isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
       >
         {/* Branding */}
         <div className="p-6 border-b border-white/10 flex items-center justify-between">
@@ -59,7 +63,7 @@ export default function AdminLayout() {
               <span className="text-[10px] text-brand-yellow font-bold uppercase tracking-wider block">Admin Panel</span>
             </div>
           </div>
-          <button 
+          <button
             onClick={() => setIsMobileSidebarOpen(false)}
             className="text-white hover:text-brand-yellow transition cursor-pointer"
           >
@@ -77,11 +81,10 @@ export default function AdminLayout() {
                 key={index}
                 to={item.path}
                 onClick={() => setIsMobileSidebarOpen(false)}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${
-                  isActive
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${isActive
                     ? 'bg-brand-green text-white shadow-md'
                     : 'text-brand-light/75 hover:bg-white/5 hover:text-white'
-                }`}
+                  }`}
               >
                 <Icon className="w-5 h-5 flex-shrink-0" />
                 <span>{item.name}</span>
@@ -131,11 +134,10 @@ export default function AdminLayout() {
               <Link
                 key={index}
                 to={item.path}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${
-                  isActive
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${isActive
                     ? 'bg-brand-green text-white shadow-md'
                     : 'text-brand-light/75 hover:bg-white/5 hover:text-white'
-                }`}
+                  }`}
               >
                 <Icon className="w-5 h-5 flex-shrink-0" />
                 <span>{item.name}</span>

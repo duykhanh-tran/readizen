@@ -11,6 +11,8 @@ import authRoutes from './routes/authRoute.js';
 import formRoutes from './routes/formRoute.js';
 import chatRoutes from './routes/chatRoute.js';
 import adminRoutes from './routes/adminRoute.js';
+import lessonRoutes from './routes/lessonRoute.js';
+import userRoutes from './routes/userRoute.js';
 import Message from './models/Message.js';
 
 dotenv.config();
@@ -50,6 +52,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/forms', formRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/lessons', lessonRoutes);
+app.use('/api/user', userRoutes);
 
 const server = http.createServer(app);
 const io = new Server(server, {

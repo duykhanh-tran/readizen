@@ -3,12 +3,13 @@ import Header from '../components/Header.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import api from '../services/axios.js';
 import { useSocket } from '../context/SocketContext.jsx';
-import { User, FileText, Clock, MessageSquare, ChevronRight } from 'lucide-react';
+import { User, FileText, Clock, MessageSquare, ChevronRight, BookOpen } from 'lucide-react';
 
 import ProfileTab from '../components/profile/ProfileTab.jsx';
 import ConsultTab from '../components/profile/ConsultTab.jsx';
 import HistoryTab from '../components/profile/HistoryTab.jsx';
 import ChatConsole from '../components/profile/ChatConsole.jsx';
+import ReadingTab from '../components/profile/ReadingTab.jsx';
 
 export default function Profile() {
   const { user, updatePassword, updateAvatar } = useAuth();
@@ -103,6 +104,7 @@ export default function Profile() {
 
   const menuItems = [
     { id: 'profile', label: 'Thông tin cá nhân', icon: User },
+    { id: 'reading', label: 'Luyện đọc AI', icon: BookOpen },
     { id: 'consult', label: 'Đăng ký tư vấn', icon: FileText },
     { id: 'history', label: 'Lịch sử yêu cầu', icon: Clock },
     { id: 'chat', label: 'Hỗ trợ trực tuyến', icon: MessageSquare, badge: unreadChat },
@@ -188,6 +190,11 @@ export default function Profile() {
                 updateAvatar={updateAvatar} 
                 updatePassword={updatePassword} 
               />
+            )}
+
+            {/* Panel: Reading lessons and scores */}
+            {activeTab === 'reading' && (
+              <ReadingTab />
             )}
 
             {/* Panel 2: Submit consultation request form */}

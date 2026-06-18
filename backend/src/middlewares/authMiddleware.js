@@ -16,3 +16,12 @@ export const verifyToken = (req, res, next) => {
         return res.status(403).json({ message: 'Token không hợp lệ hoặc đã hết hạn.' });
     }
 };
+
+export const verifyAdmin = (req, res, next) => {
+    verifyToken(req, res, () => {
+        if (req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Truy cập bị từ chối. Bạn không có quyền quản trị.' });
+        }
+        next();
+    });
+};
