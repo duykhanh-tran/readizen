@@ -19,10 +19,12 @@ import {
   CheckCircle2,
   AlertCircle
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext.jsx';
 
 export default function TrialLesson() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   // Lesson state
   const [lesson, setLesson] = useState(null);
@@ -172,18 +174,23 @@ export default function TrialLesson() {
   const handleSubmitScores = async () => {
     setIsSubmitting(true);
     try {
-      const sentencesScore = flatSentences.map((s, index) => ({
-        sentenceText: s.text,
-        score: sentenceScores[index] || 0
-      }));
+      // Chỉ lưu điểm số lên database nếu người dùng đã đăng nhập
+      if (isAuthenticated) {
+        const sentencesScore = flatSentences.map((s, index) => ({
+          sentenceText: s.text,
+          score: sentenceScores[index] || 0
+        }));
 
-      const payload = {
-        lessonId: lesson._id,
-        sentencesScore,
-        averageScore: Math.round(sentenceScores.reduce((sum, s) => sum + (s || 0), 0) / flatSentences.length)
-      };
+        const payload = {
+          lessonId: lesson._id,
+          sentencesScore,
+          averageScore: Math.round(sentenceScores.reduce((sum, s) => sum + (s || 0), 0) / flatSentences.length)
+        };
 
-      await api.post('/user/scores', payload);
+        await api.post('/user/scores', payload);
+      } else {
+        console.log('Khách vãng lai hoàn thành luyện đọc.');
+      }
       setIsFinished(true);
     } catch (err) {
       console.error(err);

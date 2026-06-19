@@ -40,10 +40,12 @@ createRoot(document.getElementById('root')).render(
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             
+            {/* Public Client Routes open to all (no login required) */}
+            <Route path="/library" element={<Library />} />
+            <Route path="/lessons/:id" element={<TrialLesson />} />
+
             {/* Protected Client Route */}
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-            <Route path="/library" element={<ProtectedRoute><Library /></ProtectedRoute>} />
-            <Route path="/lessons/:id" element={<ProtectedRoute><TrialLesson /></ProtectedRoute>} />
             
             {/* Admin Routes Protected Layout */}
             <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>

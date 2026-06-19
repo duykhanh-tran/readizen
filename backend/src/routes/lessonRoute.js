@@ -10,11 +10,11 @@ const upload = multer({
   limits: { fileSize: 2 * 1024 * 1024 }, // 2MB limit (chống spam RAM/OOM)
 });
 
-// Lấy danh sách bài học đang hoạt động và chi tiết bài học
-router.get('/', verifyToken, getClientLessons);
-router.get('/:id', verifyToken, getClientLessonById);
+// Lấy danh sách bài học đang hoạt động và chi tiết bài học (Công khai cho mọi người dùng)
+router.get('/', getClientLessons);
+router.get('/:id', getClientLessonById);
 
-// Chấm điểm phát âm AI cho học viên (áp dụng giới hạn lượt gọi 10 lần/phút)
-router.post('/evaluate-audio', verifyToken, speechLimiter, upload.single('audio'), evaluateAudioSpeech);
+// Chấm điểm phát âm AI cho học viên (áp dụng giới hạn lượt gọi 10 lần/phút, công khai cho khách)
+router.post('/evaluate-audio', speechLimiter, upload.single('audio'), evaluateAudioSpeech);
 
 export default router;
