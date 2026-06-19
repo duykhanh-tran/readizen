@@ -19,7 +19,6 @@ export default function EditLesson() {
 
   // Form State
   const [title, setTitle] = useState('');
-  const [type, setType] = useState('trial');
   const [level, setLevel] = useState('A');
   const [coverImage, setCoverImage] = useState('');
   const [pdfFile, setPdfFile] = useState('');
@@ -37,7 +36,6 @@ export default function EditLesson() {
         const data = response.data;
         
         setTitle(data.title);
-        setType(data.type);
         setLevel(data.level || 'A');
         setCoverImage(data.coverImage);
         setPdfFile(data.pdfFile);
@@ -198,7 +196,6 @@ export default function EditLesson() {
     try {
       const formData = new FormData();
       formData.append('title', title);
-      formData.append('type', type);
       formData.append('level', level);
       formData.append('coverImage', coverImage);
       formData.append('pdfFile', pdfFile);
@@ -281,18 +278,6 @@ export default function EditLesson() {
                 onChange={(e) => setTitle(e.target.value)}
                 className="w-full border border-gray-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green/35 shadow-sm bg-gray-50/30"
               />
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="text-xs font-black text-gray-700 uppercase tracking-wider">Phân loại loại bài học *</label>
-              <select 
-                value={type} 
-                onChange={(e) => setType(e.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-brand-green shadow-sm bg-white"
-              >
-                <option value="trial">Học thử (Trial)</option>
-                <option value="premium">Trả phí (Premium)</option>
-              </select>
             </div>
 
             <div className="space-y-1.5">

@@ -50,8 +50,6 @@ export const lessonValidationRules = [
     body('title')
         .trim()
         .notEmpty().withMessage('Tiêu đề bài học không được để trống.'),
-    body('type')
-        .isIn(['trial', 'premium']).withMessage('Loại bài học phải là trial hoặc premium.'),
     body('level')
         .isIn(['A', 'B', 'C', 'D', 'E']).withMessage('Level bài học phải là A, B, C, D hoặc E.'),
     body('coverImage')

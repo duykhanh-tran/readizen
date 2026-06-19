@@ -10,7 +10,6 @@ export default function Library() {
   const navigate = useNavigate();
   const [lessons, setLessons] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [filterType, setFilterType] = useState('all'); // 'all', 'trial', 'premium'
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
@@ -27,11 +26,9 @@ export default function Library() {
     fetchLessons();
   }, []);
 
-  // Filter lessons based on status, type, and search
+  // Filter lessons based on search query
   const filteredLessons = lessons.filter(lesson => {
-    const matchesType = filterType === 'all' || lesson.type === filterType;
-    const matchesSearch = lesson.title.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesType && matchesSearch;
+    return lesson.title.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
   return (
@@ -120,13 +117,6 @@ export default function Library() {
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                     onError={(e) => { e.target.src = 'https://placehold.co/300x200?text=Book+Cover' }}
                   />
-                  {/* Badge */}
-                  <span className={`absolute top-4 left-4 px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider ${lesson.type === 'trial'
-                    ? 'bg-yellow-400 text-brand-darker'
-                    : 'bg-purple-600 text-white shadow-sm'
-                    }`}>
-                    {lesson.type === 'trial' ? 'Học thử' : 'Premium'}
-                  </span>
                 </div>
 
                 {/* Details */}

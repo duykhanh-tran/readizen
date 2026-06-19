@@ -16,7 +16,6 @@ export default function AdminLessons() {
   
   // Form State (For creating a new lesson)
   const [title, setTitle] = useState('');
-  const [type, setType] = useState('trial');
   const [level, setLevel] = useState('A');
   const [coverImage, setCoverImage] = useState('');
   const [pdfFile, setPdfFile] = useState('');
@@ -116,7 +115,6 @@ export default function AdminLessons() {
   // Open Add Modal
   const handleOpenAddModal = () => {
     setTitle('');
-    setType('trial');
     setLevel('A');
     setCoverImage('');
     setPdfFile('');
@@ -197,7 +195,6 @@ export default function AdminLessons() {
     try {
       const formData = new FormData();
       formData.append('title', title);
-      formData.append('type', type);
       formData.append('level', level);
       formData.append('coverImage', coverImage);
       formData.append('pdfFile', pdfFile);
@@ -282,13 +279,6 @@ export default function AdminLessons() {
                     <div className="absolute top-4 left-4 flex gap-2">
                       <span className="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-white text-gray-800 border border-gray-200 shadow-sm">
                         Level {lesson.level || 'A'}
-                      </span>
-                      <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider shadow-sm border ${
-                        lesson.type === 'trial' 
-                          ? 'bg-yellow-50 text-yellow-800 border-yellow-200' 
-                          : 'bg-purple-50 text-purple-800 border-purple-200'
-                      }`}>
-                        {lesson.type === 'trial' ? 'Học thử' : 'Trả phí'}
                       </span>
                     </div>
                   </div>
@@ -390,18 +380,6 @@ export default function AdminLessons() {
                     onChange={(e) => setTitle(e.target.value)}
                     className="w-full border border-gray-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green/35 shadow-sm"
                   />
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-black text-gray-700 uppercase tracking-wider">Phân loại học viên *</label>
-                  <select 
-                    value={type} 
-                    onChange={(e) => setType(e.target.value)}
-                    className="w-full border border-gray-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-brand-green shadow-sm bg-white"
-                  >
-                    <option value="trial">Học thử (Trial)</option>
-                    <option value="premium">Nâng cao (Premium)</option>
-                  </select>
                 </div>
 
                 <div className="space-y-1.5">

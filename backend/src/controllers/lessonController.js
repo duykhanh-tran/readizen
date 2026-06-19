@@ -52,11 +52,10 @@ const getStringSimilarity = (s1, s2) => {
 // Create a new lesson
 export const createLesson = async (req, res) => {
     try {
-        const { title, type, level, coverImage, pdfFile, ebookImages, practiceSentences, status } = req.body;
+        const { title, level, coverImage, pdfFile, ebookImages, practiceSentences, status } = req.body;
 
         const newLesson = new Lesson({
             title,
-            type,
             level,
             coverImage,
             pdfFile,
@@ -114,7 +113,7 @@ export const getAdminLessonById = async (req, res) => {
 export const updateLesson = async (req, res) => {
     try {
         const { id } = req.params;
-        const { title, type, level, coverImage, pdfFile, ebookImages, practiceSentences, status } = req.body;
+        const { title, level, coverImage, pdfFile, ebookImages, practiceSentences, status } = req.body;
 
         const lesson = await Lesson.findById(id);
         if (!lesson) {
@@ -122,7 +121,6 @@ export const updateLesson = async (req, res) => {
         }
 
         lesson.title = title;
-        lesson.type = type;
         lesson.level = level;
         lesson.coverImage = coverImage;
         lesson.pdfFile = pdfFile;
@@ -212,7 +210,7 @@ export const getUserScores = async (req, res) => {
         const userId = req.user.id;
 
         const scores = await UserScore.find({ userId })
-            .populate('lessonId', 'title coverImage type')
+            .populate('lessonId', 'title coverImage')
             .sort({ completedAt: -1 });
 
         res.status(200).json(scores);

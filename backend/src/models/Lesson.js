@@ -6,11 +6,6 @@ const lessonSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    type: {
-        type: String,
-        enum: ['trial', 'premium'],
-        required: true
-    },
     level: {
         type: String,
         enum: ['A', 'B', 'C', 'D', 'E'],
