@@ -18,8 +18,8 @@ const getCookieOptions = () => {
     const isProd = process.env.NODE_ENV === 'production';
     const options = {
         httpOnly: true,
-        secure: true,
-        sameSite: isProd ? 'lax' : 'none',
+        secure: isProd, // Chỉ secure trên production (yêu cầu HTTPS)
+        sameSite: isProd ? 'lax' : 'lax', // Dùng lax ở local để dễ test trên localhost
     };
     if (isProd && process.env.COOKIE_DOMAIN) {
         options.domain = process.env.COOKIE_DOMAIN;
