@@ -1,5 +1,6 @@
 import User from '../models/User.js';
 import Form from '../models/Form.js';
+import Lesson from '../models/Lesson.js';
 
 export const getDashboardStats = async (req, res) => {
     try {
@@ -10,6 +11,7 @@ export const getDashboardStats = async (req, res) => {
 
         const totalUsers = await User.countDocuments();
         const totalForms = await Form.countDocuments();
+        const totalLessons = await Lesson.countDocuments();
         const pendingForms = await Form.countDocuments({ status: 'pending' });
         const contactedForms = await Form.countDocuments({ status: 'contacted' });
         const canceledForms = await Form.countDocuments({ status: 'canceled' });
@@ -17,6 +19,7 @@ export const getDashboardStats = async (req, res) => {
         res.status(200).json({
             totalUsers,
             totalForms,
+            totalLessons,
             pendingForms,
             contactedForms,
             canceledForms

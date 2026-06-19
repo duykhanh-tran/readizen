@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/axios.js';
-import { FileText, MessageSquare, Users, TrendingUp, Calendar, ArrowRight, RefreshCw, AlertCircle } from 'lucide-react';
+import { FileText, MessageSquare, Users, BookOpen, TrendingUp, Calendar, ArrowRight, RefreshCw, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function Dashboard() {
@@ -124,23 +124,23 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Card 3: Pending chats/forms */}
+        {/* Card 3: Total Lessons */}
         <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex items-start justify-between">
           <div className="space-y-4">
-            <p className="text-sm font-bold text-gray-500">Đang Chờ Tư Vấn</p>
+            <p className="text-sm font-bold text-gray-500">Số Lượng Bài Học</p>
             {isLoading ? (
               <div className="h-9 w-20 bg-gray-100 animate-pulse rounded-lg"></div>
             ) : (
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-black text-[#D97706]">{stats?.pendingForms || 0}</span>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-0.5 bg-yellow-50 text-[#D97706]">
-                  Chờ xử lý
+                <span className="text-3xl font-black text-brand-green">{stats?.totalLessons || 0}</span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-0.5 bg-green-50 text-brand-green">
+                  Luyện đọc AI
                 </span>
               </div>
             )}
           </div>
-          <div className="p-3.5 rounded-xl border bg-green-50 text-green-600 border-green-100">
-            <MessageSquare className="w-6 h-6" />
+          <div className="p-3.5 rounded-xl border bg-brand-light text-brand-green border-brand-green/20">
+            <BookOpen className="w-6 h-6" />
           </div>
         </div>
       </div>
