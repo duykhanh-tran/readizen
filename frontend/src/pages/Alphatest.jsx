@@ -192,22 +192,13 @@ export default function Alphatest() {
 
       <main id="top">
         {/* ================= HERO ================= */}
-        <header className="relative w-full py-16 lg:py-24 min-h-[680px] flex items-center overflow-hidden font-sans">
-          {/* Background Image */}
-          <div className="absolute inset-0 z-0">
-            <img
-              src="/assets/about1.webp"
-              alt="Readizen Hero Background"
-              className="w-full h-full object-cover"
-            />
-            {/* Gradient Overlay to make text readable */}
-            <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/85 to-transparent z-10"></div>
-            <div className="absolute inset-0 bg-gradient-to-t from-white/50 via-transparent to-transparent z-10"></div>
-          </div>
-
-          {/* Content */}
-          <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 w-full">
-            <div className="max-w-3xl">
+        <section className="relative w-full py-16 lg:py-24 min-h-[680px] flex items-center overflow-hidden bg-brand-cream border-b border-[#EAE5D1] font-sans">
+          <div className="absolute inset-0 bg-grid opacity-30 z-0"></div>
+          <div className="absolute -top-32 -right-32 w-96 h-96 bg-brand-yellow/10 rounded-full blur-3xl z-0"></div>
+          
+          <div className="relative max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-4 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center z-10 w-full">
+            {/* Left Column (Text & Stats) */}
+            <div className="text-left relative z-20">
               <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/80 backdrop-blur-sm border border-brand-green/20 text-brand-green text-sm font-bold mb-6 shadow-sm">
                 <span className="w-2.5 h-2.5 rounded-full bg-brand-yellow animate-pulse"></span>
                 <span className="uppercase tracking-widest text-xs">Lời mời tham dự Alpha Test</span>
@@ -225,39 +216,62 @@ export default function Alphatest() {
                 Cùng con trải nghiệm sản phẩm đầu tiên của Readizen và góp ý để hoàn thiện trước khi ra mắt.
               </p>
               
-              <div className="flex flex-wrap items-center gap-4 reveal-up delay-300">
+              <div className="flex flex-col sm:flex-row gap-4 reveal-up delay-300">
                 <Link
-                  className="bg-brand-green hover:bg-brand-dark transition-all duration-300 text-white px-10 py-4 rounded-full font-bold text-lg text-center shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                  className="inline-flex items-center justify-center px-8 py-4 rounded-full bg-brand-green hover:bg-brand-dark transition-all duration-300 text-white font-bold text-lg text-center shadow-lg hover:shadow-xl hover:-translate-y-0.5"
                   to="/register"
                 >
                   Đăng ký trải nghiệm
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Link>
                 <a
-                  className="bg-white/90 backdrop-blur-sm border-2 border-transparent hover:border-brand-green transition-all duration-300 text-gray-800 hover:text-brand-green px-10 py-4 rounded-full font-bold text-lg text-center shadow-md hover:shadow-lg"
+                  className="inline-flex items-center justify-center px-8 py-4 rounded-full bg-white/90 backdrop-blur-sm border-2 border-transparent hover:border-brand-green transition-all duration-300 text-gray-800 hover:text-brand-green font-bold text-lg text-center shadow-md hover:shadow-lg"
                   href="#flow"
                 >
                   Quy trình luyện đọc
                 </a>
               </div>
               
-              <div className="mt-10 grid grid-cols-3 gap-4 max-w-xl reveal-up delay-400">
-                <div className="bg-white/85 backdrop-blur-sm rounded-2xl border border-brand-green/10 p-5 shadow-sm text-center">
+              <div className="mt-12 grid grid-cols-3 gap-4 max-w-xl reveal-up delay-400">
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-brand-green/10 p-5 shadow-sm text-center">
                   <p className="text-3xl font-black text-brand-green">5+</p>
                   <p className="text-xs font-semibold text-gray-500 mt-2 uppercase tracking-wide">Tuổi</p>
                 </div>
-                <div className="bg-white/85 backdrop-blur-sm rounded-2xl border border-brand-green/10 p-5 shadow-sm text-center">
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-brand-green/10 p-5 shadow-sm text-center">
                   <p className="text-3xl font-black text-brand-green">3</p>
                   <p className="text-xs font-semibold text-gray-500 mt-2 uppercase tracking-wide">Bước học</p>
                 </div>
-                <div className="bg-white/85 backdrop-blur-sm rounded-2xl border border-brand-green/10 p-5 shadow-sm text-center">
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-brand-green/10 p-5 shadow-sm text-center">
                   <p className="text-3xl font-black text-brand-green">15'</p>
                   <p className="text-xs font-semibold text-gray-500 mt-2 uppercase tracking-wide">Mỗi buổi</p>
                 </div>
               </div>
             </div>
+
+            {/* Right Column (Visual placeholder) */}
+            <div className="relative hidden lg:block h-full min-h-[480px]">
+              <div className="absolute inset-0 bg-brand-green/5 rounded-[4rem] transform rotate-3 scale-105 blur-xl"></div>
+              <div className="relative h-full bg-white rounded-[3rem] p-4 shadow-lift border border-[#EAE5D1] overflow-hidden flex flex-col justify-center reveal-soft delay-200">
+                <div className="w-full aspect-[4/3] bg-brand-cream rounded-[2rem] overflow-hidden flex items-center justify-center relative border border-[#EAE5D1]">
+                  <div className="absolute inset-0 bg-gradient-to-br from-brand-light/30 to-brand-cream/30"></div>
+                  <div className="text-center z-10 text-brand-green/60">
+                    <ImageIcon className="w-16 h-16 mx-auto mb-2 opacity-60 text-brand-green" />
+                    <p className="text-sm font-bold uppercase tracking-widest text-brand-green">Hình ảnh Mẹ và Bé đọc sách</p>
+                  </div>
+                </div>
+                <div className="absolute -left-6 top-1/4 bg-white rounded-2xl p-4 shadow-2xl border border-[#EAE5D1] flex items-center gap-3 animate-bounce z-20" style={{ animationDuration: '4s' }}>
+                  <div className="w-10 h-10 rounded-full bg-brand-yellow/20 flex items-center justify-center text-brand-green">
+                    <Star className="w-5 h-5 fill-current text-brand-yellow" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-gray-500">Đánh giá</p>
+                    <p className="text-sm font-black text-gray-900">Tuyệt vời</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </header>
+        </section>
 
         {/* ============================================================= */}
         {/* ===== WHAT IS READIZEN ===== */}
