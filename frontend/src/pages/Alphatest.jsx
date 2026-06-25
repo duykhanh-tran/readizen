@@ -161,9 +161,9 @@ export default function Alphatest() {
           .deck-card[data-i="1"] { transform: translate(-50%,-50%) translateY(-10px); z-index: 3; }
           .deck-card[data-i="2"] { transform: translate(-50%,-50%) rotate(7deg) translateX(20px); z-index: 2; }
           
-          .deck-stage.fanned .deck-card[data-i="0"] { transform: translate(-50%,-50%) rotate(-11deg) translateX(-225px) translateY(6px); }
+          .deck-stage.fanned .deck-card[data-i="0"] { transform: translate(-50%,-50%) rotate(-11deg) translateX(-180px) translateY(6px); }
           .deck-stage.fanned .deck-card[data-i="1"] { transform: translate(-50%,-50%) translateY(-26px); }
-          .deck-stage.fanned .deck-card[data-i="2"] { transform: translate(-50%,-50%) rotate(11deg) translateX(225px) translateY(6px); }
+          .deck-stage.fanned .deck-card[data-i="2"] { transform: translate(-50%,-50%) rotate(11deg) translateX(180px) translateY(6px); }
           
           .deck-card.active {
             transform: translate(-50%,-50%) translateY(-44px) scale(1.05) !important;
@@ -275,83 +275,90 @@ export default function Alphatest() {
         {/* ============================================================= */}
         <section className="py-20 lg:py-28 bg-white" id="what">
           <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
-            <div className="text-center max-w-3xl mx-auto reveal-up">
-              <span className="section-kicker">Readizen là gì?</span>
-              <h2 className="mt-6 text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 tracking-tight">Một cuốn sách đọc, ba trải nghiệm trong một</h2>
-              <p className="mt-6 text-xl text-gray-600 leading-relaxed font-medium">
-                Readizen kết hợp <strong className="text-brand-green font-semibold">Sách giấy</strong>, <strong className="text-brand-green font-semibold">App học tập</strong> và <strong className="text-brand-green font-semibold">Giáo viên thực</strong> để phụ huynh và con luyện đọc tiếng Anh tại nhà.
-              </p>
-              <p className="mt-4 text-lg text-gray-500 leading-relaxed font-medium">
-                Ở giai đoạn thử nghiệm, nhóm phụ huynh tiên phong sẽ cùng con trải nghiệm bản dùng thử trong bối cảnh học thật và góp ý để Readizen hoàn thiện trước khi ra mắt.
-              </p>
-            </div>
-
-            {/* Showcase panel: deck xòe bài */}
-            <div className="relative mt-14 lg:mt-16 rounded-[3rem] bg-brand-dark overflow-hidden p-8 sm:p-12 lg:p-16 shadow-lift reveal-soft">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.05)_1px,transparent_0)] [background-size:28px_28px] opacity-60 pointer-events-none"></div>
-              <div className="absolute -top-24 -right-24 w-80 h-80 bg-brand-yellow/10 rounded-full blur-3xl pointer-events-none"></div>
-
-              <div
-                className={`relative z-10 deck-stage ${isFanned ? 'fanned' : ''} ${activeCard !== null ? 'has-active' : ''}`}
-                id="deck"
-                onMouseEnter={handleCardMouseEnter}
-                onMouseLeave={handleCardMouseLeave}
-              >
-                <span className="deck-hint">
-                  <Compass className="w-4 h-4" /> Rê chuột để xòe · Bấm để xem chi tiết
-                </span>
-
-                <article
-                  className={`deck-card ${activeCard === 0 ? 'active' : ''}`}
-                  data-i="0"
-                  tabIndex="0"
-                  role="button"
-                  aria-label="Sách giấy: đọc và tương tác"
-                  onClick={() => handleCardClick(0)}
-                  onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && handleCardClick(0)}
-                >
-                  <div className="w-14 h-14 rounded-2xl bg-green-50 flex items-center justify-center text-brand-green mb-6">
-                    <BookOpen className="w-7 h-7" />
-                  </div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-brand-green">Đọc &amp; tương tác</p>
-                  <h3 className="mt-2 text-2xl font-black text-gray-900">Sách giấy</h3>
-                  <p className="mt-3 text-gray-600 leading-relaxed font-medium">Truyện ngắn, câu đơn giản, tranh lớn và hoạt động tương tác: chọn tranh, hỏi đáp, cắt dán, Show &amp; Tell.</p>
-                </article>
-
-                <article
-                  className={`deck-card ${activeCard === 1 ? 'active' : ''}`}
-                  data-i="1"
-                  tabIndex="0"
-                  role="button"
-                  aria-label="App học tập: nghe và luyện đọc"
-                  onClick={() => handleCardClick(1)}
-                  onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && handleCardClick(1)}
-                >
-                  <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 mb-6">
-                    <Smartphone className="w-7 h-7" />
-                  </div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-blue-600">Nghe &amp; luyện</p>
-                  <h3 className="mt-2 text-2xl font-black text-gray-900">App học tập</h3>
-                  <p className="mt-3 text-gray-600 leading-relaxed font-medium">Con nghe từ mới, mở rương từ vựng, xem Story Preview, luyện đọc và gửi bài nói sau khi học với sách.</p>
-                </article>
-
-                <article
-                  className={`deck-card ${activeCard === 2 ? 'active' : ''}`}
-                  data-i="2"
-                  tabIndex="0"
-                  role="button"
-                  aria-label="Giáo viên thực: nhận phản hồi"
-                  onClick={() => handleCardClick(2)}
-                  onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && handleCardClick(2)}
-                >
-                  <div className="w-14 h-14 rounded-2xl bg-yellow-50 flex items-center justify-center text-yellow-600 mb-6">
-                    <UserCheck className="w-7 h-7" />
-                  </div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-yellow-600">Nhận phản hồi</p>
-                  <h3 className="mt-2 text-2xl font-black text-gray-900">Giáo viên thực</h3>
-                  <p className="mt-3 text-gray-600 leading-relaxed font-medium">Bài Show &amp; Tell của con được gửi lại để nhận nhận xét, khích lệ và gợi ý cải thiện sau quá trình đọc.</p>
-                </article>
+            <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+              
+              {/* Left Column: Text Content */}
+              <div className="lg:col-span-5 reveal-up text-left">
+                <span className="section-kicker">Readizen là gì?</span>
+                <h2 className="mt-6 text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 tracking-tight leading-[1.15]">
+                  Một cuốn sách đọc, <br />ba trải nghiệm trong một
+                </h2>
+                <p className="mt-6 text-xl text-gray-600 leading-relaxed font-medium">
+                  Readizen kết hợp <strong className="text-brand-green font-semibold">Sách giấy</strong>, <strong className="text-brand-green font-semibold">App học tập</strong> và <strong className="text-brand-green font-semibold">Giáo viên thực</strong> để phụ huynh và con luyện đọc tiếng Anh tại nhà.
+                </p>
+                <p className="mt-4 text-lg text-gray-500 leading-relaxed font-medium">
+                  Ở giai đoạn thử nghiệm, nhóm phụ huynh tiên phong sẽ cùng con trải nghiệm bản dùng thử trong bối cảnh học thật và góp ý để Readizen hoàn thiện trước khi ra mắt.
+                </p>
               </div>
+
+              {/* Right Column: Showcase panel (deck xòe bài) */}
+              <div className="lg:col-span-7 relative rounded-[3rem] bg-brand-dark overflow-hidden p-8 sm:p-12 lg:p-16 shadow-lift reveal-soft w-full h-[520px] flex items-center justify-center">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.05)_1px,transparent_0)] [background-size:28px_28px] opacity-60 pointer-events-none"></div>
+                <div className="absolute -top-24 -right-24 w-80 h-80 bg-brand-yellow/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div
+                  className={`relative z-10 deck-stage ${isFanned ? 'fanned' : ''} ${activeCard !== null ? 'has-active' : ''}`}
+                  id="deck"
+                  onMouseEnter={handleCardMouseEnter}
+                  onMouseLeave={handleCardMouseLeave}
+                >
+                  <span className="deck-hint">
+                    <Compass className="w-4 h-4" /> Rê chuột để xòe · Bấm để xem chi tiết
+                  </span>
+
+                  <article
+                    className={`deck-card ${activeCard === 0 ? 'active' : ''}`}
+                    data-i="0"
+                    tabIndex="0"
+                    role="button"
+                    aria-label="Sách giấy: đọc và tương tác"
+                    onClick={() => handleCardClick(0)}
+                    onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && handleCardClick(0)}
+                  >
+                    <div className="w-14 h-14 rounded-2xl bg-green-50 flex items-center justify-center text-brand-green mb-6">
+                      <BookOpen className="w-7 h-7" />
+                    </div>
+                    <p className="text-xs font-bold uppercase tracking-widest text-brand-green">Đọc &amp; tương tác</p>
+                    <h3 className="mt-2 text-2xl font-black text-gray-900">Sách giấy</h3>
+                    <p className="mt-3 text-gray-600 leading-relaxed font-medium">Truyện ngắn, câu đơn giản, tranh lớn và hoạt động tương tác: chọn tranh, hỏi đáp, cắt dán, Show &amp; Tell.</p>
+                  </article>
+
+                  <article
+                    className={`deck-card ${activeCard === 1 ? 'active' : ''}`}
+                    data-i="1"
+                    tabIndex="0"
+                    role="button"
+                    aria-label="App học tập: nghe và luyện đọc"
+                    onClick={() => handleCardClick(1)}
+                    onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && handleCardClick(1)}
+                  >
+                    <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 mb-6">
+                      <Smartphone className="w-7 h-7" />
+                    </div>
+                    <p className="text-xs font-bold uppercase tracking-widest text-blue-600">Nghe &amp; luyện</p>
+                    <h3 className="mt-2 text-2xl font-black text-gray-900">App học tập</h3>
+                    <p className="mt-3 text-gray-600 leading-relaxed font-medium">Con nghe từ mới, mở rương từ vựng, xem Story Preview, luyện đọc và gửi bài nói sau khi học với sách.</p>
+                  </article>
+
+                  <article
+                    className={`deck-card ${activeCard === 2 ? 'active' : ''}`}
+                    data-i="2"
+                    tabIndex="0"
+                    role="button"
+                    aria-label="Giáo viên thực: nhận phản hồi"
+                    onClick={() => handleCardClick(2)}
+                    onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && handleCardClick(2)}
+                  >
+                    <div className="w-14 h-14 rounded-2xl bg-yellow-50 flex items-center justify-center text-yellow-600 mb-6">
+                      <UserCheck className="w-7 h-7" />
+                    </div>
+                    <p className="text-xs font-bold uppercase tracking-widest text-yellow-600">Nhận phản hồi</p>
+                    <h3 className="mt-2 text-2xl font-black text-gray-900">Giáo viên thực</h3>
+                    <p className="mt-3 text-gray-600 leading-relaxed font-medium">Bài Show &amp; Tell của con được gửi lại để nhận nhận xét, khích lệ và gợi ý cải thiện sau quá trình đọc.</p>
+                  </article>
+                </div>
+              </div>
+
             </div>
           </div>
         </section>
