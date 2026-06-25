@@ -25,11 +25,11 @@ import {
 
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
+import FAQList from '../components/FAQList.jsx';
 
 export default function Alphatest() {
   const [isFanned, setIsFanned] = useState(false);
   const [activeCard, setActiveCard] = useState(null);
-  const [openFaqIndex, setOpenFaqIndex] = useState(null);
 
   // Scroll animations observer
   useEffect(() => {
@@ -69,26 +69,22 @@ export default function Alphatest() {
     setActiveCard(null);
   };
 
-  const toggleFaq = (index) => {
-    setOpenFaqIndex((prev) => (prev === index ? null : index));
-  };
-
   const faqs = [
     {
-      q: "Con chưa đọc tiếng Anh tốt có dùng được không?",
-      a: "Được. Readizen thiết kế cho trẻ 5+ mới bắt đầu, câu ngắn, tranh rõ và có app nghe mẫu trước khi đọc sách."
+      question: "Con chưa đọc tiếng Anh tốt có dùng được không?",
+      answer: "Được. Readizen thiết kế cho trẻ 5+ mới bắt đầu, câu ngắn, tranh rõ và có app nghe mẫu trước khi đọc sách."
     },
     {
-      q: "Phụ huynh không giỏi tiếng Anh có hỗ trợ con được không?",
-      a: "Được. Ba mẹ chỉ cần đi theo hướng dẫn, cho con nghe app, đọc sách cùng con và quan sát trải nghiệm. Không cần tự dạy phát âm chuyên sâu."
+      question: "Phụ huynh không giỏi tiếng Anh có hỗ trợ con được không?",
+      answer: "Được. Ba mẹ chỉ cần đi theo hướng dẫn, cho con nghe app, đọc sách cùng con và quan sát trải nghiệm. Không cần tự dạy phát âm chuyên sâu."
     },
     {
-      q: "Bản test có lỗi thì sao?",
-      a: "Đây là bản thử nghiệm, cho nên có thể có lỗi hoặc điểm chưa mượt. Phụ huynh chỉ cần ghi lại hoặc chụp/quay màn hình lỗi để Readizen sửa."
+      question: "Bản test có lỗi thì sao?",
+      answer: "Đây là bản thử nghiệm, cho nên có thể có lỗi hoặc điểm chưa mượt. Phụ huynh chỉ cần ghi lại hoặc chụp/quay màn hình lỗi để Readizen sửa."
     },
     {
-      q: "Test xong cần làm gì?",
-      a: "Ba mẹ điền form feedback và gửi bài Show & Tell nếu có. Readizen có thể liên hệ thêm để hỏi sâu 5–10 phút nếu ba mẹ đồng ý."
+      question: "Test xong cần làm gì?",
+      answer: "Ba mẹ điền form feedback và gửi bài Show & Tell nếu có. Readizen có thể liên hệ thêm để hỏi sâu 5–10 phút nếu ba mẹ đồng ý."
     }
   ];
 
@@ -201,19 +197,20 @@ export default function Alphatest() {
             <div className="text-left relative z-20">
               <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/80 backdrop-blur-sm border border-brand-green/20 text-brand-green text-sm font-bold mb-6 shadow-sm">
                 <span className="w-2.5 h-2.5 rounded-full bg-brand-yellow animate-pulse"></span>
-                <span className="uppercase tracking-widest text-xs">Lời mời tham dự Alpha Test</span>
+                <span className="uppercase tracking-widest text-xs">Readizen Alpha Test — Lời mời tham gia trải nghiệm</span>
               </div>
               
               <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-extrabold text-gray-900 leading-[1.1] mb-6 tracking-tight reveal-up">
-                Cùng con luyện đọc tiếng Anh tại nhà, chỉ 15 phút mỗi ngày
+                Sách đọc tiếng Anh cho trẻ 5+ <br />
+                <span className="text-brand-green">Luyện đọc tại nhà chỉ 15 phút mỗi ngày</span>
               </h1>
               
               <p className="text-lg sm:text-xl text-gray-800 mb-4 max-w-2xl leading-relaxed font-medium reveal-up delay-100">
-                Readizen là sách đọc tiếng Anh thế hệ mới, kết hợp <strong className="text-brand-green font-semibold">Sách</strong>, <strong className="text-brand-green font-semibold">App</strong> và <strong className="text-brand-green font-semibold">Giáo viên thực</strong>, tối ưu việc luyện đọc tại nhà cho phụ huynh và con.
+                Readizen là giải pháp sách đọc tiếng Anh thế hệ mới kết hợp <strong className="text-brand-green font-semibold">Sách</strong>, <strong className="text-brand-green font-semibold">App</strong> và <strong className="text-brand-green font-semibold">Giáo viên thực</strong>, giúp nâng cao kỹ năng đọc, nói của con ngay tại nhà.
               </p>
               
               <p className="text-base sm:text-lg text-gray-600 mb-8 max-w-2xl leading-relaxed font-medium reveal-up delay-200">
-                Cùng con trải nghiệm sản phẩm đầu tiên của Readizen và góp ý để hoàn thiện trước khi ra mắt.
+                Hãy cùng con trải nghiệm bộ thử nghiệm Alpha Test đầu tiên của Readizen và cùng chúng tôi hoàn thiện sản phẩm.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 reveal-up delay-300">
@@ -705,28 +702,7 @@ export default function Alphatest() {
               <span className="section-kicker">FAQ</span>
               <h2 className="mt-6 text-3xl sm:text-4xl lg:text-5xl font-black text-gray-900 tracking-tight">Câu hỏi thường gặp</h2>
             </div>
-            <div className="space-y-5" id="faqList">
-              {faqs.map((faq, idx) => (
-                <article key={idx} className="faq-item bg-white rounded-2xl border border-[#EAE5D1] overflow-hidden shadow-sm hover:shadow-md transition-shadow reveal-up" style={{ transitionDelay: `${idx * 100}ms` }}>
-                  <button
-                    className="faq-btn w-full p-6 text-left flex items-center justify-between gap-4 font-bold text-lg text-gray-900 cursor-pointer"
-                    onClick={() => toggleFaq(idx)}
-                  >
-                    <span>{faq.q}</span>
-                    <div className="w-8 h-8 rounded-full bg-brand-light flex items-center justify-center shrink-0 text-brand-green">
-                      {openFaqIndex === idx ? (
-                        <X className="faq-icon w-5 h-5 transition-transform duration-300 rotate-90" />
-                      ) : (
-                        <Plus className="faq-icon w-5 h-5 transition-transform duration-300" />
-                      )}
-                    </div>
-                  </button>
-                  <div className={`faq-body px-6 pb-6 text-gray-600 leading-relaxed text-lg font-medium border-t border-gray-50 pt-4 ${openFaqIndex === idx ? '' : 'hidden'}`}>
-                    {faq.a}
-                  </div>
-                </article>
-              ))}
-            </div>
+            <FAQList items={faqs} />
           </div>
         </section>
 
