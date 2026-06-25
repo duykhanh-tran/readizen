@@ -1,0 +1,197 @@
+/* Styling for Alphatest Page */
+
+html {
+  scroll-behavior: smooth;
+}
+
+.bg-grid {
+  background-image: radial-gradient(circle at 1px 1px, rgba(16, 103, 52, 0.06) 1px, transparent 0);
+  background-size: 32px 32px;
+}
+
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 25px 50px -12px rgba(16, 103, 52, 0.1);
+  border-color: rgba(16, 103, 52, 0.15);
+}
+
+/* Scroll reveal animations */
+.reveal-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 800ms cubic-bezier(0.16, 1, 0.3, 1), transform 800ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-soft {
+  opacity: 0;
+  transition: opacity 1000ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-up.active,
+.reveal-soft.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.delay-100 {
+  transition-delay: 100ms;
+}
+
+.delay-200 {
+  transition-delay: 200ms;
+}
+
+.delay-300 {
+  transition-delay: 300ms;
+}
+
+.delay-400 {
+  transition-delay: 400ms;
+}
+
+.hero-divider-bg {
+  clip-path: polygon(0 0, 85% 0, 100% 100%, 0 100%);
+}
+
+/* Card Deck Stage Animation */
+.deck-stage {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  max-width: 440px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .deck-stage {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 900px;
+  }
+}
+
+.deck-hint {
+  display: none;
+}
+
+.deck-card {
+  background: #ffffff;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(16, 103, 52, 0.08);
+  padding: 1.5rem;
+  box-shadow: 0 15px 30px -12px rgba(226, 232, 240, 0.7), 0 10px 20px -8px rgba(0, 0, 0, 0.02);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .deck-card {
+    border-radius: 1.75rem;
+    padding: 2rem;
+    box-shadow: 0 20px 40px -15px rgba(226, 232, 240, 0.8), 0 15px 25px -10px rgba(0, 0, 0, 0.03);
+  }
+}
+
+.deck-card:focus-visible {
+  outline: 3px solid #FDBE15;
+  outline-offset: 3px;
+}
+
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .deck-stage {
+    display: block;
+    position: relative;
+    min-height: 480px;
+    max-width: none;
+    margin: 0;
+  }
+
+  .deck-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    position: absolute;
+    top: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 60;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #64748b;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .deck-card {
+    position: absolute;
+    left: 50%;
+    top: 53%;
+    width: 290px;
+    cursor: pointer;
+    transform-origin: 50% 100%;
+    will-change: transform;
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s, opacity 0.4s, filter 0.4s;
+  }
+
+  .deck-card[data-i="0"] {
+    transform: translate(-50%, -50%) rotate(-7deg) translateX(-20px);
+    z-index: 1;
+  }
+
+  .deck-card[data-i="1"] {
+    transform: translate(-50%, -50%) translateY(-10px);
+    z-index: 3;
+  }
+
+  .deck-card[data-i="2"] {
+    transform: translate(-50%, -50%) rotate(7deg) translateX(20px);
+    z-index: 2;
+  }
+
+  .deck-stage.fanned .deck-card[data-i="0"] {
+    transform: translate(-50%, -50%) rotate(-11deg) translateX(-180px) translateY(6px);
+  }
+
+  .deck-stage.fanned .deck-card[data-i="1"] {
+    transform: translate(-50%, -50%) translateY(-26px);
+  }
+
+  .deck-stage.fanned .deck-card[data-i="2"] {
+    transform: translate(-50%, -50%) rotate(11deg) translateX(180px) translateY(6px);
+  }
+
+  .deck-card.active {
+    transform: translate(-50%, -50%) translateY(-44px) scale(1.05) !important;
+    z-index: 50 !important;
+    box-shadow: 0 35px 70px -15px rgba(16, 103, 52, 0.12), 0 25px 45px -10px rgba(0, 0, 0, 0.05);
+  }
+
+  .deck-stage.has-active .deck-card:not(.active) {
+    opacity: 0.4;
+    filter: brightness(0.95) saturate(0.95);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+    transform: none !important;
+  }
+
+  .reveal-up,
+  .reveal-soft {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
