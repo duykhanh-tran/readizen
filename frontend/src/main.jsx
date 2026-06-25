@@ -14,6 +14,7 @@ import Register from './pages/Register.jsx'
 import Profile from './pages/Profile.jsx'
 import TrialLesson from './pages/TrialLesson.jsx'
 import Library from './pages/Library.jsx'
+import Alphatest from './pages/Alphatest.jsx'
 import ProtectedRoute from './components/shared/ProtectedRoute.jsx'
 import AdminRoute from './components/shared/AdminRoute.jsx'
 import AdminLayout from './components/layout/AdminLayout.jsx'
@@ -36,6 +37,7 @@ createRoot(document.getElementById('root')).render(
             <Route path="/practice" element={<Practice />} />
             <Route path="/tech" element={<Tech />} />
             <Route path="/about" element={<About />} />
+            <Route path="/alphatest" element={<Alphatest />} />
             <Route path="/product" element={<Navigate to="/library" replace />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
