@@ -192,79 +192,72 @@ export default function Alphatest() {
 
       <main id="top">
         {/* ================= HERO ================= */}
-        <section className="relative overflow-hidden bg-brand-dark min-h-[90vh] flex items-center">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.05)_1px,transparent_0)] [background-size:32px_32px] opacity-50"></div>
-          <div className="absolute -top-32 -right-32 w-96 h-96 bg-brand-yellow/10 rounded-full blur-3xl"></div>
-          <div className="relative max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-16 lg:py-24 grid lg:grid-cols-2 gap-12 lg:gap-16 items-center z-10 w-full">
-            <div className="relative z-20">
-              <div className="absolute inset-0 hero-divider-bg bg-brand-dark/50 backdrop-blur-sm lg:bg-transparent lg:backdrop-blur-none p-6 lg:p-0 rounded-3xl lg:rounded-none -z-10 -m-6 lg:m-0"></div>
-              <div className="text-left relative z-10 p-6 lg:p-0">
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 shadow-sm mb-6 backdrop-blur-md">
-                  <span className="w-2.5 h-2.5 rounded-full bg-brand-yellow animate-pulse"></span>
-                  <span className="text-brand-cream text-xs font-bold uppercase tracking-widest">Lời mời tham dự Alpha Test</span>
-                </div>
-                <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-black text-white leading-[1.1] tracking-tight reveal-up">
-                  Cùng con luyện đọc tiếng Anh tại nhà, chỉ 15 phút mỗi ngày
-                </h1>
-                <p className="mt-6 text-lg sm:text-xl text-brand-light leading-relaxed max-w-2xl font-medium reveal-up delay-100">
-                  Readizen là sách đọc tiếng Anh thế hệ mới, kết hợp <strong className="text-brand-yellow font-semibold">Sách</strong>, <strong className="text-brand-yellow font-semibold">App</strong> và <strong class="text-brand-yellow font-semibold">Giáo viên thực</strong>, tối ưu việc luyện đọc tại nhà cho phụ huynh và con.
-                </p>
-                <p className="mt-4 text-lg sm:text-xl text-brand-light leading-relaxed max-w-2xl font-medium reveal-up delay-200">
-                  Cùng con trải nghiệm sản phẩm đầu tiên của Readizen và góp ý để hoàn thiện trước khi ra mắt.
-                </p>
-                <div className="mt-10 flex flex-col sm:flex-row gap-4 reveal-up delay-300">
-                  <Link
-                    className="inline-flex items-center justify-center px-8 py-4 rounded-full bg-brand-yellow text-brand-dark font-bold shadow-glow hover:bg-yellow-400 transition-all hover:-translate-y-0.5"
-                    to="/register"
-                  >
-                    Đăng ký trải nghiệm
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </Link>
-                  <a className="inline-flex items-center justify-center px-8 py-4 rounded-full bg-transparent text-white font-semibold border-2 border-white/30 hover:bg-white/10 transition-colors" href="#flow">
-                    Quy trình luyện đọc
-                  </a>
-                </div>
-                <div className="mt-12 grid grid-cols-3 gap-4 max-w-xl reveal-up delay-400">
-                  <div className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-5 shadow-sm text-center">
-                    <p className="text-3xl font-black text-brand-yellow">5+</p>
-                    <p className="text-xs font-semibold text-brand-light mt-2 uppercase tracking-wide">Tuổi</p>
-                  </div>
-                  <div className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-5 shadow-sm text-center">
-                    <p className="text-3xl font-black text-brand-yellow">3</p>
-                    <p className="text-xs font-semibold text-brand-light mt-2 uppercase tracking-wide">Bước học</p>
-                  </div>
-                  <div className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 p-5 shadow-sm text-center">
-                    <p className="text-3xl font-black text-brand-yellow">15'</p>
-                    <p className="text-xs font-semibold text-brand-light mt-2 uppercase tracking-wide">Mỗi buổi</p>
-                  </div>
-                </div>
+        <header className="relative w-full py-16 lg:py-24 min-h-[680px] flex items-center overflow-hidden font-sans">
+          {/* Background Image */}
+          <div className="absolute inset-0 z-0">
+            <img
+              src="/assets/about1.webp"
+              alt="Readizen Hero Background"
+              className="w-full h-full object-cover"
+            />
+            {/* Gradient Overlay to make text readable */}
+            <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/85 to-transparent z-10"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-white/50 via-transparent to-transparent z-10"></div>
+          </div>
+
+          {/* Content */}
+          <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 w-full">
+            <div className="max-w-3xl">
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/80 backdrop-blur-sm border border-brand-green/20 text-brand-green text-sm font-bold mb-6 shadow-sm">
+                <span className="w-2.5 h-2.5 rounded-full bg-brand-yellow animate-pulse"></span>
+                <span className="uppercase tracking-widest text-xs">Lời mời tham dự Alpha Test</span>
               </div>
-            </div>
-            
-            <div className="relative hidden lg:block h-full min-h-[500px]">
-              <div className="absolute inset-0 bg-brand-green/20 rounded-[4rem] transform rotate-3 scale-105 blur-xl"></div>
-              <div className="absolute inset-y-0 -left-20 w-32 bg-gradient-to-r from-brand-dark to-transparent z-10 pointer-events-none"></div>
-              <div className="relative h-full bg-white/5 backdrop-blur-sm rounded-[3rem] p-4 shadow-lift border border-white/10 overflow-hidden flex flex-col justify-center reveal-soft delay-200">
-                <div className="w-full aspect-[4/3] bg-brand-darker/50 rounded-[2rem] overflow-hidden flex items-center justify-center relative border border-white/5">
-                  <div className="absolute inset-0 bg-gradient-to-br from-brand-green/30 to-brand-dark/30"></div>
-                  <div className="text-center z-10 text-white/50">
-                    <ImageIcon className="w-16 h-16 mx-auto mb-2 opacity-50 text-brand-yellow" />
-                    <p className="text-sm font-semibold uppercase tracking-widest text-brand-light">Hình ảnh Mẹ và Bé đọc sách</p>
-                  </div>
+              
+              <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-extrabold text-gray-900 leading-[1.1] mb-6 tracking-tight reveal-up">
+                Cùng con luyện đọc tiếng Anh tại nhà, chỉ 15 phút mỗi ngày
+              </h1>
+              
+              <p className="text-lg sm:text-xl text-gray-800 mb-4 max-w-2xl leading-relaxed font-medium reveal-up delay-100">
+                Readizen là sách đọc tiếng Anh thế hệ mới, kết hợp <strong className="text-brand-green font-semibold">Sách</strong>, <strong className="text-brand-green font-semibold">App</strong> và <strong className="text-brand-green font-semibold">Giáo viên thực</strong>, tối ưu việc luyện đọc tại nhà cho phụ huynh và con.
+              </p>
+              
+              <p className="text-base sm:text-lg text-gray-600 mb-8 max-w-2xl leading-relaxed font-medium reveal-up delay-200">
+                Cùng con trải nghiệm sản phẩm đầu tiên của Readizen và góp ý để hoàn thiện trước khi ra mắt.
+              </p>
+              
+              <div className="flex flex-wrap items-center gap-4 reveal-up delay-300">
+                <Link
+                  className="bg-brand-green hover:bg-brand-dark transition-all duration-300 text-white px-10 py-4 rounded-full font-bold text-lg text-center shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                  to="/register"
+                >
+                  Đăng ký trải nghiệm
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Link>
+                <a
+                  className="bg-white/90 backdrop-blur-sm border-2 border-transparent hover:border-brand-green transition-all duration-300 text-gray-800 hover:text-brand-green px-10 py-4 rounded-full font-bold text-lg text-center shadow-md hover:shadow-lg"
+                  href="#flow"
+                >
+                  Quy trình luyện đọc
+                </a>
+              </div>
+              
+              <div className="mt-10 grid grid-cols-3 gap-4 max-w-xl reveal-up delay-400">
+                <div className="bg-white/85 backdrop-blur-sm rounded-2xl border border-brand-green/10 p-5 shadow-sm text-center">
+                  <p className="text-3xl font-black text-brand-green">5+</p>
+                  <p className="text-xs font-semibold text-gray-500 mt-2 uppercase tracking-wide">Tuổi</p>
                 </div>
-                <div className="absolute -left-12 top-1/4 bg-brand-dark/80 backdrop-blur-md rounded-2xl p-4 shadow-2xl border border-white/10 flex items-center gap-3 animate-bounce z-20" style={{ animationDuration: '4s' }}>
-                  <div className="w-10 h-10 rounded-full bg-brand-yellow/20 flex items-center justify-center text-brand-yellow">
-                    <Star className="w-5 h-5 fill-current" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-semibold text-brand-light">Đánh giá</p>
-                    <p className="text-sm font-bold text-white">Tuyệt vời</p>
-                  </div>
+                <div className="bg-white/85 backdrop-blur-sm rounded-2xl border border-brand-green/10 p-5 shadow-sm text-center">
+                  <p className="text-3xl font-black text-brand-green">3</p>
+                  <p className="text-xs font-semibold text-gray-500 mt-2 uppercase tracking-wide">Bước học</p>
+                </div>
+                <div className="bg-white/85 backdrop-blur-sm rounded-2xl border border-brand-green/10 p-5 shadow-sm text-center">
+                  <p className="text-3xl font-black text-brand-green">15'</p>
+                  <p className="text-xs font-semibold text-gray-500 mt-2 uppercase tracking-wide">Mỗi buổi</p>
                 </div>
               </div>
             </div>
           </div>
-        </section>
+        </header>
 
         {/* ============================================================= */}
         {/* ===== WHAT IS READIZEN ===== */}
