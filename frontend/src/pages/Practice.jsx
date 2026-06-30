@@ -35,11 +35,12 @@ export default function Practice() {
           <div className="max-w-3xl text-left">
             <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/80 backdrop-blur-sm border border-brand-green/20 text-brand-green text-base font-bold mb-4 shadow-sm">
               <Check className="w-5 h-5" />
-              Reading cho phụ huynh mới bắt đầu
+              Dành cho phụ huynh mới bắt đầu
             </div>
 
             <h1 className="text-5xl lg:text-7xl font-extrabold text-gray-900 leading-tight mb-4 tracking-tight">
-              Luyện đọc tại nhà
+              Phương pháp
+              <br /> Luyện đọc tại nhà
             </h1>
 
             <p className="text-xl lg:text-2xl text-gray-800 mb-8 max-w-2xl leading-relaxed font-medium">
@@ -48,16 +49,16 @@ export default function Practice() {
 
             <div className="flex flex-wrap items-center gap-4">
               <Link
-                to="/learn"
+                to="/library"
                 className="bg-brand-green hover:bg-brand-dark transition-all duration-300 text-white px-10 py-4 rounded-full font-bold text-lg text-center shadow-lg hover:shadow-xl hover:-translate-y-0.5"
               >
-                Hiểu cách luyện đọc trong 3 phút
+                Phiếu đọc AI - Miễn phí
               </Link>
               <Link
                 to="/learn"
                 className="bg-white/90 backdrop-blur-sm border-2 border-transparent hover:border-brand-green transition-all duration-300 text-gray-800 hover:text-brand-green px-10 py-4 rounded-full font-bold text-lg text-center shadow-md hover:shadow-lg"
               >
-                Xem cách Readizen triển khai
+                5 học phần sách Readizen
               </Link>
             </div>
           </div>
@@ -73,7 +74,7 @@ export default function Practice() {
               Vấn đề thường gặp
             </div>
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6 leading-tight">
-              4-0 khi con tự luyện đọc
+              4 vấn đề khi con tự luyện đọc
             </h2>
             <p className="text-gray-600 text-lg leading-relaxed">
               Theo phương pháp truyền thống, phụ huynh mua sách đọc tiếng Anh cho con, con không đọc. Không phải vì con không thích, mà vì con cảm thấy quá khó để bắt đầu đọc.
@@ -119,7 +120,7 @@ export default function Practice() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center">
           <SectionHeader
             badge="Giải pháp mới "
-            title="Đọc tại nhà cùng Readizen"
+            title="Luyện đọc tại nhà cùng Readizen"
             subtitle="Readizen giúp con từng bước làm quen, hiểu, luyện tập và thực hành nói lại câu chuyện đã đọc."
           />
 
@@ -156,30 +157,30 @@ export default function Practice() {
       <section className="bg-white py-20">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <SectionHeader
-            badge="Ba mẹ đồng hành thế nào?"
-            title="Thành phần trong hệ thống"
-            subtitle="Vai trò của ba mẹ không phải là dạy toàn bộ, mà là tạo thói quen, ngồi cùng con và khích lệ con đọc. Các phần chuyên môn đã có App và Giáo viên hỗ trợ."
+            badge="Giải pháp đọc tại nhà"
+            title="Thành phần trong giải pháp"
+            subtitle="Phụ huynh chỉ cần đóng vai người đồng hành cùng con. Các phần chuyên môn đã có App và Giáo viên của Readizen hỗ trợ từ xa."
           />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
             <FeatureCard
               emoji="📱"
-              title="App hỗ trợ phần kỹ thuật"
+              title="App học tập"
               description="Đọc mẫu, ghi âm, hỗ trợ phản hồi và dẫn con qua từng hoạt động."
               iconBg="bg-blue-50"
               iconBorder="border-blue-100"
             />
             <FeatureCard
-              emoji="👨‍👩‍👧"
-              title="Phụ huynh hỗ trợ cảm xúc"
-              description="Ngồi cạnh con, khen khi con dám đọc, hỏi câu đơn giản về tranh và duy trì thói quen."
+              emoji="👩‍🏫"
+              title="Giáo viên từ xa"
+              description="Nhận xét bài nói, gợi ý điểm cần cải thiện và khích lệ con sau mỗi bài đọc."
               iconBg="bg-yellow-50"
               iconBorder="border-yellow-100"
             />
             <FeatureCard
-              emoji="👩‍🏫"
-              title="Giáo viên hỗ trợ chuyên môn"
-              description="Nhận xét bài nói, gợi ý điểm cần cải thiện và khích lệ con sau mỗi bài Presentation."
+              emoji="👨‍👩‍👧 "
+              title="Phụ huynh"
+              description="Ngồi cạnh con, khen khi con dám đọc, hỏi câu đơn giản về tranh và duy trì thói quen."
               iconBg="bg-green-50"
               iconBorder="border-green-100"
             />
@@ -188,7 +189,7 @@ export default function Practice() {
       </section>
 
       {/* ================= SECTION 5: ĐỊNH NGHĨA 6 YẾU TỐ ================= */}
-      <section className="bg-brand-cream py-12">
+      {/* <section className="bg-brand-cream py-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <SectionHeader
             badge="Định nghĩa đơn giản"
@@ -229,7 +230,7 @@ export default function Practice() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* ================= SECTION 6: SO SÁNH NHANH ================= */}
       <section className="bg-white py-12">

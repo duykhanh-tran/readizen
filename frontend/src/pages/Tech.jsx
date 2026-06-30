@@ -58,7 +58,9 @@ export default function Tech() {
                 Trải nghiệm với Set 1
               </Link>
             </div>
-
+            <p className="text-[14px] lg:text-sm text-gray-800 mb-4 pt-[5px] max-w-2xl leading-relaxed font-medium">
+              Tại Readizen, các giải pháp Công nghệ không thay thế sách hay phụ huynh. Công nghệ giúp việc đọc tại nhà trở nên dễ dàng hơn, vui hơn và hiệu quả hơn.
+            </p>
           </div>
         </div>
       </header>

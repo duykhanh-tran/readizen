@@ -243,7 +243,7 @@ export default function TrialLesson() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-brand-cream/30 flex flex-col font-sans">
+      <div className="min-h-screen bg-brand-cream/30 flex flex-col font-sans pt-16 lg:pt-[72px]">
         <Header />
         <div className="flex-grow flex flex-col items-center justify-center gap-4" role="status" aria-live="polite">
           <div className="relative w-14 h-14">
@@ -258,7 +258,7 @@ export default function TrialLesson() {
 
   if (error || !lesson) {
     return (
-      <div className="min-h-screen bg-brand-cream/30 flex flex-col font-sans">
+      <div className="min-h-screen bg-brand-cream/30 flex flex-col font-sans pt-16 lg:pt-[72px]">
         <Header />
         <div className="flex-grow flex flex-col items-center justify-center p-6 text-center max-w-sm mx-auto" role="alert">
           <div className="w-16 h-16 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center mb-5 ring-1 ring-red-100">
@@ -289,7 +289,7 @@ export default function TrialLesson() {
   const currentImageUrl = lesson.ebookImages?.[carouselIndex] || '';
 
   return (
-    <div className="min-h-screen bg-brand-cream/30 flex flex-col font-sans antialiased overflow-x-hidden text-gray-800">
+    <div className="min-h-screen bg-brand-cream/30 flex flex-col font-sans antialiased overflow-x-hidden text-gray-800 pt-16 lg:pt-[72px]">
       <Header />
 
       {!isFinished ? (

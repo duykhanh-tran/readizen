@@ -38,6 +38,7 @@ export function App() {
   const [currentHeroBgIndex, setCurrentHeroBgIndex] = useState(0);
   const [activeCard, setActiveCard] = useState(null);
   const [activeStep, setActiveStep] = useState(null);
+  const [activeProblem, setActiveProblem] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -81,12 +82,12 @@ export function App() {
             </div>
 
             <h1 className="text-5xl lg:text-7xl font-extrabold text-gray-900 leading-tight mb-4 tracking-tight">
-              Sách đọc tiếng Anh<br />
-              tại nhà cho trẻ 5+ <br />
+              Sách luyện đọc <br />
+              tiếng Anh tại nhà
             </h1>
 
             <p className="text-xl lg:text-2xl text-gray-800 mb-4 max-w-2xl leading-relaxed font-medium">
-              Readizen là sách đọc tiếng Anh thế hệ mới.
+              Readizen là sách luyện đọc tiếng Anh thế hệ mới.
               Giúp phụ huynh và con nâng cao kỹ năng đọc, nói tiếng Anh ngay tại nhà.
             </p>
 
@@ -95,7 +96,7 @@ export function App() {
                 to="/library"
                 className="bg-brand-green hover:bg-brand-dark transition-all duration-300 text-white px-10 py-4 rounded-full font-bold text-lg text-center shadow-lg hover:shadow-xl hover:-translate-y-0.5"
               >
-                Bắt đầu với Set 1
+                Thư viện phiếu đọc AI
               </Link>
               <Link
                 to="/practice"
@@ -113,7 +114,7 @@ export function App() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="w-full aspect-square bg-gray-50 rounded-3xl overflow-hidden shadow-lg border border-gray-100 flex items-center justify-center">
             <SafeImage
-              src="/assets/home5.jpg"
+              src="/assets/home5.png"
               alt="Hộp sách Readizen"
               className="w-full h-full object-cover"
             />
@@ -121,26 +122,13 @@ export function App() {
           <div>
             <SectionHeader
               badge="Nền tảng học Tiếng Anh"
-              title="Vì sao con nên đọc truyện tiếng Anh? "
+              title="Vì sao nên luyện đọc? "
               align="left"
               className="mb-6"
             />
             <p className="text-gray-600 mb-8 text-lg">
-              Các câu chuyện đưa tiếng Anh vào bối cảnh cụ thể, ở đó có tranh, nhân vật, hành động và cảm xúc. Nhờ đó, con không chỉ học thêm từ mới mà còn hiểu cách dùng từ, quen với mẫu câu và có nội dung để nói lại bằng tiếng Anh.            </p>
-            <ul className="space-y-4">
-              <li className="flex items-center gap-3">
-                <div className="bg-brand-light p-1 rounded-full"><Check className="w-5 h-5 text-brand-green" /></div>
-                <span className="text-gray-800 font-medium text-lg">Từ vựng đặt trong ngữ cảnh</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <div className="bg-brand-light p-1 rounded-full"><Check className="w-5 h-5 text-brand-green" /></div>
-                <span className="text-gray-800 font-medium text-lg">Mẫu câu quen thuộc</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <div className="bg-brand-light p-1 rounded-full"><Check className="w-5 h-5 text-brand-green" /></div>
-                <span className="text-gray-800 font-medium text-lg">Câu truyện giúp con ghi nhớ</span>
-              </li>
-            </ul>
+              Kỹ năng đọc là một trụ cột quan trọng trong việc học tiếng Anh. Giúp con thẩm thấu ngôn ngữ 1 cách tự nhiên và nâng cao khả năng nói cho trẻ.            </p>
+
           </div>
         </div>
       </section>
@@ -153,68 +141,227 @@ export function App() {
               <div className="inline-block bg-brand-light text-brand-green text-xs font-bold px-3 py-1 rounded-md uppercase tracking-wider mb-4">
                 Vấn đề của con
               </div>
+
               <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-6">
                 Khó khăn khi con tự đọc
               </h2>
+
               <p className="text-gray-600 mb-8 text-lg">
-                Với trẻ mới bắt đầu, vấn đề không phải là thiếu sách mà là con không chọn được sách phù hợp và các hướng dẫn cần thiết để đọc chủ động và hiệu quả.              </p>
-              <Link to="/practice" className="inline-flex items-center text-brand-green font-bold hover:text-brand-dark transition-colors">
+                Với trẻ mới bắt đầu, vấn đề không phải là thiếu sách mà là con không chọn được sách phù hợp và các hướng dẫn cần thiết để đọc chủ động và hiệu quả.
+              </p>
+
+              <Link
+                to="/practice"
+                className="inline-flex items-center text-brand-green font-bold hover:text-brand-dark transition-colors"
+              >
                 Tìm hiểu truyện đọc có hướng dẫn
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Link>
             </div>
 
-            <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FeatureCard
-                emoji="📚"
-                title="Không đúng trình độ"
-                description="Nếu câu dài, từ khó hoặc tranh không rõ, con dễ nản ngay từ những trang đầu tiên."
-                iconBg="bg-red-50"
-                iconBorder="border-red-100"
-              />
-              <FeatureCard
-                emoji="🎧"
-                title="Thiếu đọc mẫu"
-                description="Con không biết âm thanh của câu nên dễ ngại đọc thành tiếng."
-                iconBg="bg-blue-50"
-                iconBorder="border-blue-100"
-              />
-              <FeatureCard
-                emoji="✨"
-                title="Thiếu phản hồi"
-                description="Phụ huynh không chắc con đọc đúng chưa, cần sửa gì hoặc đã tiến bộ ở đâu."
-                iconBg="bg-yellow-50"
-                iconBorder="border-yellow-100"
-              />
-              <FeatureCard
-                emoji="💬"
-                title="Thiếu động lực"
-                description="Nếu không có hoạt động nói lại, reading khó đổi sang speaking."
-                iconBg="bg-purple-50"
-                iconBorder="border-purple-100"
-              />
+            <div className="lg:col-span-7">
+              {[
+                {
+                  emoji: "📚",
+                  title: "Sách vượt trình độ",
+                  description:
+                    "Nếu câu dài, từ khó hoặc tranh không rõ, con dễ nản ngay từ những trang đầu.",
+                  iconBg: "bg-red-50",
+                  iconBorder: "border-red-100",
+                },
+                {
+                  emoji: "🎧",
+                  title: "Không có hướng dẫn",
+                  description:
+                    "Con không biết âm thanh của câu nên dễ ngại đọc thành tiếng.",
+                  iconBg: "bg-blue-50",
+                  iconBorder: "border-blue-100",
+                },
+                {
+                  emoji: "✨",
+                  title: "Không có phản hồi",
+                  description:
+                    "Phụ huynh không chắc con đọc đúng chưa, cần sửa gì hoặc đã tiến bộ ở đâu.",
+                  iconBg: "bg-yellow-50",
+                  iconBorder: "border-yellow-100",
+                },
+              ].map((item, index) => null)}
+
+              {/* Mobile / Tablet: hiển thị dạng card thường để dễ đọc */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 lg:hidden">
+                {[
+                  {
+                    emoji: "📚",
+                    title: "Sách vượt trình độ",
+                    description:
+                      "Nếu câu dài, từ khó hoặc tranh không rõ, con dễ nản ngay từ những trang đầu.",
+                    iconBg: "bg-red-50",
+                    iconBorder: "border-red-100",
+                  },
+                  {
+                    emoji: "🎧",
+                    title: "Không có hướng dẫn",
+                    description:
+                      "Con không biết âm thanh của câu nên dễ ngại đọc thành tiếng.",
+                    iconBg: "bg-blue-50",
+                    iconBorder: "border-blue-100",
+                  },
+                  {
+                    emoji: "✨",
+                    title: "Không có phản hồi",
+                    description:
+                      "Phụ huynh không chắc con đọc đúng chưa, cần sửa gì hoặc đã tiến bộ ở đâu.",
+                    iconBg: "bg-yellow-50",
+                    iconBorder: "border-yellow-100",
+                  },
+                ].map((item, index) => (
+                  <button
+                    type="button"
+                    key={item.title}
+                    onClick={() => setActiveProblem(index)}
+                    className={`text-left rounded-[2rem] p-6 bg-white border shadow-sm transition-all duration-300 ${activeProblem === index
+                      ? "border-brand-green shadow-xl -translate-y-1"
+                      : "border-gray-100"
+                      }`}
+                  >
+                    <div
+                      className={`w-16 h-16 rounded-2xl ${item.iconBg} ${item.iconBorder} border flex items-center justify-center text-3xl mb-5`}
+                    >
+                      {item.emoji}
+                    </div>
+
+                    <h3 className="text-lg font-bold text-gray-900 mb-3">
+                      {item.title}
+                    </h3>
+
+                    <p className="text-gray-600 text-sm leading-6">
+                      {item.description}
+                    </p>
+                  </button>
+                ))}
+              </div>
+
+              {/* Desktop: card deck */}
+              <div className="hidden lg:block">
+                <div className="group relative min-h-[430px] flex items-center justify-center">
+                  <div className="relative flex items-center justify-center w-full">
+                    {[
+                      {
+                        emoji: "📚",
+                        title: "Sách vượt trình độ",
+                        description:
+                          "Nếu câu dài, từ khó hoặc tranh không rõ, con dễ nản ngay từ những trang đầu.",
+                        iconBg: "bg-red-50",
+                        iconBorder: "border-red-100",
+                        rotate: "-rotate-6",
+                        z: "z-10",
+                      },
+                      {
+                        emoji: "🎧",
+                        title: "Không có hướng dẫn",
+                        description:
+                          "Con không biết âm thanh của câu nên dễ ngại đọc thành tiếng.",
+                        iconBg: "bg-blue-50",
+                        iconBorder: "border-blue-100",
+                        rotate: "rotate-2",
+                        z: "z-20",
+                      },
+                      {
+                        emoji: "✨",
+                        title: "Không có phản hồi",
+                        description:
+                          "Phụ huynh không chắc con đọc đúng chưa, cần sửa gì hoặc đã tiến bộ ở đâu.",
+                        iconBg: "bg-yellow-50",
+                        iconBorder: "border-yellow-100",
+                        rotate: "rotate-6",
+                        z: "z-30",
+                      },
+                    ].map((item, index) => (
+                      <button
+                        type="button"
+                        key={item.title}
+                        onClick={() => setActiveProblem(index)}
+                        className={`
+                    relative w-[220px] min-h-[310px] text-left rounded-[2rem] p-6 bg-white
+                    border shadow-xl transition-all duration-500 ease-out
+                    -ml-[150px] first:ml-0
+                    group-hover:ml-4 group-hover:rotate-0
+                    hover:-translate-y-6 hover:scale-105 hover:z-50
+                    ${item.rotate}
+                    ${activeProblem === index
+                            ? "z-50 -translate-y-8 scale-105 border-brand-green"
+                            : `${item.z} border-gray-100`
+                          }
+                  `}
+                      >
+                        <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-white via-white to-gray-50 pointer-events-none" />
+
+                        <div className="relative z-10">
+                          <div
+                            className={`w-20 h-20 rounded-3xl ${item.iconBg} ${item.iconBorder} border flex items-center justify-center text-4xl mb-6 shadow-sm`}
+                          >
+                            {item.emoji}
+                          </div>
+
+                          <h3 className="text-xl font-bold text-gray-900 mb-3">
+                            {item.title}
+                          </h3>
+
+                          <p className="text-gray-600 text-sm leading-6">
+                            {item.description}
+                          </p>
+
+                          <div className="mt-7 h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                            <div
+                              className={`h-full rounded-full transition-all duration-500 ${activeProblem === index
+                                ? "w-full bg-brand-green"
+                                : "w-1/2 bg-gray-200"
+                                }`}
+                            />
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
           <div className="bg-brand-green rounded-[2rem] p-10 lg:p-16 text-center text-white relative shadow-2xl overflow-hidden">
             <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl pointer-events-none"></div>
-            <div className="absolute top-4 left-4 text-9xl text-white/10 font-serif pointer-events-none select-none">“</div>
-            <h3 className="text-2xl lg:text-3xl font-bold mb-4 relative z-10">Con cần giải pháp mới để có thể tự đọc truyện tiếng Anh</h3>
+            <div className="absolute top-4 left-4 text-9xl text-white/10 font-serif pointer-events-none select-none">
+              “
+            </div>
+
+            <h3 className="text-2xl lg:text-3xl font-bold mb-4 relative z-10">
+              Con cần giải pháp mới để có thể tự đọc truyện tiếng Anh
+            </h3>
+
             <p className="text-brand-light text-lg mb-10 max-w-2xl mx-auto relative z-10">
-              Với mỗi câu truyện, con cần được nghe mẫu, thực hành, nhận phản hồi cho bài đọc để việc đọc trở nên hào hứng và hiệu quả hơn.            </p>
+              Với mỗi câu truyện, con cần được nghe mẫu, thực hành, nhận phản hồi cho bài đọc để việc đọc trở nên hào hứng và hiệu quả hơn.
+            </p>
+
             <div className="flex flex-col items-center justify-center relative z-10">
               <div className="w-16 h-16 bg-gray-300 rounded-full mb-3 border-2 border-white overflow-hidden shadow-md">
-                <SafeImage src="/assets/home6.jpg" alt="Avatar" className="w-full h-full object-cover" />
+                <SafeImage
+                  src="/assets/home6.jpg"
+                  alt="Avatar"
+                  className="w-full h-full object-cover"
+                />
               </div>
+
               <span className="font-bold text-lg text-white">Teacher Mai Linh</span>
-              <p className="text-brand-light text-sm opacity-80">Readizen's Founder</p>
+              <p className="text-brand-light text-sm opacity-80">
+                Readizen's Founder
+              </p>
             </div>
           </div>
         </div>
       </section>
 
       {/* ================= SECTION 4: SO SÁNH SÁCH THƯỜNG VS SÁCH READIZEN ================= */}
-      <section className="bg-brand-cream py-16 lg:py-24 relative overflow-hidden font-sans">
+      {/* <section className="bg-brand-cream py-16 lg:py-24 relative overflow-hidden font-sans">
         <div className="max-w-6xl mx-auto px-6 lg:px-8 text-center relative z-10">
 
           <SectionHeader
@@ -224,13 +371,9 @@ export function App() {
           />
 
           <div className="relative mt-12 mb-10 flex flex-col md:flex-row gap-6 md:gap-0 items-center justify-center">
-
-            {/* Badge "VS" nằm giữa 2 thẻ (Chỉ đè lên trên ở Desktop, Mobile sẽ nằm giữa 2 khối) */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 hidden md:flex w-12 h-12 bg-white rounded-full shadow-xl items-center justify-center font-black text-gray-300 border border-gray-100">
               VS
             </div>
-
-            {/* === THẺ 1: SÁCH THƯỜNG (Bên trái) === */}
             <div className="w-full md:w-1/2 bg-white md:bg-gray-50/50 rounded-3xl md:rounded-r-none md:rounded-l-3xl p-6 lg:p-10 border border-gray-200 shadow-sm md:shadow-none transition-all duration-300">
               <h3 className="text-xl font-bold text-gray-500 mb-8 pb-4 border-b border-gray-200">
                 Sách tiếng Anh thông thường
@@ -247,9 +390,7 @@ export function App() {
               </ul>
             </div>
 
-            {/* === THẺ 2: SÁCH READIZEN (Bên phải - Nổi bật hơn) === */}
             <div className="w-full md:w-1/2 bg-white rounded-3xl p-6 lg:p-10 shadow-xl border-2 border-brand-green relative z-10 transform md:scale-105 hover:-translate-y-1 transition-all duration-500">
-              {/* Tag vương miện/Highlight */}
               <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-brand-green text-white text-[10px] font-black uppercase tracking-widest py-1.5 px-4 rounded-full shadow-md">
                 Giải pháp tối ưu
               </div>
@@ -285,169 +426,319 @@ export function App() {
           </div>
 
         </div>
-      </section>
+      </section> */}
 
       {/* ================= SECTION 5 & 6: QUY TRÌNH LUYỆN ĐỌC KHOA HỌC ================= */}
       <section className="bg-brand-cream py-20 lg:py-32 overflow-hidden relative font-sans">
-
-        {/* Background Decorators (Tạo không gian học thuật nhẹ nhàng) */}
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
-          <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-brand-green/5 blur-[120px]"></div>
-          <div className="absolute top-[60%] -right-[10%] w-[30%] h-[50%] rounded-full bg-brand-yellow/5 blur-[120px]"></div>
+        {/* Background Decorators */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+          <div className="absolute -top-[12%] -left-[10%] w-[42%] h-[42%] rounded-full bg-brand-green/5 blur-[120px]" />
+          <div className="absolute top-[50%] -right-[12%] w-[35%] h-[55%] rounded-full bg-brand-yellow/5 blur-[120px]" />
+          <div className="absolute bottom-[8%] left-[30%] w-[28%] h-[28%] rounded-full bg-white/60 blur-[100px]" />
         </div>
 
         <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center relative z-10">
-
-          {/* Phần Header đã được tinh chỉnh nội dung để bao hàm cả 2 ý nghĩa */}
           <SectionHeader
-            badge="Hệ sinh thái học tập 3-trong-1"
-            title="Quy trình luyện đọc chuẩn Khoa học"
-            subtitle="Sự kết hợp hoàn hảo giữa Sách giấy truyền thống, Công nghệ App thông minh và sự đồng hành của Giáo viên, giúp trẻ tự tin chinh phục tiếng Anh tại nhà."
+            badge="Thành phần Readizen"
+            title="Readizen, sách đọc 3 trong 1"
+            subtitle="Với Readizen, con dùng Sách để đọc, App để xem hướng dẫn và thực hành đọc, Giáo viên phản hồi kết quả đọc."
           />
 
-          <div className="relative mt-8 sm:mt-20">
-
-            {/* Đường dẫn kết nối "Dòng chảy học tập" (Hiện từ màn hình tablet trở lên) */}
-            <div className="hidden md:block absolute top-[2rem] lg:top-[2.5rem] left-[16%] right-[16%] z-0">
-              {/* Nét đứt */}
-              <div className="w-full h-0 border-t-[3px] border-dashed border-gray-300 relative"></div>
-              {/* Hiệu ứng ánh sáng chạy dọc theo đường line */}
-              <div className="absolute top-[-2px] left-0 w-full h-[4px] bg-gradient-to-r from-transparent via-brand-green to-transparent opacity-50"></div>
+          <div className="relative mt-12 sm:mt-20">
+            {/* Desktop flow line */}
+            <div className="hidden md:block absolute top-[4.25rem] left-[17%] right-[17%] z-0">
+              <div className="h-2 rounded-full bg-white shadow-inner border border-brand-green/10" />
+              <div className="absolute inset-y-0 left-0 w-full rounded-full bg-gradient-to-r from-brand-green/10 via-brand-green/30 to-brand-yellow/20" />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left relative z-10">
-
-              {/* ================= THẺ BƯỚC 1: BEFORE (APP) ================= */}
-              <div
-                className="relative pt-10 lg:pt-12 group cursor-pointer max-w-sm mx-auto md:max-w-none w-full"
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10 text-left relative z-10">
+              {/* ================= THẺ BƯỚC 1 ================= */}
+              <button
+                type="button"
                 onClick={() => setActiveStep(activeStep === 1 ? null : 1)}
+                className={`group relative text-left rounded-[2rem] transition-all duration-500 outline-none ${activeStep === 1
+                    ? "md:-translate-y-4"
+                    : "hover:md:-translate-y-3"
+                  }`}
               >
-                {/* Con số chỉ mục nổi lên trên */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 z-20">
-                  <div className="relative">
-                    <div className="absolute inset-0 bg-brand-green rounded-full animate-ping opacity-30"></div>
-                    <div className="w-16 h-16 rounded-full bg-brand-green text-white flex items-center justify-center font-black text-2xl shadow-xl border-4 border-white transition-transform duration-500 group-hover:scale-110 group-hover:bg-brand-dark">
-                      1
-                    </div>
+                {/* Step number */}
+                <div className="relative z-20 flex justify-center mb-5">
+                  <div
+                    className={`relative w-16 h-16 rounded-2xl flex items-center justify-center font-black text-2xl border-4 border-white shadow-xl transition-all duration-500 ${activeStep === 1
+                        ? "bg-brand-dark text-white rotate-3 scale-110"
+                        : "bg-brand-green text-white group-hover:bg-brand-dark group-hover:scale-110"
+                      }`}
+                  >
+                    <span className="absolute inset-0 rounded-2xl bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <span className="relative z-10">1</span>
                   </div>
                 </div>
 
-                {/* Thẻ nội dung chính (Ảnh nền + Kính mờ) */}
-                <div className="relative bg-white rounded-[2.5rem] overflow-hidden aspect-[4/5] shadow-lg group-hover:shadow-2xl transition-all duration-500 group-hover:-translate-y-2 border border-gray-100">
+                <div
+                  className={`relative bg-white rounded-[2rem] overflow-hidden shadow-lg border transition-all duration-500 ${activeStep === 1
+                      ? "border-brand-green shadow-2xl"
+                      : "border-white/80 group-hover:shadow-2xl group-hover:border-brand-green/30"
+                    }`}
+                >
+                  {/* Image */}
+                  <div className="relative aspect-[4/3] overflow-hidden">
+                    <SafeImage
+                      src="/assets/m1.jpg"
+                      alt="Học với App"
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                    />
 
-                  {/* Ảnh App */}
-                  <SafeImage src="/assets/home3.webp" alt="Học với App" className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-90 group-hover:opacity-100" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-brand-darker/90 via-brand-dark/45 to-transparent" />
 
-                  {/* Gradient phủ xanh thương hiệu từ dưới lên */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-brand-darker/95 via-brand-dark/65 to-transparent opacity-90 group-hover:opacity-95 transition-opacity duration-500"></div>
-
-                  {/* Nội dung text nổi */}
-                  <div className="absolute inset-0 p-6 sm:p-8 flex flex-col justify-end z-10">
-                    <div className="mb-auto mt-6">
-                      <h4 className="font-black text-brand-yellow text-xs sm:text-sm uppercase tracking-widest mb-1">Bước 1: Before</h4>
-
+                    <div className="absolute left-5 right-5 bottom-5">
+                      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-brand-green/30 backdrop-blur-md border border-brand-green/40 text-brand-cream text-sm font-bold shadow-lg">
+                        <span className="text-lg">📖</span> Sách giấy
+                      </div>
                     </div>
+                  </div>
 
-                    {/* Nhãn công cụ (Badge) */}
-                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-brand-green/30 backdrop-blur-md border border-brand-green/40 text-brand-cream text-xs sm:text-sm font-bold w-fit mb-4 group-hover:-translate-y-1 transition-transform duration-500">
-                      <span className="text-lg">📱</span> App Học tập
-                    </div>
+                  {/* Content */}
+                  <div className="relative p-6 lg:p-7">
+                    <p className="text-gray-600 text-sm sm:text-base leading-relaxed font-sans">
+                      Truyện ngắn, câu văn súc tích, tranh vẽ nhân vật vui vẻ tạo cảm hứng học tập cho con.
+                    </p>
 
-                    {/* Mô tả chi tiết (Hiệu ứng Slide up) */}
-                    <div className={`overflow-hidden transition-all duration-500 ease-in-out ${activeStep === 1 ? 'max-h-[150px] opacity-100' : 'max-h-[80px] opacity-100 lg:max-h-0 lg:opacity-0 group-hover:max-h-[150px] group-hover:opacity-100'}`}>
-                      <p className="text-gray-300 text-xs sm:text-sm leading-relaxed border-t border-white/10 pt-4 mt-1 font-sans">
-                        Thay vì tự đoán cách đọc, con làm quen từ mới, nghe âm thanh chuẩn bản xứ và cấu trúc câu thông qua App trước khi mở sách.
-                      </p>
+                    <div className="mt-6 h-2 rounded-full bg-brand-cream overflow-hidden">
+                      <div
+                        className={`h-full rounded-full bg-brand-green transition-all duration-500 ${activeStep === 1
+                            ? "w-full"
+                            : "w-1/3 group-hover:w-full"
+                          }`}
+                      />
                     </div>
                   </div>
                 </div>
-              </div>
+              </button>
 
-              {/* ================= THẺ BƯỚC 2: READING (SÁCH GIẤY) ================= */}
-              <div
-                className="relative pt-10 lg:pt-12 group cursor-pointer max-w-sm mx-auto md:max-w-none w-full"
+              {/* ================= THẺ BƯỚC 2 ================= */}
+              <button
+                type="button"
                 onClick={() => setActiveStep(activeStep === 2 ? null : 2)}
+                className={`group relative text-left rounded-[2rem] transition-all duration-500 outline-none ${activeStep === 2
+                    ? "md:-translate-y-4"
+                    : "hover:md:-translate-y-3"
+                  }`}
               >
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 z-20">
-                  <div className="relative">
-                    <div className="absolute inset-0 bg-brand-green rounded-full animate-ping opacity-30" style={{ animationDelay: '300ms' }}></div>
-                    <div className="w-16 h-16 rounded-full bg-brand-green text-white flex items-center justify-center font-black text-2xl shadow-xl border-4 border-white transition-transform duration-500 group-hover:scale-110 group-hover:bg-brand-dark">
-                      2
-                    </div>
+                {/* Step number */}
+                <div className="relative z-20 flex justify-center mb-5">
+                  <div
+                    className={`relative w-16 h-16 rounded-2xl flex items-center justify-center font-black text-2xl border-4 border-white shadow-xl transition-all duration-500 ${activeStep === 2
+                        ? "bg-brand-dark text-white rotate-3 scale-110"
+                        : "bg-brand-green text-white group-hover:bg-brand-dark group-hover:scale-110"
+                      }`}
+                  >
+                    <span className="absolute inset-0 rounded-2xl bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <span className="relative z-10">2</span>
                   </div>
                 </div>
 
-                <div className="relative bg-white rounded-[2.5rem] overflow-hidden aspect-[4/5] shadow-lg group-hover:shadow-2xl transition-all duration-500 group-hover:-translate-y-2 border border-gray-100">
+                <div
+                  className={`relative bg-white rounded-[2rem] overflow-hidden shadow-lg border transition-all duration-500 ${activeStep === 2
+                      ? "border-brand-green shadow-2xl"
+                      : "border-white/80 group-hover:shadow-2xl group-hover:border-brand-green/30"
+                    }`}
+                >
+                  {/* Image */}
+                  <div className="relative aspect-[4/3] overflow-hidden">
+                    <SafeImage
+                      src="/assets/home1.jpg"
+                      alt="Học với Sách"
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                    />
 
-                  {/* Ảnh Sách giấy */}
-                  <SafeImage src="/assets/home1.jpg" alt="Học với Sách" className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-90 group-hover:opacity-100" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-brand-darker/90 via-brand-dark/45 to-transparent" />
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-brand-darker/95 via-brand-dark/65 to-transparent opacity-90 group-hover:opacity-95 transition-opacity duration-500"></div>
-
-                  <div className="absolute inset-0 p-6 sm:p-8 flex flex-col justify-end z-10">
-                    <div className="mb-auto mt-6">
-                      <h4 className="font-black text-brand-yellow text-xs sm:text-sm uppercase tracking-widest mb-1">Bước 2: Read</h4>
-
+                    <div className="absolute left-5 right-5 bottom-5">
+                      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-brand-green/30 backdrop-blur-md border border-brand-green/40 text-brand-cream text-sm font-bold shadow-lg">
+                        <span className="text-lg">📱</span> App học tập
+                      </div>
                     </div>
+                  </div>
 
-                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-brand-green/30 backdrop-blur-md border border-brand-green/40 text-brand-cream text-xs sm:text-sm font-bold w-fit mb-4 group-hover:-translate-y-1 transition-transform duration-500">
-                      <span className="text-lg">📚</span> Sách Giấy
-                    </div>
+                  {/* Content */}
+                  <div className="relative p-6 lg:p-7">
+                    <p className="text-gray-600 text-sm sm:text-base leading-relaxed font-sans">
+                      App hướng dẫn con nghe mẫu, luyện đọc nhận phản hồi thay vì tự đoán cách đọc.
+                    </p>
 
-                    <div className={`overflow-hidden transition-all duration-500 ease-in-out ${activeStep === 2 ? 'max-h-[150px] opacity-100' : 'max-h-[80px] opacity-100 lg:max-h-0 lg:opacity-0 group-hover:max-h-[150px] group-hover:opacity-100'}`}>
-                      <p className="text-gray-300 text-xs sm:text-sm leading-relaxed border-t border-white/10 pt-4 mt-1 font-sans">
-                        Con chìm đắm vào câu chuyện với sách giấy, tranh vẽ sinh động tạo cảm hứng. App lúc này đóng vai trò người dẫn truyện đồng hành.
-                      </p>
+                    <div className="mt-6 h-2 rounded-full bg-brand-cream overflow-hidden">
+                      <div
+                        className={`h-full rounded-full bg-brand-green transition-all duration-500 ${activeStep === 2
+                            ? "w-full"
+                            : "w-2/3 group-hover:w-full"
+                          }`}
+                      />
                     </div>
                   </div>
                 </div>
-              </div>
+              </button>
 
-              {/* ================= THẺ BƯỚC 3: AFTER (APP & GIÁO VIÊN) ================= */}
-              <div
-                className="relative pt-10 lg:pt-12 group cursor-pointer max-w-sm mx-auto md:max-w-none w-full"
+              {/* ================= THẺ BƯỚC 3 ================= */}
+              <button
+                type="button"
                 onClick={() => setActiveStep(activeStep === 3 ? null : 3)}
+                className={`group relative text-left rounded-[2rem] transition-all duration-500 outline-none ${activeStep === 3
+                    ? "md:-translate-y-4"
+                    : "hover:md:-translate-y-3"
+                  }`}
               >
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 z-20">
-                  <div className="relative">
-                    <div className="absolute inset-0 bg-brand-green rounded-full animate-ping opacity-30" style={{ animationDelay: '600ms' }}></div>
-                    <div className="w-16 h-16 rounded-full bg-brand-green text-white flex items-center justify-center font-black text-2xl shadow-xl border-4 border-white transition-transform duration-500 group-hover:scale-110 group-hover:bg-brand-dark">
-                      3
-                    </div>
+                {/* Step number */}
+                <div className="relative z-20 flex justify-center mb-5">
+                  <div
+                    className={`relative w-16 h-16 rounded-2xl flex items-center justify-center font-black text-2xl border-4 border-white shadow-xl transition-all duration-500 ${activeStep === 3
+                        ? "bg-brand-dark text-white rotate-3 scale-110"
+                        : "bg-brand-green text-white group-hover:bg-brand-dark group-hover:scale-110"
+                      }`}
+                  >
+                    <span className="absolute inset-0 rounded-2xl bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <span className="relative z-10">3</span>
                   </div>
                 </div>
 
-                <div className="relative bg-white rounded-[2.5rem] overflow-hidden aspect-[4/5] shadow-lg group-hover:shadow-2xl transition-all duration-500 group-hover:-translate-y-2 border border-gray-100">
+                <div
+                  className={`relative bg-white rounded-[2rem] overflow-hidden shadow-lg border transition-all duration-500 ${activeStep === 3
+                      ? "border-brand-green shadow-2xl"
+                      : "border-white/80 group-hover:shadow-2xl group-hover:border-brand-green/30"
+                    }`}
+                >
+                  {/* Image */}
+                  <div className="relative aspect-[4/3] overflow-hidden">
+                    <SafeImage
+                      src="/assets/home2.jpg"
+                      alt="Đánh giá từ Giáo viên"
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                    />
 
-                  {/* Ảnh Giáo viên/Feedback */}
-                  <SafeImage src="/assets/home2.jpg" alt="Đánh giá từ Giáo viên" className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-90 group-hover:opacity-100" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-brand-darker/90 via-brand-dark/45 to-transparent" />
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-brand-darker/95 via-brand-dark/65 to-transparent opacity-90 group-hover:opacity-95 transition-opacity duration-500"></div>
-
-                  <div className="absolute inset-0 p-6 sm:p-8 flex flex-col justify-end z-10">
-                    <div className="mb-auto mt-6">
-                      <h4 className="font-black text-brand-yellow text-xs sm:text-sm uppercase tracking-widest mb-1">Bước 3: After</h4>
-
-                    </div>
-
-                    <div className="flex flex-wrap gap-2 mb-4 group-hover:-translate-y-1 transition-transform duration-500 font-sans">
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-green/30 backdrop-blur-md border border-brand-green/40 text-brand-cream text-xs sm:text-sm font-bold">
-                        <span className="text-lg">👩‍🏫</span> Giáo viên
+                    <div className="absolute left-5 right-5 bottom-5">
+                      <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-brand-green/30 backdrop-blur-md border border-brand-green/40 text-brand-cream text-sm font-bold shadow-lg">
+                        <span className="text-lg">👩‍🏫</span> Giáo viên thực
                       </div>
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-brand-dark/30 backdrop-blur-md border border-brand-dark/40 text-brand-cream text-xs sm:text-sm font-bold">
-                        <span className="text-lg">🤖</span> AI
-                      </div>
-                    </div>
-
-                    <div className={`overflow-hidden transition-all duration-500 ease-in-out ${activeStep === 3 ? 'max-h-[150px] opacity-100' : 'max-h-[80px] opacity-100 lg:max-h-0 lg:opacity-0 group-hover:max-h-[150px] group-hover:opacity-100'}`}>
-                      <p className="text-gray-300 text-xs sm:text-sm leading-relaxed border-t border-white/10 pt-4 mt-1 font-sans">
-                        Thực hành thu âm bài nói. Cả hệ thống Trí tuệ nhân tạo và Giáo viên thực sẽ cùng đánh giá, chấm điểm và nhận xét để con sửa lỗi tức thì.
-                      </p>
                     </div>
                   </div>
+
+                  {/* Content */}
+                  <div className="relative p-6 lg:p-7">
+                    <p className="text-gray-600 text-sm sm:text-base leading-relaxed font-sans">
+                      Giáo viên đánh giá bài đọc của con, nhận xét điểm mạnh, điểm cần cải thiện qua mỗi bài đọc.
+                    </p>
+
+                    <div className="mt-6 h-2 rounded-full bg-brand-cream overflow-hidden">
+                      <div
+                        className={`h-full rounded-full bg-brand-green transition-all duration-500 ${activeStep === 3
+                            ? "w-full"
+                            : "w-full"
+                          }`}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ================= SECTION 6.5: QUY TRÌNH ĐỌC 3 BƯỚC ================= */}
+      <section className="bg-white py-16 lg:py-24 relative overflow-hidden font-sans">
+        {/* Subtle background decoration */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:24px_24px] opacity-35" />
+          <div className="absolute top-10 right-10 w-72 h-72 bg-brand-light/20 rounded-full blur-3xl opacity-50" />
+          <div className="absolute bottom-10 left-10 w-80 h-80 bg-yellow-50 rounded-full blur-3xl opacity-50" />
+        </div>
+
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center relative z-10">
+          <SectionHeader
+            badge="Học tập"
+            title="Quy trình đọc 3 bước"
+            subtitle="Quy trình được thiết kế dành riêng cho phụ huynh và con tự đọc, học tại nhà. Đặc biệt là những phụ huynh chưa tự tin về trình độ tiếng Anh của bản thân."
+          />
+
+          <div className="relative mt-16">
+            {/* Connection Line */}
+            <div className="hidden lg:block absolute top-[64px] left-[15%] right-[15%] h-[2px] bg-gradient-to-r from-brand-green/20 via-brand-yellow/30 to-brand-green/20 z-0 pointer-events-none" />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 text-left relative z-10">
+              {/* Step 1 */}
+              <div className="group relative bg-white/90 backdrop-blur-sm p-8 rounded-[2.5rem] shadow-sm hover:shadow-2xl hover:shadow-brand-green/5 border border-gray-100/80 hover:border-brand-green/20 flex flex-col items-center text-center hover:-translate-y-2 transition-all duration-500 ease-out overflow-hidden">
+                {/* Large Background number watermark */}
+                <div className="absolute -bottom-4 -right-2 text-8xl font-black text-gray-50/80 select-none pointer-events-none group-hover:text-gray-100/90 group-hover:-translate-y-2 transition-all duration-500 ease-out">
+                  01
+                </div>
+
+                <div className="relative z-10 flex flex-col items-center">
+                  <div className="w-16 h-16 rounded-full bg-brand-green text-white flex items-center justify-center mb-6 shadow-md border-4 border-white group-hover:scale-110 group-hover:bg-brand-dark transition-all duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 3a9 9 0 0 0-9 9v5a3 3 0 0 0 3 3h1a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2H5a7 7 0 0 1 14 0h-2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h1a3 3 0 0 0 3-3v-5a9 9 0 0 0-9-9z"></path>
+                    </svg>
+                  </div>
+
+                  <h4 className="font-extrabold text-gray-900 text-xl mb-1">Before</h4>
+                  <div className="inline-block text-xs font-bold px-3 py-1 rounded-full bg-brand-light text-brand-green mb-4">
+                    Học với App
+                  </div>
+                  <p className="text-gray-500 text-sm leading-relaxed max-w-xs">
+                    Con làm quen từ mới, âm thanh và cách đọc của cuốn sách thông qua App.
+                  </p>
                 </div>
               </div>
 
+              {/* Step 2 */}
+              <div className="group relative bg-white/90 backdrop-blur-sm p-8 rounded-[2.5rem] shadow-sm hover:shadow-2xl hover:shadow-brand-green/5 border border-gray-100/80 hover:border-brand-green/20 flex flex-col items-center text-center hover:-translate-y-2 transition-all duration-500 ease-out overflow-hidden">
+                {/* Large Background number watermark */}
+                <div className="absolute -bottom-4 -right-2 text-8xl font-black text-gray-50/80 select-none pointer-events-none group-hover:text-gray-100/90 group-hover:-translate-y-2 transition-all duration-500 ease-out">
+                  02
+                </div>
+
+                <div className="relative z-10 flex flex-col items-center">
+                  <div className="w-16 h-16 rounded-full bg-brand-green text-white flex items-center justify-center mb-6 shadow-md border-4 border-white group-hover:scale-110 group-hover:bg-brand-dark transition-all duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H11a2 2 0 0 1 2 2v16.25A4.98 4.98 0 0 0 9.5 19H6.5A2.5 2.5 0 0 1 4 16.5v-12z"></path>
+                      <path d="M20 4.5A2.5 2.5 0 0 0 17.5 2H13a2 2 0 0 0-2 2v16.25A4.98 4.98 0 0 1 14.5 19h3A2.5 2.5 0 0 0 20 16.5v-12z"></path>
+                    </svg>
+                  </div>
+
+                  <h4 className="font-extrabold text-gray-900 text-xl mb-1">Reading</h4>
+                  <div className="inline-block text-xs font-bold px-3 py-1 rounded-full bg-brand-light text-brand-green mb-4">
+                    Học với Sách
+                  </div>
+                  <p className="text-gray-500 text-sm leading-relaxed max-w-xs">
+                    Trải nghiệm đọc hoàn toàn với Sách giấy, đi kèm with hướng dẫn đọc từng câu từ App.
+                  </p>
+                </div>
+              </div>
+
+              {/* Step 3 */}
+              <div className="group relative bg-white/90 backdrop-blur-sm p-8 rounded-[2.5rem] shadow-sm hover:shadow-2xl hover:shadow-brand-green/5 border border-gray-100/80 hover:border-brand-green/20 flex flex-col items-center text-center hover:-translate-y-2 transition-all duration-500 ease-out overflow-hidden sm:col-span-2 lg:col-span-1">
+                {/* Large Background number watermark */}
+                <div className="absolute -bottom-4 -right-2 text-8xl font-black text-gray-50/80 select-none pointer-events-none group-hover:text-gray-100/90 group-hover:-translate-y-2 transition-all duration-500 ease-out">
+                  03
+                </div>
+
+                <div className="relative z-10 flex flex-col items-center">
+                  <div className="w-16 h-16 rounded-full bg-brand-green text-white flex items-center justify-center mb-6 shadow-md border-4 border-white group-hover:scale-110 group-hover:bg-brand-dark transition-all duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-7 h-7" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 14a4 4 0 0 0 4-4V6a4 4 0 1 0-8 0v4a4 4 0 0 0 4 4z"></path>
+                      <path d="M19 10a1 1 0 1 0-2 0 5 5 0 0 1-10 0 1 1 0 1 0-2 0 7 7 0 0 0 6 6.93V20H8a1 1 0 1 0 0 2h8a1 1 0 1 0 0-2h-3v-3.07A7 7 0 0 0 19 10z"></path>
+                    </svg>
+                  </div>
+
+                  <h4 className="font-extrabold text-gray-900 text-xl mb-1">After</h4>
+                  <div className="inline-block text-xs font-bold px-3 py-1 rounded-full bg-brand-light text-brand-green mb-4">
+                    Học với App
+                  </div>
+                  <p className="text-gray-500 text-sm leading-relaxed max-w-xs">
+                    Thực hành bài nói và nhận đánh giá từ hệ thống AI và Giáo viên thực.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -39,7 +39,7 @@ export default function About() {
             </div>
 
             <h1 className="text-4xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-5 tracking-tight">
-              Nâng cao năng lực đọc sách tiếng Anh cho trẻ em Việt Nam ngay tại nhà
+              Kiến tạo văn hóa đọc sách tiếng Anh cho trẻ em Việt Nam
             </h1>
 
             <p className="text-xl lg:text-2xl text-gray-800 mb-8 max-w-2xl leading-relaxed font-medium">
@@ -165,7 +165,7 @@ export default function About() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <SectionHeader
             badge="Quan điểm giáo dục"
-            title="Đọc được trước khi đọc giỏi"
+            title="Thích đọc, Đọc được và Đọc giỏi"
             subtitle="Ở giai đoạn đầu, điều quan trọng nhất không phải là con đọc thật nhiều hay đọc thật khó. Con cần những thành công nhỏ: đọc được một câu, hiểu được một tranh, trả lời được một câu hỏi và nói lại được một ý."
           />
 
@@ -286,8 +286,8 @@ export default function About() {
         <div className="max-w-6xl mx-auto px-6 lg:px-8 text-center">
           <SectionHeader
             badge="Sứ mệnh & tầm nhìn"
-            title="Hình thành văn hóa Reading tiếng Anh"
-            subtitle="Bắt đầu từ 100.000 trẻ đọc trọn vẹn 10 cuốn truyện tiếng Anh đầu tiên, không chỉ đọc chữ, mà hiểu câu chuyện, đọc thành tiếng và nói lại được điều mình đã đọc."
+            title="Văn hóa đọc sách tiếng Anh cho em Việt Nam"
+            subtitle="Vì mục tiêu 10.000 trẻ em Việt Nam đọc sách tiếng Anh theo cách trọn vẹn."
           />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">

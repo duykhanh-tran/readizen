@@ -111,7 +111,7 @@ export default function Profile() {
   ];
 
   return (
-    <div className="min-h-screen bg-brand-cream/30 flex flex-col font-sans">
+    <div className="min-h-screen bg-brand-cream/30 flex flex-col font-sans pt-16 lg:pt-[72px]">
       <Header />
 
       <main className="flex-grow max-w-7xl mx-auto px-6 py-10 w-full text-left">

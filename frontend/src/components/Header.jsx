@@ -11,11 +11,19 @@ const Header = () => {
   const navigate = useNavigate();
 
   const [isVisible, setIsVisible] = useState(true);
+  const [isScrolled, setIsScrolled] = useState(false);
   const lastScrollY = useRef(0);
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
+
+      // Set scrolled state
+      if (currentScrollY > 20) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
 
       // Hide header if scrolling down and past 80px, show if scrolling up
       if (currentScrollY > lastScrollY.current && currentScrollY > 80) {
@@ -80,11 +88,12 @@ const Header = () => {
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   };
 
+  const isSolid = isScrolled || isMobileMenuOpen;
+
   return (
-    <div className="h-16 lg:h-[72px]">
-      <header className={`bg-[#FFFDF3] w-full fixed top-0 left-0 right-0 border-b border-[#EAE5D1] shadow-sm z-50 transition-transform duration-300 ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}>
-        <div className="px-6 py-4 flex items-center justify-between max-w-7xl mx-auto">
-          {/* Cột trái: Logo */}
+    <header className={`w-full fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isVisible ? 'translate-y-0' : '-translate-y-full'} ${isSolid ? 'bg-[#FFFDF3]/95 backdrop-blur-md border-b border-[#EAE5D1] shadow-sm' : 'bg-transparent border-b border-transparent shadow-none'}`}>
+      <div className="px-6 py-4 flex items-center justify-between max-w-7xl mx-auto">
+        {/* Cột trái: Logo */}
           <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex items-center cursor-pointer flex-shrink-0">
             <img src="/assets/logo.png" alt="Readizen Logo" className="h-6 lg:h-8 w-auto object-contain" />
           </Link>
@@ -266,7 +275,6 @@ const Header = () => {
           </div>
         )}
       </header>
-    </div>
   );
 };
 
