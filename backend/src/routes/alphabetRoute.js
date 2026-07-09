@@ -1,0 +1,28 @@
+import express from 'express';
+import { 
+    getAlphabetList, 
+    getAlphabetLessonById, 
+    saveAlphabetScore, 
+    getAdminAlphabetList, 
+    getAdminAlphabetById, 
+    createAlphabetLesson, 
+    updateAlphabetLesson, 
+    deleteAlphabetLesson
+} from '../controllers/alphabetController.js';
+import { verifyToken, verifyAdmin } from '../middlewares/authMiddleware.js';
+
+const router = express.Router();
+
+// Client routes
+router.get('/', verifyToken, getAlphabetList);
+router.get('/:id', verifyToken, getAlphabetLessonById);
+router.post('/score', verifyToken, saveAlphabetScore);
+
+// Admin routes (all protected by verifyAdmin)
+router.get('/admin/all', verifyAdmin, getAdminAlphabetList);
+router.get('/admin/:id', verifyAdmin, getAdminAlphabetById);
+router.post('/admin', verifyAdmin, createAlphabetLesson);
+router.put('/admin/:id', verifyAdmin, updateAlphabetLesson);
+router.delete('/admin/:id', verifyAdmin, deleteAlphabetLesson);
+
+export default router;

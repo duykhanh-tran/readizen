@@ -13,6 +13,7 @@ import chatRoutes from './routes/chatRoute.js';
 import adminRoutes from './routes/adminRoute.js';
 import lessonRoutes from './routes/lessonRoute.js';
 import userRoutes from './routes/userRoute.js';
+import alphabetRoutes from './routes/alphabetRoute.js';
 import Message from './models/Message.js';
 
 dotenv.config();
@@ -54,6 +55,7 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/lessons', lessonRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/alphabet', alphabetRoutes);
 
 const server = http.createServer(app);
 const io = new Server(server, {

@@ -33,5 +33,7 @@ const userScoreSchema = new mongoose.Schema({
     timestamps: true
 });
 
+userScoreSchema.index({ userId: 1, completedAt: -1 });
+
 const UserScore = mongoose.model('UserScore', userScoreSchema);
 export default UserScore;

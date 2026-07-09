@@ -53,25 +53,29 @@ export const getChatUsers = async (req, res) => {
             return res.status(403).json({ message: "Truy cập bị từ chối. Bạn không có quyền quản trị." });
         }
 
-        // Tối ưu hóa hiệu năng: Thay thế N+1 Query lồng nhau bằng 1 câu truy vấn Aggregation Pipeline duy nhất
+        // Tối ưu hóa hiệu năng: Thay thế việc JOIN toàn bộ tin nhắn bằng Subpipeline Lookup chỉ lấy tin nhắn mới nhất
         const chatList = await User.aggregate([
-            // Stage 1: Liên kết (lookup) sang bảng messages để thu thập tất cả tin nhắn của từng người dùng
+            // Stage 1: Chỉ lookup tin nhắn mới nhất của từng người dùng bằng subpipeline và index
             {
                 $lookup: {
                     from: "messages",
-                    localField: "_id",
-                    foreignField: "userId",
-                    as: "allMessages"
+                    let: { userId: "$_id" },
+                    pipeline: [
+                        { $match: { $expr: { $eq: ["$userId", "$$userId"] } } },
+                        { $sort: { createdAt: -1 } },
+                        { $limit: 1 }
+                    ],
+                    as: "lastMessageArr"
                 }
             },
-            // Stage 2: Tính toán và trích xuất tin nhắn cuối cùng (lấy phần tử cuối của mảng allMessages vì messages được insert tuần tự)
+            // Stage 2: Trích xuất tin nhắn cuối cùng từ mảng kết quả
             {
                 $project: {
                     userId: "$_id",
                     userName: "$fullName",
                     email: "$email",
                     avatarUrl: "$avatarUrl",
-                    lastMessageObj: { $arrayElemAt: [{ $slice: ["$allMessages", -1] }, 0] }
+                    lastMessageObj: { $arrayElemAt: ["$lastMessageArr", 0] }
                 }
             },
             // Stage 3: Định dạng cấu trúc trả về, xử lý giá trị mặc định khi chưa có cuộc hội thoại và kiểm tra trạng thái chưa đọc (unread)

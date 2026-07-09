@@ -26,7 +26,9 @@ export const uploadToCloudinary = (fileBuffer, originalName, mimeType, folder = 
     // BẮT BUỘC phân loại resource_type
     const isPdf = mimeType === 'application/pdf' || 
                   (originalName && originalName.toLowerCase().endsWith('.pdf'));
-    const resourceType = isPdf ? 'raw' : 'image';
+    const isAudio = mimeType.startsWith('audio/') || 
+                    (originalName && (originalName.toLowerCase().endsWith('.mp3') || originalName.toLowerCase().endsWith('.wav') || originalName.toLowerCase().endsWith('.webm')));
+    const resourceType = isPdf ? 'raw' : (isAudio ? 'video' : 'image');
 
     if (isMock) {
       console.warn(`⚠️ Cloudinary is not configured. Using fallback mock URL for resource type: ${resourceType}.`);
@@ -34,6 +36,8 @@ export const uploadToCloudinary = (fileBuffer, originalName, mimeType, folder = 
       const mockFileName = `mock_${timestamp}`;
       if (isPdf) {
         resolve(`https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf?mock_upload=${mockFileName}`);
+      } else if (isAudio) {
+        resolve(`https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3?mock_upload=${mockFileName}`);
       } else {
         resolve(`https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?mock_upload=${mockFileName}`);
       }

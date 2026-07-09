@@ -88,3 +88,20 @@ export const userScoreValidationRules = [
         .isFloat({ min: 0, max: 100 }).withMessage('Điểm trung bình phải nằm trong khoảng 0-100.'),
     handleValidationErrors
 ];
+
+export const formSubmitValidationRules = [
+    body('phone')
+        .trim()
+        .matches(/(0[3|5|7|8|9])+([0-9]{8})\b/).withMessage('Số điện thoại không hợp lệ tại Việt Nam.'),
+    body('courseInterest')
+        .trim()
+        .notEmpty().withMessage('Khóa học quan tâm không được để trống.'),
+    body('currentLevel')
+        .optional()
+        .trim(),
+    body('message')
+        .optional()
+        .trim()
+        .isLength({ max: 1000 }).withMessage('Tin nhắn tối đa 1000 ký tự.'),
+    handleValidationErrors
+];

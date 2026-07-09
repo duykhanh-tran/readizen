@@ -94,187 +94,187 @@ const Header = () => {
     <header className={`w-full fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isVisible ? 'translate-y-0' : '-translate-y-full'} ${isSolid ? 'bg-[#FFFDF3]/95 backdrop-blur-md border-b border-[#EAE5D1] shadow-sm' : 'bg-transparent border-b border-transparent shadow-none'}`}>
       <div className="px-6 py-4 flex items-center justify-between max-w-7xl mx-auto">
         {/* Cột trái: Logo */}
-          <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex items-center cursor-pointer flex-shrink-0">
-            <img src="/assets/logo.png" alt="Readizen Logo" className="h-6 lg:h-8 w-auto object-contain" />
-          </Link>
+        <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex items-center cursor-pointer flex-shrink-0">
+          <img src="/assets/logo.png" alt="Readizen Logo" className="h-6 lg:h-8 w-auto object-contain" />
+        </Link>
 
-          {/* Cột giữa: Navigation Links */}
-          <nav className="hidden lg:flex items-center space-x-10">
-            <NavItem text="Phương pháp" hasDropdown dropdownItems={methodDropdownItems} />
-            <NavItem text="Thư viện" to="/library" />
-            {/* <NavItem text="Sản phẩm" to="/product" /> */}
-            <NavItem text="Về Readizen" to="/about" />
-          </nav>
+        {/* Cột giữa: Navigation Links */}
+        <nav className="hidden lg:flex items-center space-x-10">
+          <NavItem text="Phương pháp" hasDropdown dropdownItems={methodDropdownItems} />
+          <NavItem text="Thư viện" to="/library" />
+          <NavItem text="ABC" to="/alphabet" />
+          {/* <NavItem text="Sản phẩm" to="/product" /> */}
+          <NavItem text="Về Readizen" to="/about" />
+        </nav>
 
-          {/* Cột phải: CTA Button & Mobile Toggle */}
-          <div className="flex items-center gap-1 lg:gap-3">
-            {/* Nút đăng nhập/đăng ký hoặc User Profile (Desktop) */}
-            <div className="hidden lg:flex items-center gap-3">
-              {isAuthenticated ? (
-                <div className="relative" ref={dropdownRef}>
-                  <button
-                    onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
-                    className="flex items-center gap-2 bg-brand-light/50 border border-brand-green/20 hover:bg-brand-light py-2 px-4 rounded-full transition duration-200 cursor-pointer"
-                  >
-                    {user?.avatarUrl ? (
-                      <img
-                        src={user.avatarUrl}
-                        alt="Avatar"
-                        className="w-8 h-8 rounded-full object-cover border border-brand-green/20 shadow-sm"
-                      />
-                    ) : (
-                      <div className="w-8 h-8 rounded-full bg-brand-green text-white font-bold flex items-center justify-center text-xs shadow-sm">
-                        {getInitials(user?.fullName || user?.username)}
-                      </div>
-                    )}
-                    <span className="font-bold text-gray-800 text-sm">
-                      {user?.fullName || user?.username || 'Tài khoản'}
-                    </span>
-                    <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${isUserDropdownOpen ? 'rotate-180' : ''}`} />
-                  </button>
-
-                  {/* Dropdown Menu */}
-                  {isUserDropdownOpen && (
-                    <div className="absolute right-0 mt-3 w-64 bg-white border border-[#EAE5D1] rounded-2xl shadow-xl py-2 z-50 animate-in fade-in-50 slide-in-from-top-2 duration-150">
-                      <div className="px-4 py-3 border-b border-[#FAF7EE]">
-                        <p className="text-[10px] uppercase tracking-wider font-semibold text-gray-400">Đăng nhập dưới tên</p>
-                        <p className="font-bold text-gray-800 text-sm truncate mt-1">{user?.fullName || user?.username}</p>
-                        <p className="text-xs text-gray-500 truncate mt-0.5">{user?.email}</p>
-                      </div>
-
-                      <div className="p-1">
-                        {user?.role === 'admin' ? (
-                          <Link
-                            to="/admin"
-                            onClick={() => setIsUserDropdownOpen(false)}
-                            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:text-brand-green hover:bg-[#FAF7EE] rounded-xl transition duration-150"
-                          >
-                            <Shield className="w-4 h-4" />
-                            <span>Trang quản trị</span>
-                          </Link>
-                        ) : (
-                          <Link
-                            to="/profile"
-                            onClick={() => setIsUserDropdownOpen(false)}
-                            className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:text-brand-green hover:bg-[#FAF7EE] rounded-xl transition duration-150"
-                          >
-                            <User className="w-4 h-4" />
-                            <span>Trang cá nhân</span>
-                          </Link>
-                        )}
-
-                        <button
-                          onClick={handleLogout}
-                          className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-xl transition duration-150 text-left cursor-pointer"
-                        >
-                          <LogOut className="w-4 h-4" />
-                          <span>Đăng xuất</span>
-                        </button>
-                      </div>
+        {/* Cột phải: CTA Button & Mobile Toggle */}
+        <div className="flex items-center gap-1 lg:gap-3">
+          {/* Nút đăng nhập/đăng ký hoặc User Profile (Desktop) */}
+          <div className="hidden lg:flex items-center gap-3">
+            {isAuthenticated ? (
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setIsUserDropdownOpen(!isUserDropdownOpen)}
+                  className="flex items-center gap-2 bg-brand-light/50 border border-brand-green/20 hover:bg-brand-light py-2 px-4 rounded-full transition duration-200 cursor-pointer"
+                >
+                  {user?.avatarUrl ? (
+                    <img
+                      src={user.avatarUrl}
+                      alt="Avatar"
+                      className="w-8 h-8 rounded-full object-cover border border-brand-green/20 shadow-sm"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-brand-green text-white font-bold flex items-center justify-center text-xs shadow-sm">
+                      {getInitials(user?.fullName || user?.username)}
                     </div>
                   )}
-                </div>
-              ) : (
-                <div className="flex items-center gap-3">
-                  <Link to="/login" className="text-[#333333] hover:text-brand-green font-bold py-2 px-4 rounded-full text-sm transition-colors duration-200">
-                    Đăng nhập
-                  </Link>
-                  <Link to="/register" className="bg-brand-green hover:bg-brand-dark text-white font-bold py-2.5 px-6 rounded-full text-sm transition-colors duration-200 shadow-md hover:shadow-lg">
-                    Đăng ký
-                  </Link>
-                </div>
-              )}
-            </div>
+                  <span className="font-bold text-gray-800 text-sm">
+                    {user?.fullName || user?.username || 'Tài khoản'}
+                  </span>
+                  <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${isUserDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
 
-            {/* Nút menu hamburger cho màn hình mobile */}
-            <button
-              className="lg:hidden p-2 text-brand-green hover:bg-[#EAE5D1] rounded-md transition-colors"
-              onClick={toggleMobileMenu}
-            >
-              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
-          </div>
-        </div>
+                {/* Dropdown Menu */}
+                {isUserDropdownOpen && (
+                  <div className="absolute right-0 mt-3 w-64 bg-white border border-[#EAE5D1] rounded-2xl shadow-xl py-2 z-50 animate-in fade-in-50 slide-in-from-top-2 duration-150">
+                    <div className="px-4 py-3 border-b border-[#FAF7EE]">
+                      <p className="text-[10px] uppercase tracking-wider font-semibold text-gray-400">Đăng nhập dưới tên</p>
+                      <p className="font-bold text-gray-800 text-sm truncate mt-1">{user?.fullName || user?.username}</p>
+                      <p className="text-xs text-gray-500 truncate mt-0.5">{user?.email}</p>
+                    </div>
 
-        {/* Mobile Menu Dropdown */}
-        {isMobileMenuOpen && (
-          <div className="lg:hidden absolute top-full left-0 w-full bg-[#FFFDF3] border-b border-[#EAE5D1] shadow-2xl flex flex-col py-4 px-6 space-y-2 animate-in slide-in-from-top-2 duration-200 z-50">
-            <MobileNavItem text="Phương pháp" hasDropdown dropdownItems={methodDropdownItems} onClick={() => setIsMobileMenuOpen(false)} />
-            <MobileNavItem text="Thư viện" to="/library" onClick={() => setIsMobileMenuOpen(false)} />
-            {/* <MobileNavItem text="Sản phẩm" to="/product" onClick={() => setIsMobileMenuOpen(false)} /> */}
-            <MobileNavItem text="Về Readizen" to="/about" onClick={() => setIsMobileMenuOpen(false)} />
+                    <div className="p-1">
+                      {user?.role === 'admin' ? (
+                        <Link
+                          to="/admin"
+                          onClick={() => setIsUserDropdownOpen(false)}
+                          className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:text-brand-green hover:bg-[#FAF7EE] rounded-xl transition duration-150"
+                        >
+                          <Shield className="w-4 h-4" />
+                          <span>Trang quản trị</span>
+                        </Link>
+                      ) : (
+                        <Link
+                          to="/profile"
+                          onClick={() => setIsUserDropdownOpen(false)}
+                          className="flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:text-brand-green hover:bg-[#FAF7EE] rounded-xl transition duration-150"
+                        >
+                          <User className="w-4 h-4" />
+                          <span>Trang cá nhân</span>
+                        </Link>
+                      )}
 
-            <div className="pt-6 pb-2 border-t border-[#EAE5D1] flex flex-col gap-3">
-              {isAuthenticated ? (
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2.5 px-2 py-1">
-                    {user?.avatarUrl ? (
-                      <img
-                        src={user.avatarUrl}
-                        alt="Avatar"
-                        className="w-10 h-10 rounded-full object-cover border border-brand-green/20 shadow-sm"
-                      />
-                    ) : (
-                      <div className="w-10 h-10 rounded-full bg-brand-green text-white font-bold flex items-center justify-center text-sm shadow-sm">
-                        {getInitials(user?.fullName || user?.username)}
-                      </div>
-                    )}
-                    <div>
-                      <div className="font-bold text-gray-800 text-sm">{user?.fullName || user?.username}</div>
-                      <div className="text-xs text-gray-500 truncate">{user?.email}</div>
+                      <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-xl transition duration-150 text-left cursor-pointer"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        <span>Đăng xuất</span>
+                      </button>
                     </div>
                   </div>
-
-                  {user?.role === 'admin' ? (
-                    <Link
-                      to="/admin"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="flex items-center justify-center gap-2 w-full bg-brand-light text-brand-green font-bold py-3 px-4 rounded-full text-sm transition-colors duration-200 border border-brand-green/20"
-                    >
-                      <Shield className="w-4 h-4" />
-                      <span>Trang quản trị</span>
-                    </Link>
-                  ) : (
-                    <Link
-                      to="/profile"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="flex items-center justify-center gap-2 w-full bg-brand-light text-brand-green font-bold py-3 px-4 rounded-full text-sm transition-colors duration-200 border border-brand-green/20"
-                    >
-                      <User className="w-4 h-4" />
-                      <span>Trang cá nhân</span>
-                    </Link>
-                  )}
-
-                  <button
-                    onClick={handleLogout}
-                    className="w-full flex items-center justify-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3 px-4 rounded-full text-sm transition-colors duration-200 cursor-pointer"
-                  >
-                    <LogOut className="w-4 h-4" />
-                    <span>Đăng xuất</span>
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <Link
-                    to="/login"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="w-full text-[#333333] hover:text-brand-green text-center font-bold py-3 px-4 rounded-full text-sm transition-colors duration-200 border border-gray-200 block"
-                  >
-                    Đăng nhập
-                  </Link>
-                  <Link
-                    to="/register"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="w-full bg-brand-green hover:bg-brand-dark text-white text-center font-bold py-3 px-4 rounded-full text-sm transition-colors duration-200 shadow-md block"
-                  >
-                    Đăng ký
-                  </Link>
-                </>
-              )}
-            </div>
+                )}
+              </div>
+            ) : (
+              <div className="flex items-center gap-3">
+                <Link to="/login" className="text-[#333333] hover:text-brand-green font-bold py-2 px-4 rounded-full text-sm transition-colors duration-200">
+                  Đăng nhập
+                </Link>
+                <Link to="/register" className="bg-brand-green hover:bg-brand-dark text-white font-bold py-2.5 px-6 rounded-full text-sm transition-colors duration-200 shadow-md hover:shadow-lg">
+                  Đăng ký
+                </Link>
+              </div>
+            )}
           </div>
-        )}
-      </header>
+
+          {/* Nút menu hamburger cho màn hình mobile */}
+          <button
+            className="lg:hidden p-2 text-brand-green hover:bg-[#EAE5D1] rounded-md transition-colors"
+            onClick={toggleMobileMenu}
+          >
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Menu Dropdown */}
+      {isMobileMenuOpen && (
+        <div className="lg:hidden absolute top-full left-0 w-full bg-[#FFFDF3] border-b border-[#EAE5D1] shadow-2xl flex flex-col py-4 px-6 space-y-2 animate-in slide-in-from-top-2 duration-200 z-50">
+          <MobileNavItem text="Phương pháp" hasDropdown dropdownItems={methodDropdownItems} onClick={() => setIsMobileMenuOpen(false)} />
+          <MobileNavItem text="Thư viện" to="/library" onClick={() => setIsMobileMenuOpen(false)} />
+          <MobileNavItem text="ABC" to="/alphabet" onClick={() => setIsMobileMenuOpen(false)} />
+
+          <div className="pt-6 pb-2 border-t border-[#EAE5D1] flex flex-col gap-3">
+            {isAuthenticated ? (
+              <div className="space-y-3">
+                <div className="flex items-center gap-2.5 px-2 py-1">
+                  {user?.avatarUrl ? (
+                    <img
+                      src={user.avatarUrl}
+                      alt="Avatar"
+                      className="w-10 h-10 rounded-full object-cover border border-brand-green/20 shadow-sm"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-brand-green text-white font-bold flex items-center justify-center text-sm shadow-sm">
+                      {getInitials(user?.fullName || user?.username)}
+                    </div>
+                  )}
+                  <div>
+                    <div className="font-bold text-gray-800 text-sm">{user?.fullName || user?.username}</div>
+                    <div className="text-xs text-gray-500 truncate">{user?.email}</div>
+                  </div>
+                </div>
+
+                {user?.role === 'admin' ? (
+                  <Link
+                    to="/admin"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center justify-center gap-2 w-full bg-brand-light text-brand-green font-bold py-3 px-4 rounded-full text-sm transition-colors duration-200 border border-brand-green/20"
+                  >
+                    <Shield className="w-4 h-4" />
+                    <span>Trang quản trị</span>
+                  </Link>
+                ) : (
+                  <Link
+                    to="/profile"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center justify-center gap-2 w-full bg-brand-light text-brand-green font-bold py-3 px-4 rounded-full text-sm transition-colors duration-200 border border-brand-green/20"
+                  >
+                    <User className="w-4 h-4" />
+                    <span>Trang cá nhân</span>
+                  </Link>
+                )}
+
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center justify-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 font-bold py-3 px-4 rounded-full text-sm transition-colors duration-200 cursor-pointer"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Đăng xuất</span>
+                </button>
+              </div>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="w-full text-[#333333] hover:text-brand-green text-center font-bold py-3 px-4 rounded-full text-sm transition-colors duration-200 border border-gray-200 block"
+                >
+                  Đăng nhập
+                </Link>
+                <Link
+                  to="/register"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="w-full bg-brand-green hover:bg-brand-dark text-white text-center font-bold py-3 px-4 rounded-full text-sm transition-colors duration-200 shadow-md block"
+                >
+                  Đăng ký
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </header>
   );
 };
 

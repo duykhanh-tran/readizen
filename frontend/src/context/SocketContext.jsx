@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import { useAuth } from './AuthContext.jsx';
-import { getAccessToken } from '../services/axios.js';
+import { getAccessToken, addTokenListener } from '../services/axios.js';
 
 const SocketContext = createContext(null);
 
@@ -28,6 +28,14 @@ export const SocketProvider = ({ children }) => {
       transports: ['websocket', 'polling']
     });
 
+    const unsubscribe = addTokenListener((newToken) => {
+      newSocket.auth = { ...newSocket.auth, token: newToken };
+      if (!newSocket.connected) {
+        console.log('🔄 Reconnecting socket with new token...');
+        newSocket.connect();
+      }
+    });
+
     newSocket.on('connect', () => {
       console.log('🟢 Global Socket connected successfully:', newSocket.id);
       
@@ -43,6 +51,7 @@ export const SocketProvider = ({ children }) => {
     setSocket(newSocket);
 
     return () => {
+      unsubscribe();
       newSocket.disconnect();
       console.log('🔴 Global Socket disconnected on unmount');
     };

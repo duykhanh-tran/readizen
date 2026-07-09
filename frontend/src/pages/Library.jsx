@@ -4,13 +4,17 @@ import api from '../services/axios.js';
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
 import SafeImage from '../components/shared/SafeImage.jsx';
-import { BookOpen, Search, ArrowRight, Sparkles, Loader2, BookOpenCheck } from 'lucide-react';
+import { BookOpen, Search, ArrowRight, Sparkles, Loader2, BookOpenCheck, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function Library() {
   const navigate = useNavigate();
   const [lessons, setLessons] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
 
   useEffect(() => {
     const fetchLessons = async () => {
@@ -26,10 +30,21 @@ export default function Library() {
     fetchLessons();
   }, []);
 
+  // Reset page when search query changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
+
   // Filter lessons based on search query
   const filteredLessons = lessons.filter(lesson => {
     return lesson.title.toLowerCase().includes(searchQuery.toLowerCase());
   });
+
+  const totalPages = Math.ceil(filteredLessons.length / itemsPerPage);
+  const paginatedLessons = filteredLessons.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   return (
     <div className="font-sans text-gray-800 bg-brand-cream min-h-screen selection:bg-brand-light/40 overflow-x-hidden">
@@ -103,44 +118,69 @@ export default function Library() {
             <p className="text-xs text-gray-550 mt-1">Không tìm thấy bài học nào phù hợp với bộ lọc hiện tại.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {filteredLessons.map((lesson) => (
-              <article
-                key={lesson._id}
-                className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden hover:shadow-soft hover:border-brand-green/30 transition duration-300 flex flex-col group"
-              >
-                {/* Image block */}
-                <div className="aspect-[4/3] bg-gray-50 relative overflow-hidden flex items-center justify-center">
-                  <img
-                    src={lesson.coverImage}
-                    alt={lesson.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                    onError={(e) => { e.target.src = 'https://placehold.co/300x200?text=Book+Cover' }}
-                  />
-                </div>
-
-                {/* Details */}
-                <div className="p-5 flex-grow flex flex-col justify-between">
-                  <div>
-                    <h3 className="font-black text-gray-900 text-sm leading-snug group-hover:text-brand-green transition truncate">
-                      {lesson.title}
-                    </h3>
-                    <p className="text-[10px] text-gray-400 font-bold mt-1.5 flex items-center gap-1.5">
-                      <BookOpenCheck className="w-3.5 h-3.5 text-brand-green" />
-                      <span>{lesson.ebookImages?.length || 0} trang minh họa</span>
-                    </p>
+          <div className="space-y-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {paginatedLessons.map((lesson) => (
+                <article
+                  key={lesson._id}
+                  className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden hover:shadow-soft hover:border-brand-green/30 transition duration-300 flex flex-col group"
+                >
+                  {/* Image block */}
+                  <div className="aspect-[4/3] bg-gray-55 relative overflow-hidden flex items-center justify-center">
+                    <img
+                      src={lesson.coverImage}
+                      alt={lesson.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                      onError={(e) => { e.target.src = 'https://placehold.co/300x200?text=Book+Cover' }}
+                    />
                   </div>
 
-                  <button
-                    onClick={() => navigate(`/lessons/${lesson._id}`)}
-                    className="mt-6 w-full bg-brand-green hover:bg-brand-dark text-white py-3 rounded-xl font-bold text-xs transition flex items-center justify-center gap-1.5 cursor-pointer shadow-sm group-hover:shadow-md"
-                  >
-                    <span>Luyện đọc ngay</span>
-                    <ArrowRight className="w-3.5 h-3.5 transition group-hover:translate-x-0.5" />
-                  </button>
-                </div>
-              </article>
-            ))}
+                  {/* Details */}
+                  <div className="p-5 flex-grow flex flex-col justify-between">
+                    <div>
+                      <h3 className="font-black text-gray-900 text-sm leading-snug group-hover:text-brand-green transition truncate">
+                        {lesson.title}
+                      </h3>
+                      <p className="text-[10px] text-gray-400 font-bold mt-1.5 flex items-center gap-1.5">
+                        <BookOpenCheck className="w-3.5 h-3.5 text-brand-green" />
+                        <span>{lesson.ebookImages?.length || 0} trang minh họa</span>
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={() => navigate(`/lessons/${lesson._id}`)}
+                      className="mt-6 w-full bg-brand-green hover:bg-brand-dark text-white py-3 rounded-xl font-bold text-xs transition flex items-center justify-center gap-1.5 cursor-pointer shadow-sm group-hover:shadow-md"
+                    >
+                      <span>Luyện đọc ngay</span>
+                      <ArrowRight className="w-3.5 h-3.5 transition group-hover:translate-x-0.5" />
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-3 mt-12 border-t border-gray-100 pt-8">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 disabled:opacity-40 disabled:hover:bg-transparent transition cursor-pointer"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <span className="text-xs font-bold text-gray-600 select-none">
+                  Trang {currentPage} / {totalPages}
+                </span>
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 disabled:opacity-40 disabled:hover:bg-transparent transition cursor-pointer"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
+            )}
           </div>
         )}
       </main>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
-import { LayoutDashboard, FileText, MessageSquare, LogOut, Shield, Home, Menu, X, BookOpen } from 'lucide-react';
+import { LayoutDashboard, FileText, MessageSquare, LogOut, Shield, Home, Menu, X, BookOpen, Sparkles } from 'lucide-react';
 
 export default function AdminLayout() {
   const { user, logout } = useAuth();
@@ -24,6 +24,11 @@ export default function AdminLayout() {
       name: 'Bài học AI',
       path: '/admin/lessons',
       icon: BookOpen
+    },
+    {
+      name: 'Bảng chữ cái',
+      path: '/admin/alphabet',
+      icon: Sparkles
     },
     {
       name: 'Form tư vấn',

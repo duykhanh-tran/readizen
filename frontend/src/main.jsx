@@ -15,6 +15,8 @@ import Profile from './pages/Profile.jsx'
 import TrialLesson from './pages/TrialLesson.jsx'
 import Library from './pages/Library.jsx'
 import Alphatest from './pages/Alphatest.jsx'
+import AlphabetBoard from './pages/AlphabetBoard.jsx'
+import AlphabetLesson from './pages/AlphabetLesson.jsx'
 import ProtectedRoute from './components/shared/ProtectedRoute.jsx'
 import AdminRoute from './components/shared/AdminRoute.jsx'
 import AdminLayout from './components/layout/AdminLayout.jsx'
@@ -23,12 +25,16 @@ import AdminForms from './pages/admin/Forms.jsx'
 import AdminChat from './pages/admin/Chat.jsx'
 import AdminLessons from './pages/admin/Lessons.jsx'
 import EditLesson from './pages/admin/EditLesson.jsx'
+import ManageAlphabet from './pages/admin/ManageAlphabet.jsx'
+import EditAlphabetLesson from './pages/admin/EditAlphabetLesson.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 import { SocketProvider } from './context/SocketContext.jsx'
+import ScrollToTop from './components/shared/ScrollToTop.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
+      <ScrollToTop />
       <AuthProvider>
         <SocketProvider>
           <Routes>
@@ -48,6 +54,8 @@ createRoot(document.getElementById('root')).render(
 
             {/* Protected Client Route */}
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+            <Route path="/alphabet" element={<ProtectedRoute><AlphabetBoard /></ProtectedRoute>} />
+            <Route path="/alphabet/:id" element={<ProtectedRoute><AlphabetLesson /></ProtectedRoute>} />
             
             {/* Admin Routes Protected Layout */}
             <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
@@ -56,6 +64,8 @@ createRoot(document.getElementById('root')).render(
               <Route path="chat" element={<AdminChat />} />
               <Route path="lessons" element={<AdminLessons />} />
               <Route path="lessons/edit/:lessonId" element={<EditLesson />} />
+              <Route path="alphabet" element={<ManageAlphabet />} />
+              <Route path="alphabet/edit/:id" element={<EditAlphabetLesson />} />
             </Route>
           </Routes>
           <Analytics />

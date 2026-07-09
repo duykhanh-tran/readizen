@@ -332,25 +332,6 @@ export default function TrialLesson() {
                   {lesson.title}
                 </h1>
 
-                {/* Các tag tính năng */}
-                <div className="flex flex-wrap items-center justify-center gap-3">
-                  <span className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg shadow-sm">
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                    Đọc truyện
-                  </span>
-
-                  <span className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg shadow-sm">
-                    <span className="w-1.5 h-1.5 rounded-full bg-purple-500"></span>
-                    Luyện âm AI
-                  </span>
-
-                  {lesson.pdfFile && (
-                    <span className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-lg shadow-sm">
-                      <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
-                      Có file PDF
-                    </span>
-                  )}
-                </div>
               </div>
             </section>
 
