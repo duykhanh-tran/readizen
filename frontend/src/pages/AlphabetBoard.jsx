@@ -71,7 +71,7 @@ export default function AlphabetBoard() {
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <SafeImage
-            src="/assets/ABC-02.jpeg"
+            src="/assets/ABC-01.jpeg"
             alt="Bảng chữ cái Readizen"
             className="w-full h-full object-cover"
           />
