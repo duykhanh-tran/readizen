@@ -82,7 +82,7 @@ const Header = () => {
 
   const resourceDropdownItems = [
     {
-      title: "Thư viện",
+      title: "Phiếu đọc AI",
       to: "/library"
     },
     {
@@ -90,7 +90,7 @@ const Header = () => {
       to: "/smartabc"
     },
     {
-      title: "Video bài giảng",
+      title: "Videos",
       to: "/videos"
     }
   ];
@@ -318,27 +318,24 @@ const NavItem = ({ text, to, hasDropdown, dropdownItems }) => {
     <div className="relative group py-2">
       <Link
         to={hasDropdown ? '#' : to || '#'}
-        className={`flex items-center cursor-pointer font-bold text-sm transition-colors duration-200 ${
-          isActive ? 'text-brand-green' : 'text-[#333333] hover:text-brand-green'
-        }`}
+        className={`flex items-center cursor-pointer font-bold text-sm transition-colors duration-200 ${isActive ? 'text-brand-green' : 'text-[#333333] hover:text-brand-green'
+          }`}
       >
         <span>
           {text}
         </span>
         {hasDropdown && (
           <ChevronDown
-            className={`ml-1 w-4 h-4 transition-transform duration-200 group-hover:rotate-180 ${
-              isActive ? 'text-brand-green' : 'text-[#666666] group-hover:text-brand-green'
-            }`}
+            className={`ml-1 w-4 h-4 transition-transform duration-200 group-hover:rotate-180 ${isActive ? 'text-brand-green' : 'text-[#666666] group-hover:text-brand-green'
+              }`}
             strokeWidth={2.5}
           />
         )}
       </Link>
 
       {/* Hiệu ứng underline mờ khi hover hoặc active */}
-      <div className={`absolute bottom-0 left-0 h-0.5 bg-brand-green transition-all duration-300 ${
-        isActive ? 'w-full opacity-100' : 'w-0 group-hover:w-full opacity-0 group-hover:opacity-100'
-      }`}></div>
+      <div className={`absolute bottom-0 left-0 h-0.5 bg-brand-green transition-all duration-300 ${isActive ? 'w-full opacity-100' : 'w-0 group-hover:w-full opacity-0 group-hover:opacity-100'
+        }`}></div>
 
       {/* Dropdown Menu */}
       {hasDropdown && dropdownItems && (
@@ -351,9 +348,8 @@ const NavItem = ({ text, to, hasDropdown, dropdownItems }) => {
                 <Link
                   key={index}
                   to={item.to}
-                  className={`block px-6 py-3 transition-colors duration-150 border-b border-[#FAF7EE] last:border-b-0 ${
-                    isChildActive ? 'bg-[#FAF7EE] text-brand-green' : 'text-[#333333] hover:text-brand-green hover:bg-[#FAF7EE]'
-                  }`}
+                  className={`block px-6 py-3 transition-colors duration-150 border-b border-[#FAF7EE] last:border-b-0 ${isChildActive ? 'bg-[#FAF7EE] text-brand-green' : 'text-[#333333] hover:text-brand-green hover:bg-[#FAF7EE]'
+                    }`}
                 >
                   <div className="font-bold text-sm">{item.title}</div>
                   {item.desc && <div className="text-xs text-gray-550 font-normal mt-1 leading-normal">{item.desc}</div>}
@@ -390,19 +386,16 @@ const MobileNavItem = ({ text, to, hasDropdown, dropdownItems, onClick }) => {
       <div className="flex flex-col font-sans">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className={`flex items-center justify-between cursor-pointer py-3 px-2 rounded-lg hover:bg-[#EAE5D1]/50 group transition-colors w-full text-left ${
-            isParentActive ? 'bg-[#EAE5D1]/30' : ''
-          }`}
+          className={`flex items-center justify-between cursor-pointer py-3 px-2 rounded-lg hover:bg-[#EAE5D1]/50 group transition-colors w-full text-left ${isParentActive ? 'bg-[#EAE5D1]/30' : ''
+            }`}
         >
-          <span className={`font-bold text-base transition-colors duration-200 ${
-            isParentActive ? 'text-brand-green' : 'text-[#333333] group-hover:text-brand-green'
-          }`}>
+          <span className={`font-bold text-base transition-colors duration-200 ${isParentActive ? 'text-brand-green' : 'text-[#333333] group-hover:text-brand-green'
+            }`}>
             {text}
           </span>
           <ChevronDown
-            className={`w-5 h-5 transition-transform duration-200 ${
-              isParentActive ? 'text-brand-green' : 'text-[#666666] group-hover:text-brand-green'
-            } ${isOpen ? 'rotate-180' : ''}`}
+            className={`w-5 h-5 transition-transform duration-200 ${isParentActive ? 'text-brand-green' : 'text-[#666666] group-hover:text-brand-green'
+              } ${isOpen ? 'rotate-180' : ''}`}
           />
         </button>
 
@@ -415,9 +408,8 @@ const MobileNavItem = ({ text, to, hasDropdown, dropdownItems, onClick }) => {
                   key={index}
                   to={item.to}
                   onClick={onClick}
-                  className={`block py-2.5 px-4 rounded-lg font-semibold text-sm transition-colors ${
-                    isChildActive ? 'text-brand-green bg-[#EAE5D1]/40' : 'text-gray-700 hover:text-brand-green hover:bg-[#EAE5D1]/30'
-                  }`}
+                  className={`block py-2.5 px-4 rounded-lg font-semibold text-sm transition-colors ${isChildActive ? 'text-brand-green bg-[#EAE5D1]/40' : 'text-gray-700 hover:text-brand-green hover:bg-[#EAE5D1]/30'
+                    }`}
                 >
                   {item.title}
                 </Link>
@@ -435,13 +427,11 @@ const MobileNavItem = ({ text, to, hasDropdown, dropdownItems, onClick }) => {
     <Link
       to={to || '#'}
       onClick={onClick}
-      className={`flex items-center justify-between cursor-pointer py-3 px-2 rounded-lg hover:bg-[#EAE5D1]/50 group transition-colors ${
-        isActive ? 'bg-[#EAE5D1]/30' : ''
-      }`}
+      className={`flex items-center justify-between cursor-pointer py-3 px-2 rounded-lg hover:bg-[#EAE5D1]/50 group transition-colors ${isActive ? 'bg-[#EAE5D1]/30' : ''
+        }`}
     >
-      <span className={`font-bold text-base transition-colors duration-200 ${
-        isActive ? 'text-brand-green' : 'text-[#333333] group-hover:text-brand-green'
-      }`}>
+      <span className={`font-bold text-base transition-colors duration-200 ${isActive ? 'text-brand-green' : 'text-[#333333] group-hover:text-brand-green'
+        }`}>
         {text}
       </span>
     </Link>
