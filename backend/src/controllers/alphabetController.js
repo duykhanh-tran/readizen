@@ -72,7 +72,16 @@ export const getAlphabetList = async (req, res) => {
 export const getAlphabetLessonById = async (req, res) => {
     try {
         const { id } = req.params;
-        const lesson = await AlphabetLesson.findOne({ _id: id, status: 'published' });
+        const isObjectId = mongoose.Types.ObjectId.isValid(id);
+        
+        let query = { status: 'published' };
+        if (isObjectId) {
+            query._id = id;
+        } else {
+            query.letter = id.toUpperCase();
+        }
+
+        const lesson = await AlphabetLesson.findOne(query);
         if (!lesson) {
             return res.status(404).json({ message: 'Không tìm thấy chữ cái này hoặc chưa xuất bản.' });
         }

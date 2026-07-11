@@ -4,6 +4,7 @@ import api from '../services/axios.js';
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
 import SafeImage from '../components/shared/SafeImage.jsx';
+import SharedPagination from '../components/shared/SharedPagination.jsx';
 import { Star, Loader2, Award, BookOpen, AlertCircle, Sparkles, Search, ArrowRight } from 'lucide-react';
 
 export default function AlphabetBoard() {
@@ -199,7 +200,7 @@ export default function AlphabetBoard() {
                       {/* Bottom Info / Button */}
                       <div className="w-full">
                         <button
-                          onClick={() => navigate(`/alphabet/${item._id}`)}
+                          onClick={() => navigate(`/smartabc/${item.letter.toLowerCase()}`)}
                           className="mt-6 w-full bg-brand-green hover:bg-brand-dark text-white py-3 rounded-xl font-bold text-xs transition flex items-center justify-center gap-1.5 cursor-pointer shadow-sm group-hover:shadow-md"
                         >
                           <span>Luyện tập ngay</span>
@@ -213,27 +214,11 @@ export default function AlphabetBoard() {
             </div>
 
             {/* Pagination Controls */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-center gap-4 bg-white border border-gray-150 p-4 rounded-2xl max-w-sm mx-auto shadow-sm">
-                <button
-                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                  disabled={currentPage === 1}
-                  className="px-4 py-2 bg-brand-light text-brand-green border border-brand-green/20 hover:bg-brand-green hover:text-white rounded-xl text-xs font-bold transition disabled:opacity-40 disabled:hover:bg-brand-light disabled:hover:text-brand-green disabled:cursor-not-allowed cursor-pointer"
-                >
-                  Trang trước
-                </button>
-                <span className="text-xs font-extrabold text-gray-600">
-                  Trang {currentPage} / {totalPages}
-                </span>
-                <button
-                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                  disabled={currentPage === totalPages}
-                  className="px-4 py-2 bg-brand-light text-brand-green border border-brand-green/20 hover:bg-brand-green hover:text-white rounded-xl text-xs font-bold transition disabled:opacity-40 disabled:hover:bg-brand-light disabled:hover:text-brand-green disabled:cursor-not-allowed cursor-pointer"
-                >
-                  Trang sau
-                </button>
-              </div>
-            )}
+            <SharedPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
           </div>
         )}
       </main>

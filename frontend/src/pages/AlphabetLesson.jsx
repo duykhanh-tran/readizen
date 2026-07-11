@@ -190,7 +190,7 @@ export default function AlphabetLesson() {
           <h3 className="font-bold text-gray-800 text-lg">Bài học không khả dụng</h3>
           <p className="text-sm text-gray-500 mt-2 mb-7 leading-relaxed">{error || 'Không tìm thấy chữ cái này.'}</p>
           <Link
-            to="/alphabet"
+            to="/smartabc"
             className="inline-flex items-center gap-2 bg-brand-green hover:bg-brand-dark text-white px-7 py-2.5 rounded-full text-sm font-bold shadow-md transition"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -219,7 +219,7 @@ export default function AlphabetLesson() {
           {/* Back button */}
           <div className="mb-4">
             <Link
-              to="/alphabet"
+              to="/smartabc"
               className="inline-flex items-center gap-2 rounded-full border border-brand-green/10 bg-white/80 px-4 py-2 text-xs font-extrabold text-gray-500 shadow-sm backdrop-blur hover:border-brand-green/25 hover:bg-brand-light/50 hover:text-brand-green transition"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
@@ -412,7 +412,7 @@ export default function AlphabetLesson() {
 
           <div className="w-full flex flex-col gap-3">
             <button
-              onClick={() => navigate('/alphabet')}
+              onClick={() => navigate('/smartabc')}
               className="w-full py-3.5 rounded-full bg-brand-green hover:bg-brand-dark text-white font-extrabold text-sm shadow transition"
             >
               Tiếp tục học chữ cái khác

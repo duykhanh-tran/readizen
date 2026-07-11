@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Menu, X, LogOut, Shield, User } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 
 const Header = () => {
@@ -80,6 +80,21 @@ const Header = () => {
     }
   ];
 
+  const resourceDropdownItems = [
+    {
+      title: "Thư viện",
+      to: "/library"
+    },
+    {
+      title: "SmartABC",
+      to: "/smartabc"
+    },
+    {
+      title: "Video bài giảng",
+      to: "/videos"
+    }
+  ];
+
   // Helper to get initials from fullName
   const getInitials = (name) => {
     if (!name) return 'U';
@@ -101,9 +116,7 @@ const Header = () => {
         {/* Cột giữa: Navigation Links */}
         <nav className="hidden lg:flex items-center space-x-10">
           <NavItem text="Phương pháp" hasDropdown dropdownItems={methodDropdownItems} />
-          <NavItem text="Thư viện" to="/library" />
-          <NavItem text="ABC" to="/alphabet" />
-          {/* <NavItem text="Sản phẩm" to="/product" /> */}
+          <NavItem text="Tài nguyên" hasDropdown dropdownItems={resourceDropdownItems} />
           <NavItem text="Về Readizen" to="/about" />
         </nav>
 
@@ -140,7 +153,7 @@ const Header = () => {
                     <div className="px-4 py-3 border-b border-[#FAF7EE]">
                       <p className="text-[10px] uppercase tracking-wider font-semibold text-gray-400">Đăng nhập dưới tên</p>
                       <p className="font-bold text-gray-800 text-sm truncate mt-1">{user?.fullName || user?.username}</p>
-                      <p className="text-xs text-gray-500 truncate mt-0.5">{user?.email}</p>
+                      <p className="text-xs text-gray-550 truncate mt-0.5">{user?.email}</p>
                     </div>
 
                     <div className="p-1">
@@ -201,8 +214,8 @@ const Header = () => {
       {isMobileMenuOpen && (
         <div className="lg:hidden absolute top-full left-0 w-full bg-[#FFFDF3] border-b border-[#EAE5D1] shadow-2xl flex flex-col py-4 px-6 space-y-2 animate-in slide-in-from-top-2 duration-200 z-50">
           <MobileNavItem text="Phương pháp" hasDropdown dropdownItems={methodDropdownItems} onClick={() => setIsMobileMenuOpen(false)} />
-          <MobileNavItem text="Thư viện" to="/library" onClick={() => setIsMobileMenuOpen(false)} />
-          <MobileNavItem text="ABC" to="/alphabet" onClick={() => setIsMobileMenuOpen(false)} />
+          <MobileNavItem text="Tài nguyên" hasDropdown dropdownItems={resourceDropdownItems} onClick={() => setIsMobileMenuOpen(false)} />
+          <MobileNavItem text="Về Readizen" to="/about" onClick={() => setIsMobileMenuOpen(false)} />
 
           <div className="pt-6 pb-2 border-t border-[#EAE5D1] flex flex-col gap-3">
             {isAuthenticated ? (
@@ -221,7 +234,7 @@ const Header = () => {
                   )}
                   <div>
                     <div className="font-bold text-gray-800 text-sm">{user?.fullName || user?.username}</div>
-                    <div className="text-xs text-gray-500 truncate">{user?.email}</div>
+                    <div className="text-xs text-gray-550 truncate">{user?.email}</div>
                   </div>
                 </div>
 
@@ -278,43 +291,75 @@ const Header = () => {
   );
 };
 
+// Helper function to calculate active route match including sub-routes (lessons/details)
+const isRouteActive = (itemUrl, currentPath) => {
+  if (itemUrl === '/library') {
+    return currentPath === '/library' || currentPath.startsWith('/lessons/');
+  }
+  if (itemUrl === '/smartabc') {
+    return currentPath === '/smartabc' || currentPath.startsWith('/smartabc/');
+  }
+  if (itemUrl === '/videos') {
+    return currentPath === '/videos' || currentPath.startsWith('/videos/');
+  }
+  return currentPath === itemUrl;
+};
+
 // Component con cho từng mục trong menu điều hướng (Desktop)
 const NavItem = ({ text, to, hasDropdown, dropdownItems }) => {
+  const { pathname } = useLocation();
+
+  // Parent is active if its URL matches or any of its child items match
+  const isActive = hasDropdown
+    ? dropdownItems?.some(item => isRouteActive(item.to, pathname))
+    : isRouteActive(to, pathname);
+
   return (
     <div className="relative group py-2">
       <Link
         to={hasDropdown ? '#' : to || '#'}
-        className="flex items-center cursor-pointer text-[#333333] hover:text-brand-green transition-colors duration-200"
+        className={`flex items-center cursor-pointer font-bold text-sm transition-colors duration-200 ${
+          isActive ? 'text-brand-green' : 'text-[#333333] hover:text-brand-green'
+        }`}
       >
-        <span className="font-bold text-sm">
+        <span>
           {text}
         </span>
         {hasDropdown && (
           <ChevronDown
-            className="ml-1 w-4 h-4 text-[#666666] group-hover:text-brand-green transition-transform duration-200 group-hover:rotate-180"
+            className={`ml-1 w-4 h-4 transition-transform duration-200 group-hover:rotate-180 ${
+              isActive ? 'text-brand-green' : 'text-[#666666] group-hover:text-brand-green'
+            }`}
             strokeWidth={2.5}
           />
         )}
       </Link>
 
-      {/* Hiệu ứng underline mờ khi hover */}
-      <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-green transition-all duration-300 group-hover:w-full opacity-0 group-hover:opacity-100"></div>
+      {/* Hiệu ứng underline mờ khi hover hoặc active */}
+      <div className={`absolute bottom-0 left-0 h-0.5 bg-brand-green transition-all duration-300 ${
+        isActive ? 'w-full opacity-100' : 'w-0 group-hover:w-full opacity-0 group-hover:opacity-100'
+      }`}></div>
 
       {/* Dropdown Menu */}
       {hasDropdown && dropdownItems && (
         <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-72 bg-white border border-[#EAE5D1] rounded-2xl shadow-xl py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50">
           <div className="absolute -top-1 w-2.5 h-2.5 bg-white border-t border-l border-[#EAE5D1] rotate-45 left-1/2 -translate-x-1/2"></div>
           <div className="relative bg-white rounded-2xl overflow-hidden">
-            {dropdownItems.map((item, index) => (
-              <Link
-                key={index}
-                to={item.to}
-                className="block px-6 py-3 hover:bg-[#FAF7EE] text-[#333333] hover:text-brand-green transition-colors duration-150 border-b border-[#FAF7EE] last:border-b-0"
-              >
-                <div className="font-bold text-sm">{item.title}</div>
-                {item.desc && <div className="text-xs text-gray-500 font-normal mt-1 leading-normal">{item.desc}</div>}
-              </Link>
-            ))}
+            {dropdownItems.map((item, index) => {
+              const isChildActive = isRouteActive(item.to, pathname);
+              return (
+                <Link
+                  key={index}
+                  to={item.to}
+                  className={`block px-6 py-3 transition-colors duration-150 border-b border-[#FAF7EE] last:border-b-0 ${
+                    isChildActive ? 'bg-[#FAF7EE] text-brand-green' : 'text-[#333333] hover:text-brand-green hover:bg-[#FAF7EE]'
+                  }`}
+                >
+                  <div className="font-bold text-sm">{item.title}</div>
+                  {item.desc && <div className="text-xs text-gray-550 font-normal mt-1 leading-normal">{item.desc}</div>}
+                </Link>
+              );
+            })}
           </div>
         </div>
       )}
@@ -324,48 +369,79 @@ const NavItem = ({ text, to, hasDropdown, dropdownItems }) => {
 
 // Component con cho menu điều hướng (Mobile)
 const MobileNavItem = ({ text, to, hasDropdown, dropdownItems, onClick }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const { pathname } = useLocation();
+
+  const isParentActive = hasDropdown
+    ? dropdownItems?.some(item => isRouteActive(item.to, pathname))
+    : isRouteActive(to, pathname);
+
+  // Accordion expands automatically if any of its children are active
+  const [isOpen, setIsOpen] = useState(isParentActive);
+
+  // Sync accordion expansion state when path changes
+  useEffect(() => {
+    if (isParentActive) {
+      setIsOpen(true);
+    }
+  }, [pathname, isParentActive]);
 
   if (hasDropdown && dropdownItems) {
     return (
       <div className="flex flex-col font-sans">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center justify-between cursor-pointer py-3 px-2 rounded-lg hover:bg-[#EAE5D1]/50 group transition-colors w-full text-left"
+          className={`flex items-center justify-between cursor-pointer py-3 px-2 rounded-lg hover:bg-[#EAE5D1]/50 group transition-colors w-full text-left ${
+            isParentActive ? 'bg-[#EAE5D1]/30' : ''
+          }`}
         >
-          <span className="text-[#333333] font-bold text-base group-hover:text-brand-green transition-colors duration-200">
+          <span className={`font-bold text-base transition-colors duration-200 ${
+            isParentActive ? 'text-brand-green' : 'text-[#333333] group-hover:text-brand-green'
+          }`}>
             {text}
           </span>
           <ChevronDown
-            className={`w-5 h-5 text-[#666666] group-hover:text-brand-green transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+            className={`w-5 h-5 transition-transform duration-200 ${
+              isParentActive ? 'text-brand-green' : 'text-[#666666] group-hover:text-brand-green'
+            } ${isOpen ? 'rotate-180' : ''}`}
           />
         </button>
 
         {isOpen && (
           <div className="pl-4 flex flex-col border-l-2 border-brand-green/20 ml-2 mt-1 space-y-1">
-            {dropdownItems.map((item, index) => (
-              <Link
-                key={index}
-                to={item.to}
-                onClick={onClick}
-                className="block py-2.5 px-4 rounded-lg text-gray-700 hover:text-brand-green hover:bg-[#EAE5D1]/30 font-semibold text-sm transition-colors"
-              >
-                {item.title}
-              </Link>
-            ))}
+            {dropdownItems.map((item, index) => {
+              const isChildActive = isRouteActive(item.to, pathname);
+              return (
+                <Link
+                  key={index}
+                  to={item.to}
+                  onClick={onClick}
+                  className={`block py-2.5 px-4 rounded-lg font-semibold text-sm transition-colors ${
+                    isChildActive ? 'text-brand-green bg-[#EAE5D1]/40' : 'text-gray-700 hover:text-brand-green hover:bg-[#EAE5D1]/30'
+                  }`}
+                >
+                  {item.title}
+                </Link>
+              );
+            })}
           </div>
         )}
       </div>
     );
   }
 
+  const isActive = isRouteActive(to, pathname);
+
   return (
     <Link
       to={to || '#'}
       onClick={onClick}
-      className="flex items-center justify-between cursor-pointer py-3 px-2 rounded-lg hover:bg-[#EAE5D1]/50 group transition-colors"
+      className={`flex items-center justify-between cursor-pointer py-3 px-2 rounded-lg hover:bg-[#EAE5D1]/50 group transition-colors ${
+        isActive ? 'bg-[#EAE5D1]/30' : ''
+      }`}
     >
-      <span className="text-[#333333] font-bold text-base group-hover:text-brand-green transition-colors duration-200">
+      <span className={`font-bold text-base transition-colors duration-200 ${
+        isActive ? 'text-brand-green' : 'text-[#333333] group-hover:text-brand-green'
+      }`}>
         {text}
       </span>
     </Link>

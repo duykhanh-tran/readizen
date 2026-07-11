@@ -14,6 +14,7 @@ import adminRoutes from './routes/adminRoute.js';
 import lessonRoutes from './routes/lessonRoute.js';
 import userRoutes from './routes/userRoute.js';
 import alphabetRoutes from './routes/alphabetRoute.js';
+import videoRoutes from './routes/videoRoute.js';
 import Message from './models/Message.js';
 
 dotenv.config();
@@ -56,6 +57,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/lessons', lessonRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/alphabet', alphabetRoutes);
+app.use('/api/videos', videoRoutes);
 
 const server = http.createServer(app);
 const io = new Server(server, {

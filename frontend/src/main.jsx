@@ -27,6 +27,10 @@ import AdminLessons from './pages/admin/Lessons.jsx'
 import EditLesson from './pages/admin/EditLesson.jsx'
 import ManageAlphabet from './pages/admin/ManageAlphabet.jsx'
 import EditAlphabetLesson from './pages/admin/EditAlphabetLesson.jsx'
+import VideoTopics from './pages/VideoTopics.jsx'
+import TopicVideosList from './pages/TopicVideosList.jsx'
+import VideoPlayerFocus from './pages/VideoPlayerFocus.jsx'
+import ManageVideos from './pages/admin/ManageVideos.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 import { SocketProvider } from './context/SocketContext.jsx'
 import ScrollToTop from './components/shared/ScrollToTop.jsx'
@@ -54,8 +58,11 @@ createRoot(document.getElementById('root')).render(
 
             {/* Protected Client Route */}
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-            <Route path="/alphabet" element={<ProtectedRoute><AlphabetBoard /></ProtectedRoute>} />
-            <Route path="/alphabet/:id" element={<ProtectedRoute><AlphabetLesson /></ProtectedRoute>} />
+            <Route path="/smartabc" element={<ProtectedRoute><AlphabetBoard /></ProtectedRoute>} />
+            <Route path="/smartabc/:id" element={<ProtectedRoute><AlphabetLesson /></ProtectedRoute>} />
+            <Route path="/videos" element={<ProtectedRoute><VideoTopics /></ProtectedRoute>} />
+            <Route path="/videos/:slug" element={<ProtectedRoute><TopicVideosList /></ProtectedRoute>} />
+            <Route path="/videos/:slug/:lessonSlug" element={<ProtectedRoute><VideoPlayerFocus /></ProtectedRoute>} />
             
             {/* Admin Routes Protected Layout */}
             <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
@@ -66,6 +73,7 @@ createRoot(document.getElementById('root')).render(
               <Route path="lessons/edit/:lessonId" element={<EditLesson />} />
               <Route path="alphabet" element={<ManageAlphabet />} />
               <Route path="alphabet/edit/:id" element={<EditAlphabetLesson />} />
+              <Route path="videos" element={<ManageVideos />} />
             </Route>
           </Routes>
           <Analytics />

@@ -84,10 +84,12 @@ export default function Library() {
       </header>
 
       <main className="flex-grow max-w-7xl mx-auto px-6 py-10 w-full text-left">
-        {/* Filter Controls & Search */}
+        {/* Search bar & filter controls */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-          {/* Tabs */}
-
+          <div>
+            <h2 className="text-xl font-black text-gray-900">Thư Viện Sách Luyện Đọc</h2>
+            <p className="text-xs text-gray-500 mt-1">Bé hãy chọn một cuốn sách thú vị để bắt đầu luyện đọc nhé!</p>
+          </div>
 
           {/* Search bar */}
           <div className="relative w-full md:w-80">
