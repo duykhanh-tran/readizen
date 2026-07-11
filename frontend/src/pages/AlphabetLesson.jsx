@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '../services/axios.js';
 import Header from '../components/Header.jsx';
@@ -7,7 +7,7 @@ import useAudioRecorder from '../hooks/useAudioRecorder.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import {
   Volume2, Mic, Square, Loader2, ArrowLeft, ChevronLeft,
-  ChevronRight, Award, CheckCircle2, AlertCircle, Play
+  ChevronRight, AlertCircle
 } from 'lucide-react';
 
 export default function AlphabetLesson() {
@@ -31,13 +31,11 @@ export default function AlphabetLesson() {
   const {
     recordingIndex,
     evaluatingIndex,
-    detailedFeedback,
     startRecording,
     stopRecording,
     evaluateAudio,
     playSpeechText,
     clearFeedback,
-    isRecording,
     isEvaluating
   } = useAudioRecorder();
 
@@ -148,7 +146,6 @@ export default function AlphabetLesson() {
       );
     }
 
-    const targetLower = word.toLowerCase();
     const transcriptLower = (transcript || '').toLowerCase();
 
     return (
