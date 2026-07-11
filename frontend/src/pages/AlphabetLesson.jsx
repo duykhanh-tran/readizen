@@ -410,6 +410,21 @@ export default function AlphabetLesson() {
             </div>
           </div>
 
+          {!isAuthenticated && (
+            <div className="w-full bg-brand-light/35 border border-brand-green/10 rounded-2xl p-4.5 text-left flex items-start gap-3 mb-6">
+              <span className="text-xl">💡</span>
+              <div>
+                <p className="text-xs text-gray-700 font-bold leading-relaxed">
+                  Bé học rất giỏi! Hãy Đăng nhập hoặc Đăng ký tài khoản để lưu lại thành tích học tập và xem tiến trình của bé nhé!
+                </p>
+                <div className="flex gap-4 mt-2">
+                  <Link to="/login" className="text-xs font-black text-brand-green hover:underline">Đăng nhập</Link>
+                  <Link to="/register" className="text-xs font-black text-brand-green hover:underline">Đăng ký</Link>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="w-full flex flex-col gap-3">
             <button
               onClick={() => navigate('/smartabc')}

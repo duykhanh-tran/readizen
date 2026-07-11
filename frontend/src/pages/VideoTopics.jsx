@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/axios.js';
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
 import SharedPagination from '../components/shared/SharedPagination.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
 import { Loader2, AlertCircle, Play, BookOpen, Star, ArrowRight, Search } from 'lucide-react';
 
 export default function VideoTopics() {
+  const { isAuthenticated } = useAuth();
   const [topics, setTopics] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -119,6 +121,21 @@ export default function VideoTopics() {
             />
           </div>
         </div>
+
+        {!isAuthenticated && (
+          <div className="mb-8 bg-brand-light/35 border border-brand-green/10 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <span className="text-xl">✨</span>
+              <p className="text-xs sm:text-sm text-gray-700 font-bold">
+                Đăng nhập hoặc đăng ký tài khoản để bắt đầu học tập qua video và lưu giữ kết quả học tập của bé nhé!
+              </p>
+            </div>
+            <div className="flex gap-3 shrink-0">
+              <Link to="/login" className="px-4 py-2 bg-white hover:bg-gray-50 border border-brand-green/20 rounded-xl text-xs font-bold text-brand-green shadow-sm transition">Đăng nhập</Link>
+              <Link to="/register" className="px-4 py-2 bg-brand-green hover:bg-brand-dark rounded-xl text-xs font-bold text-white shadow-sm transition">Đăng ký</Link>
+            </div>
+          </div>
+        )}
 
         {/* Loading / Error States */}
         {isLoading ? (
