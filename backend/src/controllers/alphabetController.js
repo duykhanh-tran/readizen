@@ -8,58 +8,72 @@ import { uploadToCloudinary } from '../lib/cloudinary.js';
 // Get all 26 letters with current user's score in a single query via Aggregation $lookup
 export const getAlphabetList = async (req, res) => {
     try {
-        const userId = req.user.id;
+        const userId = req.user?.id;
+        let mappedList;
 
-        const list = await AlphabetLesson.aggregate([
-            // Join with UserAlphabetScore for current user
-            {
-                $lookup: {
-                    from: 'useralphabetscores',
-                    let: { lessonId: '$_id' },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: {
-                                    $and: [
-                                        { $eq: ['$alphabetLessonId', '$$lessonId'] },
-                                        { $eq: ['$userId', new mongoose.Types.ObjectId(userId)] }
-                                    ]
+        if (userId) {
+            const list = await AlphabetLesson.aggregate([
+                // Join with UserAlphabetScore for current user
+                {
+                    $lookup: {
+                        from: 'useralphabetscores',
+                        let: { lessonId: '$_id' },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [
+                                            { $eq: ['$alphabetLessonId', '$$lessonId'] },
+                                            { $eq: ['$userId', new mongoose.Types.ObjectId(userId)] }
+                                        ]
+                                    }
                                 }
                             }
-                        }
-                    ],
-                    as: 'userScore'
+                        ],
+                        as: 'userScore'
+                    }
+                },
+                // Project target fields
+                {
+                    $project: {
+                        _id: 1,
+                        letter: 1,
+                        thumbnail: 1,
+                        status: 1,
+                        vocabulariesCount: { $size: '$vocabularies' },
+                        userScoreObj: { $arrayElemAt: ['$userScore', 0] }
+                    }
+                },
+                // Filter only published for client
+                {
+                    $match: { status: 'published' }
+                },
+                // Sort by letter
+                {
+                    $sort: { letter: 1 }
                 }
-            },
-            // Project target fields
-            {
-                $project: {
-                    _id: 1,
-                    letter: 1,
-                    thumbnail: 1,
-                    status: 1,
-                    vocabulariesCount: { $size: '$vocabularies' },
-                    userScoreObj: { $arrayElemAt: ['$userScore', 0] }
-                }
-            },
-            // Filter only published for client
-            {
-                $match: { status: 'published' }
-            },
-            // Sort by letter
-            {
-                $sort: { letter: 1 }
-            }
-        ]);
+            ]);
 
-        const mappedList = list.map(item => ({
-            _id: item._id,
-            letter: item.letter,
-            thumbnail: item.thumbnail,
-            vocabulariesCount: item.vocabulariesCount,
-            averageScore: item.userScoreObj ? item.userScoreObj.averageScore : null,
-            attempts: item.userScoreObj ? item.userScoreObj.attempts : 0
-        }));
+            mappedList = list.map(item => ({
+                _id: item._id,
+                letter: item.letter,
+                thumbnail: item.thumbnail,
+                vocabulariesCount: item.vocabulariesCount,
+                averageScore: item.userScoreObj ? item.userScoreObj.averageScore : null,
+                attempts: item.userScoreObj ? item.userScoreObj.attempts : 0
+            }));
+        } else {
+            // Guest mode: simply find all published alphabet lessons
+            const list = await AlphabetLesson.find({ status: 'published' }).sort({ letter: 1 });
+            mappedList = list.map(item => ({
+                _id: item._id,
+                letter: item.letter,
+                thumbnail: item.thumbnail,
+                vocabulariesCount: item.vocabularies?.length || 0,
+                averageScore: null,
+                attempts: 0
+            }));
+        }
 
         res.status(200).json(mappedList);
     } catch (error) {

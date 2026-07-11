@@ -55,14 +55,14 @@ createRoot(document.getElementById('root')).render(
             {/* Public Client Routes open to all (no login required) */}
             <Route path="/library" element={<Library />} />
             <Route path="/lessons/:id" element={<TrialLesson />} />
+            <Route path="/smartabc" element={<AlphabetBoard />} />
+            <Route path="/smartabc/:id" element={<AlphabetLesson />} />
+            <Route path="/videos" element={<VideoTopics />} />
+            <Route path="/videos/:slug" element={<TopicVideosList />} />
+            <Route path="/videos/:slug/:lessonSlug" element={<VideoPlayerFocus />} />
 
             {/* Protected Client Route */}
             <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-            <Route path="/smartabc" element={<ProtectedRoute><AlphabetBoard /></ProtectedRoute>} />
-            <Route path="/smartabc/:id" element={<ProtectedRoute><AlphabetLesson /></ProtectedRoute>} />
-            <Route path="/videos" element={<ProtectedRoute><VideoTopics /></ProtectedRoute>} />
-            <Route path="/videos/:slug" element={<ProtectedRoute><TopicVideosList /></ProtectedRoute>} />
-            <Route path="/videos/:slug/:lessonSlug" element={<ProtectedRoute><VideoPlayerFocus /></ProtectedRoute>} />
             
             {/* Admin Routes Protected Layout */}
             <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>

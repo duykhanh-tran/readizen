@@ -13,7 +13,7 @@ import {
   deleteLesson, 
   uploadMedia 
 } from '../controllers/videoController.js';
-import { verifyToken, verifyAdmin } from '../middlewares/authMiddleware.js';
+import { verifyToken, verifyAdmin, optionalVerifyToken } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
@@ -25,13 +25,13 @@ const upload = multer({
 
 // --- CLIENT PUBLIC/PROTECTED ROUTES ---
 // Get all topics
-router.get('/topics', verifyToken, getTopics);
+router.get('/topics', optionalVerifyToken, getTopics);
 // Get topic details and its lessons by slug
-router.get('/topics/:slug', verifyToken, getTopicBySlug);
+router.get('/topics/:slug', optionalVerifyToken, getTopicBySlug);
 // Get specific lesson details by ID (for admin/general fetch)
-router.get('/lesson/:id', verifyToken, getLessonById);
+router.get('/lesson/:id', optionalVerifyToken, getLessonById);
 // Get specific lesson details by topicSlug and lessonSlug
-router.get('/topics/:topicSlug/lessons/:lessonSlug', verifyToken, getLessonBySlugs);
+router.get('/topics/:topicSlug/lessons/:lessonSlug', optionalVerifyToken, getLessonBySlugs);
 
 // --- ADMIN ROUTES (Protected by verifyAdmin) ---
 // Manage Topics

@@ -9,13 +9,13 @@ import {
     updateAlphabetLesson, 
     deleteAlphabetLesson
 } from '../controllers/alphabetController.js';
-import { verifyToken, verifyAdmin } from '../middlewares/authMiddleware.js';
+import { verifyToken, verifyAdmin, optionalVerifyToken } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
 // Client routes
-router.get('/', verifyToken, getAlphabetList);
-router.get('/:id', verifyToken, getAlphabetLessonById);
+router.get('/', optionalVerifyToken, getAlphabetList);
+router.get('/:id', optionalVerifyToken, getAlphabetLessonById);
 router.post('/score', verifyToken, saveAlphabetScore);
 
 // Admin routes (all protected by verifyAdmin)
