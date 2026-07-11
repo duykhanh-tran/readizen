@@ -1,6 +1,7 @@
 import Lesson from '../models/Lesson.js';
 import UserScore from '../models/UserScore.js';
 import { AssemblyAI } from 'assemblyai';
+import { logAdminActivity } from '../utils/adminLogger.js';
 
 // Helper: Chuẩn hóa chuỗi tiếng Anh (chữ thường, loại bỏ dấu câu, nén khoảng trắng)
 const normalizeText = (text) => {
@@ -65,6 +66,7 @@ export const createLesson = async (req, res) => {
         });
 
         await newLesson.save();
+        await logAdminActivity(req.user.id, 'CREATE', 'Reading', `Đã tạo bài học đọc AI: "${title}"`);
         res.status(201).json({ message: 'Tạo bài học mới thành công!', lesson: newLesson });
     } catch (error) {
         res.status(500).json({ message: 'Lỗi server khi tạo bài học', error: error.message });
@@ -131,6 +133,7 @@ export const updateLesson = async (req, res) => {
         }
 
         await lesson.save();
+        await logAdminActivity(req.user.id, 'UPDATE', 'Reading', `Đã cập nhật bài học đọc AI: "${title}"`);
         res.status(200).json({ message: 'Cập nhật bài học thành công!', lesson });
     } catch (error) {
         res.status(500).json({ message: 'Lỗi server khi cập nhật bài học', error: error.message });
@@ -145,6 +148,7 @@ export const deleteLesson = async (req, res) => {
         if (!lesson) {
             return res.status(404).json({ message: 'Không tìm thấy bài học để xóa.' });
         }
+        await logAdminActivity(req.user.id, 'DELETE', 'Reading', `Đã xóa bài học đọc AI: "${lesson.title}"`);
         res.status(200).json({ message: 'Xóa bài học thành công!' });
     } catch (error) {
         res.status(500).json({ message: 'Lỗi server khi xóa bài học', error: error.message });

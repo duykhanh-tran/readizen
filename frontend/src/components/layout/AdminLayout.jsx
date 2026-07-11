@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { LayoutDashboard, FileText, MessageSquare, LogOut, Shield, Home, Menu, X, BookOpen, Sparkles, Video } from 'lucide-react';
+import AdminNotificationBell from './AdminNotificationBell.jsx';
 
 export default function AdminLayout() {
   const { user, logout } = useAuth();
@@ -92,8 +93,8 @@ export default function AdminLayout() {
                 to={item.path}
                 onClick={() => setIsMobileSidebarOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${isActive
-                    ? 'bg-brand-green text-white shadow-md'
-                    : 'text-brand-light/75 hover:bg-white/5 hover:text-white'
+                  ? 'bg-brand-green text-white shadow-md'
+                  : 'text-brand-light/75 hover:bg-white/5 hover:text-white'
                   }`}
               >
                 <Icon className="w-5 h-5 flex-shrink-0" />
@@ -103,23 +104,7 @@ export default function AdminLayout() {
           })}
         </nav>
 
-        {/* Sidebar Footer */}
-        <div className="p-4 border-t border-white/10 space-y-1">
-          <Link
-            to="/"
-            className="flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm text-brand-light/75 hover:bg-white/5 hover:text-white transition"
-          >
-            <Home className="w-5 h-5 flex-shrink-0" />
-            <span>Trang chủ chính</span>
-          </Link>
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition text-left cursor-pointer"
-          >
-            <LogOut className="w-5 h-5 flex-shrink-0" />
-            <span>Đăng xuất</span>
-          </button>
-        </div>
+
       </aside>
 
       {/* Desktop Sidebar (lg Screen and Up) */}
@@ -145,8 +130,8 @@ export default function AdminLayout() {
                 key={index}
                 to={item.path}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${isActive
-                    ? 'bg-brand-green text-white shadow-md'
-                    : 'text-brand-light/75 hover:bg-white/5 hover:text-white'
+                  ? 'bg-brand-green text-white shadow-md'
+                  : 'text-brand-light/75 hover:bg-white/5 hover:text-white'
                   }`}
               >
                 <Icon className="w-5 h-5 flex-shrink-0" />
@@ -156,23 +141,7 @@ export default function AdminLayout() {
           })}
         </nav>
 
-        {/* Sidebar Footer */}
-        <div className="p-4 border-t border-white/10 space-y-1">
-          <Link
-            to="/"
-            className="flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm text-brand-light/75 hover:bg-white/5 hover:text-white transition"
-          >
-            <Home className="w-5 h-5 flex-shrink-0" />
-            <span>Trang chủ chính</span>
-          </Link>
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition text-left cursor-pointer"
-          >
-            <LogOut className="w-5 h-5 flex-shrink-0" />
-            <span>Đăng xuất</span>
-          </button>
-        </div>
+
       </aside>
 
       {/* Main Content Area */}
@@ -193,16 +162,72 @@ export default function AdminLayout() {
             </h1>
           </div>
 
-          <div className="flex items-center gap-2 lg:gap-4">
-            {/* Admin Badge */}
-            <span className="inline-flex items-center gap-1 bg-yellow-50 text-yellow-800 text-[10px] lg:text-[11px] font-bold px-2 py-0.5 lg:px-2.5 lg:py-1 rounded-md border border-yellow-200">
-              <Shield className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">SUPER ADMIN</span>
+          <div className="flex items-center gap-2 lg:gap-3">
+            {/* Admin information */}
+            <span className="hidden md:inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-3 py-1.5 text-[10px] font-black uppercase tracking-wide text-amber-800">
+              <Shield className="h-3.5 w-3.5" />
+              Super Admin
             </span>
 
-            {/* Avatar & Profile */}
-            <div className="w-8 h-8 rounded-full bg-brand-green text-white font-bold flex items-center justify-center text-xs shadow-sm flex-shrink-0">
+            <AdminNotificationBell />
+
+            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-brand-green text-xs font-black text-white shadow-sm ring-2 ring-brand-green/10">
               AD
+            </div>
+
+            {/* Divider */}
+            <div className="mx-1 hidden h-7 w-px bg-gray-200 sm:block" />
+
+            {/* Main actions */}
+            <div className="flex items-center gap-2">
+              {/* Home */}
+              <Link
+                to="/"
+                title="Về trang chủ"
+                className="
+        group inline-flex h-9 items-center justify-center gap-2
+        rounded-xl bg-brand-green px-3.5
+        text-xs font-black text-white
+        shadow-[0_6px_16px_rgba(34,130,76,0.22)]
+        transition-all duration-200
+        hover:-translate-y-0.5 hover:bg-brand-dark
+        hover:shadow-[0_9px_22px_rgba(34,130,76,0.3)]
+        focus:outline-none focus:ring-2 focus:ring-brand-green/30
+        active:translate-y-0
+        sm:px-4
+      "
+              >
+                <Home className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+
+                <span className="hidden sm:inline">
+                  Trang chủ
+                </span>
+              </Link>
+
+              {/* Logout */}
+              <button
+                type="button"
+                onClick={handleLogout}
+                title="Đăng xuất"
+                className="
+        group inline-flex h-9 items-center justify-center gap-2
+        rounded-xl border border-red-200 bg-red-50 px-3.5
+        text-xs font-black text-red-600
+        shadow-sm transition-all duration-200
+        hover:-translate-y-0.5 hover:border-red-500
+        hover:bg-red-600 hover:text-white
+        hover:shadow-[0_9px_22px_rgba(220,38,38,0.22)]
+        focus:outline-none focus:ring-2 focus:ring-red-200
+        active:translate-y-0
+        sm:px-4
+      "
+              >
+                <LogOut className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+
+                <span className="hidden sm:inline">
+                  Đăng xuất
+                </span>
+              </button>
             </div>
           </div>
         </header>

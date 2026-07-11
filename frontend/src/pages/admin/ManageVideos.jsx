@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../../services/axios.js';
 import { 
   Plus, Edit, Trash2, Loader2, AlertCircle, Check, 
   Video, Folder, Upload, Link as LinkIcon, Clock, Eye 
 } from 'lucide-react';
+import SlideOverPanel from '../../components/shared/SlideOverPanel.jsx';
 
 export default function ManageVideos() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('lessons'); // 'topics' or 'lessons'
   
   // List States
@@ -203,33 +206,10 @@ export default function ManageVideos() {
   // --- LESSON ACTIONS ---
   const handleOpenLessonModal = (lesson = null) => {
     if (lesson) {
-      setEditingLesson(lesson);
-      setLessonForm({
-        topicId: lesson.topicId?._id || lesson.topicId || '',
-        title: lesson.title,
-        slug: lesson.slug || '',
-        videoType: lesson.videoType,
-        aspectRatio: lesson.aspectRatio || '16:9',
-        videoUrl: lesson.videoUrl,
-        thumbnail: lesson.thumbnail || '',
-        duration: lesson.duration || '05:00',
-        order: lesson.order || 0
-      });
+      navigate(`/admin/videos/edit/${lesson._id}`);
     } else {
-      setEditingLesson(null);
-      setLessonForm({
-        topicId: selectedTopicFilter !== 'all' ? selectedTopicFilter : (topics[0]?._id || ''),
-        title: '',
-        slug: '',
-        videoType: 'youtube',
-        aspectRatio: '16:9',
-        videoUrl: '',
-        thumbnail: '',
-        duration: '05:00',
-        order: lessons.length
-      });
+      navigate('/admin/videos/create');
     }
-    setIsLessonModalOpen(true);
   };
 
   const handleLessonSubmit = async (e) => {
@@ -418,14 +398,13 @@ export default function ManageVideos() {
                   <th className="py-4 px-6">Chủ đề</th>
                   <th className="py-4 px-6">Nguồn video</th>
                   <th className="py-4 px-6">Tỷ lệ</th>
-                  <th className="py-4 px-6">Độ dài</th>
                   <th className="py-4 px-6 text-right">Thao tác</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 font-semibold text-gray-700">
                 {lessons.length === 0 ? (
                   <tr>
-                    <td colSpan="9" className="text-center py-10 text-gray-400 italic">Không tìm thấy bài giảng video nào</td>
+                    <td colSpan="8" className="text-center py-10 text-gray-400 italic">Không tìm thấy bài giảng video nào</td>
                   </tr>
                 ) : (
                   lessons.map((l) => (
@@ -440,7 +419,7 @@ export default function ManageVideos() {
                         />
                       </td>
                       <td className="py-4.5 px-6 font-extrabold text-gray-900 max-w-xs truncate">{l.title}</td>
-                      <td className="py-4.5 px-6 text-gray-500 font-mono">{l.slug}</td>
+                      <td className="py-4.5 px-6 text-gray-550 font-mono">{l.slug}</td>
                       <td className="py-4.5 px-6"><span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-[10px] font-bold">{l.topicTitle || 'Chủ đề'}</span></td>
                       <td className="py-4.5 px-6 font-bold">
                         {l.videoType === 'youtube' && <span className="text-red-600">YouTube</span>}
@@ -448,7 +427,6 @@ export default function ManageVideos() {
                         {l.videoType === 'upload' && <span className="text-blue-600">File tải lên</span>}
                       </td>
                       <td className="py-4.5 px-6 text-gray-500 font-bold">{l.aspectRatio || '16:9'}</td>
-                      <td className="py-4.5 px-6 text-gray-400">{l.duration}</td>
                       <td className="py-4.5 px-6 text-right">
                         <div className="flex items-center justify-end gap-1.5">
                           <button
@@ -476,363 +454,110 @@ export default function ManageVideos() {
         </div>
       )}
 
-      {/* TOPIC DRAWER */}
-      {isTopicModalOpen && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex justify-end animate-in fade-in duration-200">
-          <div className="absolute inset-0" onClick={() => setIsTopicModalOpen(false)} />
-          <div className="relative w-full max-w-lg bg-white h-full shadow-2xl flex flex-col z-10 animate-in slide-in-from-right duration-355">
-            {/* Header */}
-            <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
-              <div>
-                <h2 className="text-base font-black text-gray-800">
-                  {editingTopic ? 'Biên soạn chủ đề video' : 'Tạo chủ đề video mới'}
-                </h2>
-                <p className="text-[10px] text-gray-500 font-semibold mt-0.5">Điền các thông tin của chủ đề video</p>
-              </div>
-              <button 
-                onClick={() => setIsTopicModalOpen(false)}
-                className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-150 text-gray-400 hover:text-gray-600 transition"
-              >
-                ✕
-              </button>
-            </div>
-
-            {/* Body */}
-            <form onSubmit={handleTopicSubmit} className="flex-grow overflow-y-auto p-6 space-y-5 text-xs font-semibold text-gray-600">
-              {/* Title */}
-              <div>
-                <label className="block mb-1.5 text-gray-500">Tiêu đề chủ đề *</label>
-                <input
-                  type="text"
-                  required
-                  value={topicForm.title}
-                  onChange={(e) => setTopicForm({ ...topicForm, title: e.target.value })}
-                  placeholder="Ví dụ: Học chữ cái ABC"
-                  className="w-full bg-gray-50 border border-gray-250 rounded-xl px-4.5 py-3 outline-none focus:border-brand-green/50 text-gray-800 font-bold"
-                />
-              </div>
-
-              {/* Slug */}
-              <div>
-                <label className="block mb-1.5 text-gray-500">Đường dẫn tĩnh (Slug) - tự sinh nếu để trống</label>
-                <input
-                  type="text"
-                  value={topicForm.slug}
-                  onChange={(e) => setTopicForm({ ...topicForm, slug: e.target.value })}
-                  placeholder="Ví dụ: hoc-chu-cai-abc"
-                  className="w-full bg-gray-50 border border-gray-250 rounded-xl px-4.5 py-3 outline-none focus:border-brand-green/50 text-gray-800 font-bold"
-                />
-              </div>
-
-              {/* Thumbnail URL / Upload */}
-              <div>
-                <label className="block mb-1.5 text-gray-500">Ảnh đại diện (Thumbnail URL) *</label>
-                <div className="flex gap-2 mb-2">
-                  <input
-                    type="text"
-                    required
-                    value={topicForm.thumbnail}
-                    onChange={(e) => setTopicForm({ ...topicForm, thumbnail: e.target.value })}
-                    placeholder="Dán đường dẫn ảnh hoặc tải lên"
-                    className="flex-grow bg-gray-50 border border-gray-250 rounded-xl px-4.5 py-3 outline-none focus:border-brand-green/50 text-gray-800 font-bold"
-                  />
-                  <label className="bg-gray-100 hover:bg-gray-200 border border-gray-250 hover:border-gray-300 rounded-xl px-4 flex items-center justify-center gap-1.5 cursor-pointer text-gray-600 transition h-11 shrink-0 font-bold">
-                    <Upload className="w-4 h-4" />
-                    <span>Tải lên</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={(e) => handleFileUpload(e, 'topicThumbnail')}
-                    />
-                  </label>
-                </div>
-                {isUploading && uploadTarget === 'topicThumbnail' && (
-                  <div className="text-[10px] text-brand-green flex items-center gap-1 font-bold">
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    <span>Đang tải ảnh lên Cloudinary...</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Description */}
-              <div>
-                <label className="block mb-1.5 text-gray-500">Mô tả ngắn</label>
-                <textarea
-                  value={topicForm.description}
-                  onChange={(e) => setTopicForm({ ...topicForm, description: e.target.value })}
-                  placeholder="Mô tả tóm tắt nội dung chủ đề"
-                  className="w-full bg-gray-50 border border-gray-250 rounded-xl px-4.5 py-3 outline-none focus:border-brand-green/50 text-gray-800 font-bold h-20 resize-none"
-                />
-              </div>
-
-              {/* Order */}
-              <div>
-                <label className="block mb-1.5 text-gray-500">Thứ tự hiển thị</label>
-                <input
-                  type="number"
-                  value={topicForm.order}
-                  onChange={(e) => setTopicForm({ ...topicForm, order: parseInt(e.target.value) || 0 })}
-                  className="w-24 bg-gray-50 border border-gray-250 rounded-xl px-4.5 py-3 outline-none focus:border-brand-green/50 text-gray-800 font-bold"
-                />
-              </div>
-            </form>
-
-            {/* Actions */}
-            <div className="p-6 border-t border-gray-100 flex items-center justify-end gap-2 bg-gray-50/50">
-              <button
-                type="button"
-                onClick={() => setIsTopicModalOpen(false)}
-                className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl font-bold cursor-pointer transition text-xs"
-              >
-                Hủy bỏ
-              </button>
-              <button
-                type="button"
-                onClick={handleTopicSubmit}
-                disabled={isUploading}
-                className="px-5 py-2.5 bg-brand-green hover:bg-brand-dark text-white rounded-xl font-bold cursor-pointer transition disabled:opacity-50 text-xs"
-              >
-                Lưu chủ đề
-              </button>
-            </div>
+      {/* TOPIC DRAWER USING SLIDEOVERPANEL */}
+      <SlideOverPanel
+        isOpen={isTopicModalOpen}
+        onClose={() => setIsTopicModalOpen(false)}
+        title={editingTopic ? 'Biên soạn chủ đề video' : 'Tạo chủ đề video mới'}
+      >
+        <form onSubmit={handleTopicSubmit} className="space-y-5 text-xs font-semibold text-gray-600">
+          {/* Title */}
+          <div>
+            <label className="block mb-1.5 text-gray-500">Tiêu đề chủ đề *</label>
+            <input
+              type="text"
+              required
+              value={topicForm.title}
+              onChange={(e) => setTopicForm({ ...topicForm, title: e.target.value })}
+              placeholder="Ví dụ: Học chữ cái ABC"
+              className="w-full bg-gray-50 border border-gray-250 rounded-xl px-4.5 py-3 outline-none focus:border-brand-green/50 text-gray-800 font-bold"
+            />
           </div>
-        </div>
-      )}
 
-      {/* LESSON DRAWER */}
-      {isLessonModalOpen && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex justify-end animate-in fade-in duration-200">
-          <div className="absolute inset-0" onClick={() => setIsLessonModalOpen(false)} />
-          <div className="relative w-full max-w-4xl bg-white h-full shadow-2xl flex flex-col z-10 animate-in slide-in-from-right duration-355">
-            {/* Header */}
-            <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
-              <div>
-                <h2 className="text-base font-black text-gray-800">
-                  {editingLesson ? 'Biên soạn bài giảng video' : 'Tạo bài giảng video mới'}
-                </h2>
-                <p className="text-[10px] text-gray-500 font-semibold mt-0.5">Biên soạn thông tin và cấu hình tài nguyên media cho bài giảng</p>
-              </div>
-              <button 
-                onClick={() => setIsLessonModalOpen(false)}
-                className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-150 text-gray-400 hover:text-gray-600 transition"
-              >
-                ✕
-              </button>
-            </div>
-
-            {/* Body (Form Grid) */}
-            <form onSubmit={handleLessonSubmit} className="flex-grow overflow-y-auto p-8 grid grid-cols-1 md:grid-cols-2 gap-8 text-xs font-semibold text-gray-600">
-              {/* Column 1: General Info */}
-              <div className="space-y-5">
-                <h3 className="font-extrabold text-sm text-brand-green border-b pb-2 mb-3">Thông Tin Chung</h3>
-                
-                {/* Topic Select */}
-                <div>
-                  <label className="block mb-1.5 text-gray-500">Thuộc chủ đề *</label>
-                  <select
-                    required
-                    value={lessonForm.topicId}
-                    onChange={(e) => setLessonForm({ ...lessonForm, topicId: e.target.value })}
-                    className="w-full bg-gray-50 border border-gray-250 rounded-xl px-4 py-3 outline-none focus:border-brand-green/50 text-gray-800 font-bold cursor-pointer"
-                  >
-                    <option value="">-- Chọn chủ đề video --</option>
-                    {topics.map(t => (
-                      <option key={t._id} value={t._id}>{t.title}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Title */}
-                <div>
-                  <label className="block mb-1.5 text-gray-500">Tiêu đề bài giảng *</label>
-                  <input
-                    type="text"
-                    required
-                    value={lessonForm.title}
-                    onChange={(e) => setLessonForm({ ...lessonForm, title: e.target.value })}
-                    placeholder="Ví dụ: Luyện đọc nguyên âm đơn"
-                    className="w-full bg-gray-50 border border-gray-250 rounded-xl px-4.5 py-3 outline-none focus:border-brand-green/50 text-gray-800 font-bold"
-                  />
-                </div>
-
-                {/* Slug */}
-                <div>
-                  <label className="block mb-1.5 text-gray-500">Đường dẫn tĩnh (Slug) - tự sinh từ tiêu đề nếu để trống</label>
-                  <input
-                    type="text"
-                    value={lessonForm.slug}
-                    onChange={(e) => setLessonForm({ ...lessonForm, slug: e.target.value })}
-                    placeholder="Ví dụ: luyen-doc-nguyen-am-don hoặc a"
-                    className="w-full bg-gray-50 border border-gray-250 rounded-xl px-4.5 py-3 outline-none focus:border-brand-green/50 text-gray-800 font-bold"
-                  />
-                </div>
-
-                {/* Row: Duration & Order */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block mb-1.5 text-gray-500">Thời lượng (ví dụ: 05:30) *</label>
-                    <input
-                      type="text"
-                      required
-                      value={lessonForm.duration}
-                      onChange={(e) => setLessonForm({ ...lessonForm, duration: e.target.value })}
-                      placeholder="05:30"
-                      className="w-full bg-gray-50 border border-gray-250 rounded-xl px-4.5 py-3 outline-none focus:border-brand-green/50 text-gray-800 font-bold"
-                    />
-                  </div>
-                  <div>
-                    <label className="block mb-1.5 text-gray-500">Thứ tự sắp xếp *</label>
-                    <input
-                      type="number"
-                      required
-                      value={lessonForm.order}
-                      onChange={(e) => setLessonForm({ ...lessonForm, order: parseInt(e.target.value) || 0 })}
-                      className="w-full bg-gray-50 border border-gray-250 rounded-xl px-4.5 py-3 outline-none focus:border-brand-green/50 text-gray-800 font-bold"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Column 2: Media & Configuration */}
-              <div className="space-y-5">
-                <h3 className="font-extrabold text-sm text-brand-green border-b pb-2 mb-3">Cấu Hình Media & Tỷ Lệ</h3>
-
-                {/* Video Type Select */}
-                <div>
-                  <label className="block mb-1.5 text-gray-500">Nguồn video phát *</label>
-                  <select
-                    required
-                    value={lessonForm.videoType}
-                    onChange={(e) => {
-                      const type = e.target.value;
-                      setLessonForm({
-                        ...lessonForm,
-                        videoType: type,
-                        videoUrl: '',
-                        aspectRatio: type === 'tiktok' ? '9:16' : '16:9'
-                      });
-                    }}
-                    className="w-full bg-gray-50 border border-gray-250 rounded-xl px-4 py-3 outline-none focus:border-brand-green/50 text-gray-800 font-bold cursor-pointer"
-                  >
-                    <option value="youtube">YouTube (Embed Link / Shorts)</option>
-                    <option value="tiktok">TikTok Video Link</option>
-                    <option value="upload">Upload Video File (MP4 to Cloudinary)</option>
-                  </select>
-                </div>
-
-                {/* Aspect Ratio Selector */}
-                <div>
-                  <label className="block mb-1.5 text-gray-500">Tỷ lệ khung hình hiển thị *</label>
-                  <select
-                    required
-                    disabled={lessonForm.videoType === 'tiktok'}
-                    value={lessonForm.aspectRatio}
-                    onChange={(e) => setLessonForm({ ...lessonForm, aspectRatio: e.target.value })}
-                    className="w-full bg-gray-50 border border-gray-250 rounded-xl px-4 py-3 outline-none focus:border-brand-green/50 text-gray-800 font-bold cursor-pointer disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
-                  >
-                    <option value="16:9">Ngang (Landscape - 16:9)</option>
-                    <option value="9:16">Dọc (Portrait - 9:16)</option>
-                  </select>
-                  {lessonForm.videoType === 'tiktok' && (
-                    <p className="text-[10px] text-gray-400 mt-1 font-bold">Đã tự động khóa tỷ lệ dọc 9:16 cho TikTok.</p>
-                  )}
-                </div>
-
-                {/* Video URL Input / File Upload */}
-                <div>
-                  <label className="block mb-1.5 text-gray-500">
-                    {lessonForm.videoType === 'upload' ? 'Đường dẫn Video MP4 (Tải lên hoặc dán URL)' : 'Liên kết chia sẻ Video *'}
-                  </label>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      required
-                      value={lessonForm.videoUrl}
-                      onChange={(e) => setLessonForm({ ...lessonForm, videoUrl: e.target.value })}
-                      placeholder={
-                        lessonForm.videoType === 'youtube'
-                          ? 'Ví dụ: https://www.youtube.com/watch?v=...'
-                          : lessonForm.videoType === 'tiktok'
-                          ? 'Ví dụ: https://www.tiktok.com/@user/video/...'
-                          : 'Ví dụ: https://res.cloudinary.com/...'
-                      }
-                      className="flex-grow bg-gray-50 border border-gray-250 rounded-xl px-4.5 py-3 outline-none focus:border-brand-green/50 text-gray-800 font-bold"
-                    />
-                    {lessonForm.videoType === 'upload' && (
-                      <label className="bg-gray-100 hover:bg-gray-200 border border-gray-250 hover:border-gray-300 rounded-xl px-4 flex items-center justify-center gap-1.5 cursor-pointer text-gray-600 transition font-bold shrink-0 h-11">
-                        <Upload className="w-4 h-4" />
-                        <span>Tải lên</span>
-                        <input
-                          type="file"
-                          accept="video/mp4,video/x-m4v,video/*"
-                          className="hidden"
-                          onChange={(e) => handleFileUpload(e, 'lessonVideo')}
-                        />
-                      </label>
-                    )}
-                  </div>
-                  {isUploading && uploadTarget === 'lessonVideo' && (
-                    <div className="text-[10px] text-brand-green flex items-center gap-1 font-bold mt-1.5">
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      <span>Đang tải tệp Video MP4 lên Cloudinary (Quá trình này mất khoảng vài phút)...</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Lesson Thumbnail URL / Upload (Optional) */}
-                <div>
-                  <label className="block mb-1.5 text-gray-500">Ảnh đại diện video (Thumbnail URL) - Không bắt buộc</label>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={lessonForm.thumbnail}
-                      onChange={(e) => setLessonForm({ ...lessonForm, thumbnail: e.target.value })}
-                      placeholder="Dán đường dẫn ảnh hoặc tải lên"
-                      className="flex-grow bg-gray-50 border border-gray-250 rounded-xl px-4.5 py-3 outline-none focus:border-brand-green/50 text-gray-800 font-bold"
-                    />
-                    <label className="bg-gray-100 hover:bg-gray-200 border border-gray-250 hover:border-gray-300 rounded-xl px-4 flex items-center justify-center gap-1.5 cursor-pointer text-gray-600 transition font-bold shrink-0 h-11">
-                      <Upload className="w-4 h-4" />
-                      <span>Tải lên</span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(e) => handleFileUpload(e, 'lessonThumbnail')}
-                      />
-                    </label>
-                  </div>
-                  {isUploading && uploadTarget === 'lessonThumbnail' && (
-                    <div className="text-[10px] text-brand-green flex items-center gap-1 font-bold mt-1.5">
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      <span>Đang tải ảnh thumbnail lên Cloudinary...</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </form>
-
-            {/* Actions */}
-            <div className="p-6 border-t border-gray-100 flex items-center justify-end gap-2 bg-gray-50/50">
-              <button
-                type="button"
-                onClick={() => setIsLessonModalOpen(false)}
-                className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl font-bold cursor-pointer transition text-xs"
-              >
-                Hủy bỏ
-              </button>
-              <button
-                type="button"
-                onClick={handleLessonSubmit}
-                disabled={isUploading}
-                className="px-5 py-2.5 bg-brand-green hover:bg-brand-dark text-white rounded-xl font-bold cursor-pointer transition disabled:opacity-50 text-xs"
-              >
-                Lưu bài giảng
-              </button>
-            </div>
+          {/* Slug */}
+          <div>
+            <label className="block mb-1.5 text-gray-500">Đường dẫn tĩnh (Slug) - tự sinh nếu để trống</label>
+            <input
+              type="text"
+              value={topicForm.slug}
+              onChange={(e) => setTopicForm({ ...topicForm, slug: e.target.value })}
+              placeholder="Ví dụ: hoc-chu-cai-abc"
+              className="w-full bg-gray-50 border border-gray-250 rounded-xl px-4.5 py-3 outline-none focus:border-brand-green/50 text-gray-800 font-bold"
+            />
           </div>
-        </div>
-      )}
+
+          {/* Thumbnail URL / Upload */}
+          <div>
+            <label className="block mb-1.5 text-gray-500">Ảnh đại diện (Thumbnail URL) *</label>
+            <div className="flex gap-2 mb-2">
+              <input
+                type="text"
+                required
+                value={topicForm.thumbnail}
+                onChange={(e) => setTopicForm({ ...topicForm, thumbnail: e.target.value })}
+                placeholder="Dán đường dẫn ảnh hoặc tải lên"
+                className="flex-grow bg-gray-50 border border-gray-250 rounded-xl px-4.5 py-3 outline-none focus:border-brand-green/50 text-gray-800 font-bold"
+              />
+              <label className="bg-gray-100 hover:bg-gray-200 border border-gray-250 hover:border-gray-300 rounded-xl px-4 flex items-center justify-center gap-1.5 cursor-pointer text-gray-600 transition h-11 shrink-0 font-bold">
+                <Upload className="w-4 h-4" />
+                <span>Tải lên</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => handleFileUpload(e, 'topicThumbnail')}
+                />
+              </label>
+            </div>
+            {isUploading && uploadTarget === 'topicThumbnail' && (
+              <div className="text-[10px] text-brand-green flex items-center gap-1 font-bold">
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <span>Đang tải ảnh lên Cloudinary...</span>
+              </div>
+            )}
+          </div>
+
+          {/* Description */}
+          <div>
+            <label className="block mb-1.5 text-gray-500">Mô tả ngắn</label>
+            <textarea
+              value={topicForm.description}
+              onChange={(e) => setTopicForm({ ...topicForm, description: e.target.value })}
+              placeholder="Mô tả tóm tắt nội dung chủ đề"
+              className="w-full bg-gray-50 border border-gray-250 rounded-xl px-4.5 py-3 outline-none focus:border-brand-green/50 text-gray-800 font-bold h-20 resize-none"
+            />
+          </div>
+
+          {/* Order */}
+          <div>
+            <label className="block mb-1.5 text-gray-500">Thứ tự hiển thị</label>
+            <input
+              type="number"
+              value={topicForm.order}
+              onChange={(e) => setTopicForm({ ...topicForm, order: parseInt(e.target.value) || 0 })}
+              className="w-24 bg-gray-50 border border-gray-250 rounded-xl px-4.5 py-3 outline-none focus:border-brand-green/50 text-gray-800 font-bold"
+            />
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center justify-end gap-2 pt-5 border-t border-gray-100">
+            <button
+              type="button"
+              onClick={() => setIsTopicModalOpen(false)}
+              className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl font-bold cursor-pointer transition text-xs"
+            >
+              Hủy bỏ
+            </button>
+            <button
+              type="submit"
+              disabled={isUploading}
+              className="px-5 py-2.5 bg-brand-green hover:bg-brand-dark text-white rounded-xl font-bold cursor-pointer transition disabled:opacity-50 text-xs"
+            >
+              Lưu chủ đề
+            </button>
+          </div>
+        </form>
+      </SlideOverPanel>
     </div>
   );
 }

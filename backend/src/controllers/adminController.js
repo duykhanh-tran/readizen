@@ -1,6 +1,8 @@
 import User from '../models/User.js';
-import Form from '../models/Form.js';
 import Lesson from '../models/Lesson.js';
+import AlphabetLesson from '../models/AlphabetLesson.js';
+import VideoLesson from '../models/VideoLesson.js';
+import AdminActivityLog from '../models/AdminActivityLog.js';
 
 export const getDashboardStats = async (req, res) => {
     try {
@@ -9,21 +11,38 @@ export const getDashboardStats = async (req, res) => {
             return res.status(403).json({ message: "Truy cập bị từ chối. Bạn không có quyền quản trị." });
         }
 
-        const totalUsers = await User.countDocuments();
-        const totalForms = await Form.countDocuments();
-        const totalLessons = await Lesson.countDocuments();
-        const pendingForms = await Form.countDocuments({ status: 'pending' });
-        const contactedForms = await Form.countDocuments({ status: 'contacted' });
-        const canceledForms = await Form.countDocuments({ status: 'canceled' });
+        // Truy vấn đếm song song các bảng dữ liệu bằng Promise.all để tăng tốc hiệu năng
+        const [totalUsers, totalReadingLessons, totalAlphabetLessons, totalVideoLessons] = await Promise.all([
+            User.countDocuments(),
+            Lesson.countDocuments(),
+            AlphabetLesson.countDocuments(),
+            VideoLesson.countDocuments()
+        ]);
 
         res.status(200).json({
             totalUsers,
-            totalForms,
-            totalLessons,
-            pendingForms,
-            contactedForms,
-            canceledForms
+            totalReadingLessons,
+            totalAlphabetLessons,
+            totalVideoLessons
         });
+    } catch (error) {
+        res.status(500).json({ message: "Lỗi server", error: error.message });
+    }
+};
+
+// Lấy danh sách nhật ký hoạt động hệ thống (Admin-only)
+export const getActivityLogs = async (req, res) => {
+    try {
+        if (req.user.role !== "admin") {
+            return res.status(403).json({ message: "Truy cập bị từ chối. Bạn không có quyền quản trị." });
+        }
+
+        const logs = await AdminActivityLog.find()
+            .populate('adminId', 'fullName email')
+            .sort({ createdAt: -1 })
+            .limit(100);
+
+        res.status(200).json(logs);
     } catch (error) {
         res.status(500).json({ message: "Lỗi server", error: error.message });
     }

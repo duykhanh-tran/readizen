@@ -2,6 +2,7 @@ import AlphabetLesson from '../models/AlphabetLesson.js';
 import UserAlphabetScore from '../models/UserAlphabetScore.js';
 import mongoose from 'mongoose';
 import { uploadToCloudinary } from '../lib/cloudinary.js';
+import { logAdminActivity } from '../utils/adminLogger.js';
 
 // --- CLIENT APIS ---
 
@@ -214,6 +215,7 @@ export const createAlphabetLesson = async (req, res) => {
         });
 
         await lesson.save();
+        await logAdminActivity(req.user.id, 'CREATE', 'Alphabet', `Đã tạo chữ cái: "${lesson.letter}"`);
         res.status(201).json({ message: 'Tạo bài học bảng chữ cái thành công!', lesson });
     } catch (error) {
         res.status(500).json({ message: 'Lỗi server khi tạo chữ cái', error: error.message });
@@ -237,6 +239,7 @@ export const updateAlphabetLesson = async (req, res) => {
         lesson.status = status !== undefined ? status : lesson.status;
 
         await lesson.save();
+        await logAdminActivity(req.user.id, 'UPDATE', 'Alphabet', `Đã cập nhật chữ cái: "${lesson.letter}"`);
         res.status(200).json({ message: 'Cập nhật bài học bảng chữ cái thành công!', lesson });
     } catch (error) {
         res.status(500).json({ message: 'Lỗi server khi cập nhật chữ cái', error: error.message });
@@ -251,6 +254,7 @@ export const deleteAlphabetLesson = async (req, res) => {
         if (!lesson) {
             return res.status(404).json({ message: 'Không tìm thấy chữ cái để xóa.' });
         }
+        await logAdminActivity(req.user.id, 'DELETE', 'Alphabet', `Đã xóa chữ cái: "${lesson.letter}"`);
         res.status(200).json({ message: 'Xóa bài học bảng chữ cái thành công!' });
     } catch (error) {
         res.status(500).json({ message: 'Lỗi server khi xóa chữ cái', error: error.message });

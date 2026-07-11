@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   AlertCircle,
-  Clock,
   ListVideo,
   Loader2,
   Play,
@@ -262,15 +261,11 @@ export default function TopicVideosList() {
                 </div>
 
                 {/* Spotify-like column header */}
-                <div className="hidden grid-cols-[48px_128px_minmax(0,1fr)_150px_92px] items-center gap-4 border-b border-gray-100 px-6 py-3 text-[10px] font-black uppercase tracking-[0.14em] text-gray-400 lg:grid">
+                <div className="hidden grid-cols-[48px_128px_minmax(0,1fr)_150px] items-center gap-4 border-b border-gray-100 px-6 py-3 text-[10px] font-black uppercase tracking-[0.14em] text-gray-400 lg:grid">
                   <div className="text-center">#</div>
                   <div>Video</div>
                   <div>Tiêu đề</div>
                   <div>Nguồn</div>
-                  <div className="flex items-center justify-end gap-1.5">
-                    <Clock className="h-3.5 w-3.5" />
-                    Thời lượng
-                  </div>
                 </div>
 
                 <div className="divide-y divide-gray-100 px-2 py-2 sm:px-3">
@@ -289,7 +284,7 @@ export default function TopicVideosList() {
                             openLesson(lesson);
                           }
                         }}
-                        className="group grid cursor-pointer grid-cols-[30px_84px_minmax(0,1fr)] items-center gap-3 rounded-2xl px-2 py-3 outline-none transition duration-200 hover:bg-[#f3f7f1] focus-visible:ring-2 focus-visible:ring-brand-green/40 sm:grid-cols-[38px_110px_minmax(0,1fr)_72px] sm:gap-4 sm:px-3 lg:grid-cols-[48px_128px_minmax(0,1fr)_150px_92px] lg:px-3"
+                        className="group grid cursor-pointer grid-cols-[30px_84px_minmax(0,1fr)] items-center gap-3 rounded-2xl px-2 py-3 outline-none transition duration-200 hover:bg-[#f3f7f1] focus-visible:ring-2 focus-visible:ring-brand-green/40 sm:grid-cols-[38px_110px_minmax(0,1fr)] sm:gap-4 sm:px-3 lg:grid-cols-[48px_128px_minmax(0,1fr)_150px] lg:px-3"
                       >
                         <div className="flex items-center justify-center text-xs font-bold text-gray-400">
                           <span className="group-hover:hidden">{calculatedIndex}</span>
@@ -330,10 +325,6 @@ export default function TopicVideosList() {
 
                         <div className="hidden lg:block">
                           {renderSourceBadge(lesson.videoType)}
-                        </div>
-
-                        <div className="hidden items-center justify-end text-xs font-bold tabular-nums text-gray-400 sm:flex">
-                          {lesson.duration || '--:--'}
                         </div>
                       </article>
                     );

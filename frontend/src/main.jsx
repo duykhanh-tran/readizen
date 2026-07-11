@@ -31,6 +31,7 @@ import VideoTopics from './pages/VideoTopics.jsx'
 import TopicVideosList from './pages/TopicVideosList.jsx'
 import VideoPlayerFocus from './pages/VideoPlayerFocus.jsx'
 import ManageVideos from './pages/admin/ManageVideos.jsx'
+import EditVideoLesson from './pages/admin/EditVideoLesson.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 import { SocketProvider } from './context/SocketContext.jsx'
 import ScrollToTop from './components/shared/ScrollToTop.jsx'
@@ -74,6 +75,8 @@ createRoot(document.getElementById('root')).render(
               <Route path="alphabet" element={<ManageAlphabet />} />
               <Route path="alphabet/edit/:id" element={<EditAlphabetLesson />} />
               <Route path="videos" element={<ManageVideos />} />
+              <Route path="videos/create" element={<EditVideoLesson />} />
+              <Route path="videos/edit/:id" element={<EditVideoLesson />} />
             </Route>
           </Routes>
           <Analytics />

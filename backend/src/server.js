@@ -16,6 +16,7 @@ import userRoutes from './routes/userRoute.js';
 import alphabetRoutes from './routes/alphabetRoute.js';
 import videoRoutes from './routes/videoRoute.js';
 import Message from './models/Message.js';
+import { setIO } from './utils/socketIO.js';
 
 dotenv.config();
 
@@ -75,6 +76,8 @@ const io = new Server(server, {
         credentials: true
     }
 });
+
+setIO(io);
 
 // BƯỚC MỚI: Middleware bảo mật Socket.io bằng JWT
 io.use((socket, next) => {

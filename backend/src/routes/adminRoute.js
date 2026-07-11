@@ -1,6 +1,6 @@
 import express from 'express';
 import multer from 'multer';
-import { getDashboardStats } from '../controllers/adminController.js';
+import { getDashboardStats, getActivityLogs } from '../controllers/adminController.js';
 import { createLesson, getAdminLessons, updateLesson, deleteLesson, getAdminLessonById } from '../controllers/lessonController.js';
 import { verifyAdmin } from '../middlewares/authMiddleware.js';
 import { lessonValidationRules } from '../middlewares/validationMiddleware.js';
@@ -35,6 +35,9 @@ const parseMultipartLessonBody = (req, res, next) => {
 
 // Lấy số liệu thống kê Dashboard Admin
 router.get('/dashboard-stats', verifyAdmin, getDashboardStats);
+
+// Lấy nhật ký hoạt động hệ thống (Admin-only)
+router.get('/activity-logs', verifyAdmin, getActivityLogs);
 
 // Quản lý bài học AI (Nhận FormData thông qua upload.none() và parse body)
 router.post('/lessons', verifyAdmin, upload.none(), parseMultipartLessonBody, lessonValidationRules, createLesson);

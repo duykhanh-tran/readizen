@@ -35,11 +35,7 @@ const videoLessonSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
-  duration: {
-    type: String,
-    default: '00:00',
-    trim: true,
-  },
+
   order: {
     type: Number,
     default: 0,
