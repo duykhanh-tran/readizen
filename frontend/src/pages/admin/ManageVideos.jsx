@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../../services/axios.js';
 import { 
   Plus, Edit, Trash2, Loader2, AlertCircle, Check, 
-  Video, Folder, Upload, Link as LinkIcon, Clock, Eye 
+  Video, Folder, Upload, Link as LinkIcon, Clock, Eye, EyeOff 
 } from 'lucide-react';
 import SlideOverPanel from '../../components/shared/SlideOverPanel.jsx';
 
@@ -398,13 +398,14 @@ export default function ManageVideos() {
                   <th className="py-4 px-6">Chủ đề</th>
                   <th className="py-4 px-6">Nguồn video</th>
                   <th className="py-4 px-6">Tỷ lệ</th>
+                  <th className="py-4 px-6">Trạng thái</th>
                   <th className="py-4 px-6 text-right">Thao tác</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 font-semibold text-gray-700">
                 {lessons.length === 0 ? (
                   <tr>
-                    <td colSpan="8" className="text-center py-10 text-gray-400 italic">Không tìm thấy bài giảng video nào</td>
+                    <td colSpan="9" className="text-center py-10 text-gray-400 italic">Không tìm thấy bài giảng video nào</td>
                   </tr>
                 ) : (
                   lessons.map((l) => (
@@ -419,14 +420,27 @@ export default function ManageVideos() {
                         />
                       </td>
                       <td className="py-4.5 px-6 font-extrabold text-gray-900 max-w-xs truncate">{l.title}</td>
-                      <td className="py-4.5 px-6 text-gray-550 font-mono">{l.slug}</td>
+                      <td className="py-4.5 px-6 text-gray-500 font-mono">{l.slug}</td>
                       <td className="py-4.5 px-6"><span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-[10px] font-bold">{l.topicTitle || 'Chủ đề'}</span></td>
                       <td className="py-4.5 px-6 font-bold">
                         {l.videoType === 'youtube' && <span className="text-red-600">YouTube</span>}
                         {l.videoType === 'tiktok' && <span className="text-zinc-800">TikTok</span>}
                         {l.videoType === 'upload' && <span className="text-blue-600">File tải lên</span>}
                       </td>
-                      <td className="py-4.5 px-6 text-gray-500 font-bold">{l.aspectRatio || '16:9'}</td>
+                      <td className="py-4.5 px-6 text-gray-550 font-bold">{l.aspectRatio || '16:9'}</td>
+                      <td className="py-4.5 px-6">
+                        {l.status === 'published' ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-green-50 text-green-700 border border-green-200 text-[10px] font-bold">
+                            <Check className="w-3 h-3" />
+                            Published
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gray-100 text-gray-500 border border-gray-200 text-[10px] font-bold">
+                            <EyeOff className="w-3 h-3" />
+                            Draft
+                          </span>
+                        )}
+                      </td>
                       <td className="py-4.5 px-6 text-right">
                         <div className="flex items-center justify-end gap-1.5">
                           <button

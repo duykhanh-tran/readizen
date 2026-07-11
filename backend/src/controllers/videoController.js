@@ -48,9 +48,12 @@ export const getTopicBySlug = async (req, res) => {
       return res.status(404).json({ message: 'Không tìm thấy chủ đề video này.' });
     }
 
+    const isAdmin = req.user?.role === 'admin';
+    const queryFilter = isAdmin ? { topicId: topic._id } : { topicId: topic._id, status: 'published' };
+
     // Nếu không truyền page/limit, trả về toàn bộ bài học (tương thích ngược)
     if (!page && !limit) {
-      const lessons = await VideoLesson.find({ topicId: topic._id }).sort({ order: 1 });
+      const lessons = await VideoLesson.find(queryFilter).sort({ order: 1 });
       return res.status(200).json({
         ...topic.toObject(),
         lessons
@@ -61,8 +64,8 @@ export const getTopicBySlug = async (req, res) => {
     const limitNum = parseInt(limit) || 12;
     const skip = (pageNum - 1) * limitNum;
 
-    const total = await VideoLesson.countDocuments({ topicId: topic._id });
-    const lessons = await VideoLesson.find({ topicId: topic._id })
+    const total = await VideoLesson.countDocuments(queryFilter);
+    const lessons = await VideoLesson.find(queryFilter)
       .sort({ order: 1 })
       .skip(skip)
       .limit(limitNum);
@@ -101,9 +104,15 @@ export const getLessonBySlugs = async (req, res) => {
     if (!topic) {
       return res.status(404).json({ message: 'Không tìm thấy chủ đề video này.' });
     }
-    const lesson = await VideoLesson.findOne({ topicId: topic._id, slug: lessonSlug }).populate('topicId', 'title slug');
+    
+    const isAdmin = req.user?.role === 'admin';
+    const query = isAdmin 
+      ? { topicId: topic._id, slug: lessonSlug } 
+      : { topicId: topic._id, slug: lessonSlug, status: 'published' };
+
+    const lesson = await VideoLesson.findOne(query).populate('topicId', 'title slug');
     if (!lesson) {
-      return res.status(404).json({ message: 'Không tìm thấy bài học video này.' });
+      return res.status(404).json({ message: 'Không tìm thấy bài học video này hoặc bài học chưa được xuất bản.' });
     }
     res.status(200).json(lesson);
   } catch (error) {
@@ -176,7 +185,7 @@ export const deleteTopic = async (req, res) => {
 // Create Video Lesson
 export const createLesson = async (req, res) => {
   try {
-    const { topicId, title, slug, videoType, aspectRatio, videoUrl, thumbnail, order } = req.body;
+    const { topicId, title, slug, videoType, aspectRatio, videoUrl, thumbnail, order, status } = req.body;
     const newLesson = new VideoLesson({
       topicId,
       title,
@@ -185,7 +194,8 @@ export const createLesson = async (req, res) => {
       aspectRatio: aspectRatio || '16:9',
       videoUrl,
       thumbnail,
-      order: order || 0
+      order: order || 0,
+      status: status || 'draft'
     });
     await newLesson.save();
     await logAdminActivity(req.user.id, 'CREATE', 'Video', `Đã tạo bài học video: "${newLesson.title}"`);
@@ -199,7 +209,7 @@ export const createLesson = async (req, res) => {
 export const updateLesson = async (req, res) => {
   try {
     const { id } = req.params;
-    const { topicId, title, slug, videoType, aspectRatio, videoUrl, thumbnail, order } = req.body;
+    const { topicId, title, slug, videoType, aspectRatio, videoUrl, thumbnail, order, status } = req.body;
     const lesson = await VideoLesson.findById(id);
     if (!lesson) {
       return res.status(404).json({ message: 'Không tìm thấy bài học video cần cập nhật.' });
@@ -213,6 +223,7 @@ export const updateLesson = async (req, res) => {
     lesson.videoUrl = videoUrl !== undefined ? videoUrl : lesson.videoUrl;
     lesson.thumbnail = thumbnail !== undefined ? thumbnail : lesson.thumbnail;
     lesson.order = order !== undefined ? order : lesson.order;
+    lesson.status = status !== undefined ? status : lesson.status;
 
     await lesson.save();
     await logAdminActivity(req.user.id, 'UPDATE', 'Video', `Đã cập nhật bài học video: "${lesson.title}"`);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '../../services/axios.js';
-import { ArrowLeft, Save, Upload, Loader2, AlertCircle, Video, Image, FileText } from 'lucide-react';
+import { ArrowLeft, Save, Upload, Loader2, AlertCircle, Video, Image, FileText, Eye, EyeOff } from 'lucide-react';
 
 export default function EditVideoLesson() {
   const { id } = useParams(); // Nếu có id -> Edit Mode, ngược lại -> Create Mode
@@ -23,6 +23,7 @@ export default function EditVideoLesson() {
   const [videoUrl, setVideoUrl] = useState('');
   const [thumbnail, setThumbnail] = useState('');
   const [order, setOrder] = useState(0);
+  const [status, setStatus] = useState('draft');
 
   // Uploading States
   const [isUploading, setIsUploading] = useState(false);
@@ -50,6 +51,7 @@ export default function EditVideoLesson() {
           setVideoUrl(lesson.videoUrl || '');
           setThumbnail(lesson.thumbnail || '');
           setOrder(lesson.order || 0);
+          setStatus(lesson.status || 'draft');
         } else {
           // Gán mặc định chủ đề đầu tiên nếu có
           if (topicsRes.data.length > 0) {
@@ -120,7 +122,8 @@ export default function EditVideoLesson() {
         aspectRatio,
         videoUrl,
         thumbnail,
-        order: Number(order) || 0
+        order: Number(order) || 0,
+        status
       };
 
       if (isEditMode) {
@@ -242,6 +245,37 @@ export default function EditVideoLesson() {
               onChange={(e) => setOrder(parseInt(e.target.value) || 0)}
               className="w-full border border-gray-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-brand-green shadow-sm"
             />
+          </div>
+
+          {/* Status */}
+          <div className="space-y-1.5">
+            <label className="text-gray-500">Trạng thái bài học *</label>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setStatus('draft')}
+                className={`flex items-center justify-center gap-1.5 py-3 rounded-xl border text-xs font-bold transition cursor-pointer ${
+                  status === 'draft'
+                    ? 'bg-gray-100 border-gray-300 text-gray-700 shadow-sm'
+                    : 'bg-white border-gray-200 text-gray-400 hover:text-gray-600'
+                }`}
+              >
+                <EyeOff className="w-4 h-4" />
+                <span>Bản nháp (Draft)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setStatus('published')}
+                className={`flex items-center justify-center gap-1.5 py-3 rounded-xl border text-xs font-bold transition cursor-pointer ${
+                  status === 'published'
+                    ? 'bg-green-50 border-green-200 text-green-700 shadow-sm'
+                    : 'bg-white border-gray-200 text-gray-400 hover:text-green-600'
+                }`}
+              >
+                <Eye className="w-4 h-4" />
+                <span>Xuất bản</span>
+              </button>
+            </div>
           </div>
         </div>
 

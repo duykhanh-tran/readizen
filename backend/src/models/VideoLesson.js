@@ -39,6 +39,11 @@ const videoLessonSchema = new mongoose.Schema({
   order: {
     type: Number,
     default: 0,
+  },
+  status: {
+    type: String,
+    enum: ['draft', 'published'],
+    default: 'draft',
   }
 }, { timestamps: true });
 
