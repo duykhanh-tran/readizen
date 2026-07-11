@@ -16,15 +16,11 @@ const generateTokens = (id, role) => {
 // Cấu hình cookie động tùy theo môi trường dev/prod
 const getCookieOptions = () => {
     const isProd = process.env.NODE_ENV === 'production';
-    const options = {
+    return {
         httpOnly: true,
         secure: isProd, // Chỉ secure trên production (yêu cầu HTTPS)
-        sameSite: isProd ? 'lax' : 'lax', // Dùng lax ở local để dễ test trên localhost
+        sameSite: 'lax', // Khác origin nhưng cùng site readizen.vn nên dùng lax
     };
-    if (isProd && process.env.COOKIE_DOMAIN) {
-        options.domain = process.env.COOKIE_DOMAIN;
-    }
-    return options;
 };
 
 export const register = async (req, res) => {
@@ -256,6 +252,70 @@ export const updateAvatar = async (req, res) => {
         }
 
         res.status(200).json({ message: 'Cập nhật ảnh đại diện thành công!', user });
+    } catch (error) {
+        res.status(500).json({ message: 'Lỗi server', error: error.message });
+    }
+};
+
+// Lấy thông tin phiên học tập hiện tại (Guest-friendly, trả 200 thay vì 401 khi chưa đăng nhập)
+export const getSession = async (req, res) => {
+    try {
+        const token = req.cookies?.refreshToken;
+        if (!token) {
+            return res.status(200).json({ authenticated: false, user: null });
+        }
+
+        const session = await Session.findOne({ refreshToken: token });
+        if (!session) {
+            res.clearCookie("refreshToken", getCookieOptions());
+            return res.status(200).json({ authenticated: false, user: null });
+        }
+
+        jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, async (err, decoded) => {
+            if (err) {
+                await Session.deleteOne({ refreshToken: token });
+                res.clearCookie("refreshToken", getCookieOptions());
+                return res.status(200).json({ authenticated: false, user: null });
+            }
+
+            // Tạo cặp token mới (Xoay vòng Refresh Token Rotation - RTR)
+            const { accessToken: newAccessToken, refreshToken: newRefreshToken } = generateTokens(decoded.id, decoded.role);
+
+            // Cập nhật lại session trong DB với token mới
+            session.refreshToken = newRefreshToken;
+            session.expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 ngày mới
+            await session.save();
+
+            // Cập nhật Cookie
+            res.cookie('refreshToken', newRefreshToken, {
+                ...getCookieOptions(),
+                maxAge: 7 * 24 * 60 * 60 * 1000
+            });
+
+            // Lấy thông tin user
+            let user;
+            if (decoded.role === 'admin') {
+                user = await Admin.findById(decoded.id).select('-hashedPassword');
+            } else {
+                user = await User.findById(decoded.id).select('-hashedPassword');
+            }
+
+            if (!user) {
+                return res.status(200).json({ authenticated: false, user: null });
+            }
+
+            res.status(200).json({
+                authenticated: true,
+                accessToken: newAccessToken,
+                user: {
+                    id: user._id,
+                    fullName: user.fullName,
+                    email: user.email,
+                    role: decoded.role,
+                    avatarUrl: user.avatarUrl
+                }
+            });
+        });
     } catch (error) {
         res.status(500).json({ message: 'Lỗi server', error: error.message });
     }

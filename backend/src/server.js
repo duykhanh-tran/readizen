@@ -42,7 +42,9 @@ const corsOptions = {
             callback(new Error('Bị chặn bởi cấu hình bảo mật CORS'));
         }
     },
-    credentials: true // Bắt buộc phải có để truyền nhận HttpOnly Cookie cross-site
+    credentials: true, // Bắt buộc phải có để truyền nhận HttpOnly Cookie cross-site
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 };
 
 app.use(cors(corsOptions));

@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import api, { setAccessToken } from '../services/axios';
+import { createContext, useContext, useState, useEffect } from 'react';
+import api, { setAccessToken, addTokenListener } from '../services/axios';
 
 const AuthContext = createContext(null);
 
@@ -11,10 +11,18 @@ export const AuthProvider = ({ children }) => {
   // Hàm khôi phục phiên đăng nhập khi load trang
   const checkAuth = async () => {
     try {
-      const response = await api.get('/auth/me');
-      setUser(response.data);
-      setIsAuthenticated(true);
-    } catch (error) {
+      const response = await api.get('/auth/session');
+      if (response.data && response.data.authenticated) {
+        setAccessToken(response.data.accessToken);
+        setUser(response.data.user);
+        setIsAuthenticated(true);
+      } else {
+        setAccessToken('');
+        setUser(null);
+        setIsAuthenticated(false);
+      }
+    } catch {
+      setAccessToken('');
       setUser(null);
       setIsAuthenticated(false);
     } finally {
@@ -24,6 +32,16 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     checkAuth();
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = addTokenListener((token) => {
+      if (!token) {
+        setUser(null);
+        setIsAuthenticated(false);
+      }
+    });
+    return () => unsubscribe();
   }, []);
 
   // Đăng nhập tài khoản Client

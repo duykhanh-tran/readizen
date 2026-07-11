@@ -1,5 +1,5 @@
 import express from 'express';
-import { register, login, adminLogin, getMe, logout, refreshToken, updatePassword, updateAvatar } from '../controllers/authController.js';
+import { register, login, adminLogin, getMe, logout, refreshToken, updatePassword, updateAvatar, getSession } from '../controllers/authController.js';
 import { verifyToken } from '../middlewares/authMiddleware.js';
 import { registerValidationRules, loginValidationRules, adminLoginValidationRules } from '../middlewares/validationMiddleware.js';
 import { authLimiter } from '../middlewares/rateLimiter.js';
@@ -14,6 +14,7 @@ router.post('/login', loginValidationRules, login);
 router.post('/refresh', refreshToken);
 router.post('/admin/login', adminLoginValidationRules, adminLogin);
 router.post('/logout', logout);
+router.get('/session', getSession);
 router.get('/me', verifyToken, getMe);
 
 // Thêm API cho User Portal (Yêu cầu đăng nhập trước)

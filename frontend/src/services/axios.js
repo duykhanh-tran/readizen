@@ -57,9 +57,17 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     
+    const url = originalRequest.url || '';
+    const isAuthRequest = url.includes('/auth/login') || 
+                          url.includes('/auth/refresh') || 
+                          url.includes('/auth/logout') || 
+                          url.includes('/auth/session') || 
+                          url.includes('/auth/admin/login');
+
     if (
       (error.response?.status === 401 || error.response?.status === 403) && 
-      !originalRequest._retry
+      !originalRequest._retry &&
+      !isAuthRequest
     ) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
