@@ -1,6 +1,6 @@
 import express from 'express';
 import { register, login, adminLogin, getMe, logout, refreshToken, updatePassword, updateAvatar, getSession } from '../controllers/authController.js';
-import { verifyToken } from '../middlewares/authMiddleware.js';
+import { verifyToken, verifyRefreshToken } from '../middlewares/authMiddleware.js';
 import { registerValidationRules, loginValidationRules, adminLoginValidationRules } from '../middlewares/validationMiddleware.js';
 import { authLimiter } from '../middlewares/rateLimiter.js';
 
@@ -11,7 +11,7 @@ router.use(authLimiter);
 
 router.post('/register', registerValidationRules, register);
 router.post('/login', loginValidationRules, login);
-router.post('/refresh', refreshToken);
+router.post('/refresh', verifyRefreshToken, refreshToken);
 router.post('/admin/login', adminLoginValidationRules, adminLogin);
 router.post('/logout', logout);
 router.get('/session', getSession);

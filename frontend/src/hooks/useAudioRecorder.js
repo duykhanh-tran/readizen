@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import api from '../services/axios.js';
 
 // Global reference to handle overlap across hook instances
@@ -68,6 +69,7 @@ export default function useAudioRecorder() {
     
     audio.play().catch(err => {
       console.error('Audio play failed:', err);
+      toast.error('Không thể phát âm thanh mẫu. Vui lòng thử lại.');
     });
   }, [stopAllMedia]);
 
@@ -109,7 +111,7 @@ export default function useAudioRecorder() {
         };
       }
     } else {
-      console.warn('Web SpeechSynthesis not supported in this browser.');
+      toast.error('Trình duyệt của bạn không hỗ trợ tính năng đọc văn bản (TTS).');
     }
   }, [stopAllMedia]);
 
@@ -174,7 +176,11 @@ export default function useAudioRecorder() {
     } catch (err) {
       console.error('Microphone access error:', err);
       setError('MicrophonePermissionDenied');
-      console.error('Không thể truy cập Microphone. Vui lòng cấp quyền trong cài đặt trình duyệt.');
+      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+        toast.error('Vui lòng cấp quyền Micro trên thanh địa chỉ trình duyệt để bé bắt đầu đọc nhé!');
+      } else {
+        toast.error('Không thể truy cập Microphone. Vui lòng cài đặt và thử lại.');
+      }
     }
   }, [recordingIndex, evaluatingIndex, stopAllMedia]);
 
@@ -235,11 +241,12 @@ export default function useAudioRecorder() {
       const data = response.data; // expects { score, transcript, wordsFeedback }
       
       setDetailedFeedback(data);
+      toast.success('Chấm điểm phát âm thành công!');
       return data;
     } catch (err) {
       console.error('AI Speech Evaluation Error:', err);
       setError('SpeechEvaluationFailed');
-      console.error('Lỗi chấm điểm phát âm. Vui lòng thử lại.');
+      toast.error('Lỗi chấm điểm phát âm. Vui lòng kiểm tra kết nối mạng và thử lại.');
       throw err;
     } finally {
       setEvaluatingIndex(null);

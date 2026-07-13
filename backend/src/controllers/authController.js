@@ -1,6 +1,7 @@
 import User from '../models/User.js';
 import Admin from '../models/Admin.js';
 import Session from '../models/Session.js';
+import BlacklistedToken from '../models/BlacklistedToken.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
@@ -141,6 +142,19 @@ export const logout = async (req, res) => {
         const token = req.cookies?.refreshToken;
         if (token) {
             await Session.deleteOne({ refreshToken: token });
+
+            try {
+                // Giải mã token để lấy thời gian hết hạn (exp)
+                const decoded = jwt.decode(token);
+                if (decoded && decoded.exp) {
+                    const expiresAt = new Date(decoded.exp * 1000);
+                    // Lưu vào danh sách đen
+                    await BlacklistedToken.create({ token, expiresAt });
+                }
+            } catch (jwtErr) {
+                console.error("Lỗi giải mã token khi logout:", jwtErr);
+            }
+
             res.clearCookie("refreshToken", getCookieOptions());
         }
         res.status(200).json({ message: 'Đăng xuất thành công!' });
@@ -262,6 +276,13 @@ export const getSession = async (req, res) => {
     try {
         const token = req.cookies?.refreshToken;
         if (!token) {
+            return res.status(200).json({ authenticated: false, user: null });
+        }
+
+        // Kiểm tra xem token có trong blacklist không
+        const isBlacklisted = await BlacklistedToken.findOne({ token });
+        if (isBlacklisted) {
+            res.clearCookie("refreshToken", getCookieOptions());
             return res.status(200).json({ authenticated: false, user: null });
         }
 

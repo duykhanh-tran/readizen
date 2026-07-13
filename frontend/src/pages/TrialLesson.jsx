@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import api from '../services/axios.js';
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
 import SafeImage from '../components/shared/SafeImage.jsx';
+import useAudioRecorder from '../hooks/useAudioRecorder.js';
 import {
   Play,
   Volume2,
@@ -39,16 +41,19 @@ export default function TrialLesson() {
 
   // AI Practice State
   const [sentenceScores, setSentenceScores] = useState([]); // array of scores matching flatSentences
-  const [recordingIndex, setRecordingIndex] = useState(null); // index in flatSentences
-  const [evaluatingIndex, setEvaluatingIndex] = useState(null); // index in flatSentences
-  const [evaluationStep, setEvaluationStep] = useState(null); // 'compressing' | 'uploading' | 'analyzing'
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
 
-  // MediaRecorder refs
-  const mediaRecorderRef = useRef(null);
-  const audioChunksRef = useRef([]);
-  const mimeTypeRef = useRef('audio/webm');
+  // Consume useAudioRecorder Hook
+  const {
+    recordingIndex,
+    evaluatingIndex,
+    evaluationStep,
+    startRecording,
+    stopRecording,
+    evaluateAudio,
+    playSpeechText
+  } = useAudioRecorder();
 
   // Fetch Lesson details
   useEffect(() => {
@@ -72,25 +77,6 @@ export default function TrialLesson() {
     fetchLesson();
   }, [id]);
 
-  // Warm up Web Speech Synthesis voices to prevent delayed first play
-  useEffect(() => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.getVoices();
-    }
-  }, []);
-
-  // Clean up audio recording tracks on unmount to prevent memory/hardware leaks
-  useEffect(() => {
-    return () => {
-      if (mediaRecorderRef.current) {
-        const stream = mediaRecorderRef.current.stream;
-        if (stream) {
-          stream.getTracks().forEach(track => track.stop());
-        }
-      }
-    };
-  }, []);
-
   // Handle Keyboard controls in Fullscreen Modal
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -113,141 +99,27 @@ export default function TrialLesson() {
     setCarouselIndex(prev => (prev === lesson.ebookImages.length - 1 ? 0 : prev + 1));
   };
 
-  // Text-To-Speech (Listen helper)
-  const handleListenTemplate = (text) => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.85; // kid-friendly rate
-
-      const setVoiceAndSpeak = () => {
-        const voices = window.speechSynthesis.getVoices();
-        let selectedVoice = voices.find(v => /Google US English/i.test(v.name));
-        if (!selectedVoice) {
-          selectedVoice = voices.find(v => /en-US/i.test(v.lang) || /en_US/i.test(v.lang));
-        }
-        if (!selectedVoice) {
-          selectedVoice = voices.find(v => v.lang.startsWith('en'));
-        }
-
-        if (selectedVoice) {
-          utterance.voice = selectedVoice;
-          utterance.lang = selectedVoice.lang;
-        } else {
-          utterance.lang = 'en-US';
-        }
-        window.speechSynthesis.speak(utterance);
-      };
-
-      const voices = window.speechSynthesis.getVoices();
-      if (voices && voices.length > 0) {
-        setVoiceAndSpeak();
-      } else {
-        window.speechSynthesis.onvoiceschanged = () => {
-          setVoiceAndSpeak();
-          window.speechSynthesis.onvoiceschanged = null;
-        };
-      }
-    } else {
-      console.warn('Trình duyệt của bạn không hỗ trợ tính năng đọc văn bản (TTS).');
-    }
-  };
-
   // Start Mic Recording
-  const startRecording = async (index) => {
-    try {
-      if (recordingIndex !== null) return;
-
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          channelCount: { ideal: 1 },
-          sampleRate: { ideal: 16000 },
-          echoCancellation: true,
-          noiseSuppression: true
-        }
-      });
-
-      let selectedMimeType = 'audio/webm';
-      let options = {};
-      if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
-        selectedMimeType = 'audio/webm;codecs=opus';
-        options = { mimeType: selectedMimeType, audioBitsPerSecond: 16000 };
-      } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
-        selectedMimeType = 'audio/mp4';
-        options = { mimeType: selectedMimeType, audioBitsPerSecond: 16000 };
-      } else if (MediaRecorder.isTypeSupported('audio/webm')) {
-        selectedMimeType = 'audio/webm';
-        options = { mimeType: selectedMimeType, audioBitsPerSecond: 16000 };
-      }
-
-      mimeTypeRef.current = selectedMimeType;
-      mediaRecorderRef.current = new MediaRecorder(stream, options);
-      audioChunksRef.current = [];
-
-      mediaRecorderRef.current.ondataavailable = (event) => {
-        if (event.data && event.data.size > 0) {
-          audioChunksRef.current.push(event.data);
-        }
-      };
-
-      mediaRecorderRef.current.onstop = async () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: mimeTypeRef.current });
-        await evaluateSentenceAudio(index, audioBlob);
-      };
-
-      mediaRecorderRef.current.start();
-      setRecordingIndex(index);
-    } catch (err) {
-      console.error('Microphone access error:', err);
-      console.error('Không thể truy cập Microphone. Vui lòng kiểm tra lại quyền của trình duyệt.');
-    }
+  const handleStartRecording = (index) => {
+    if (recordingIndex !== null || evaluatingIndex !== null) return;
+    startRecording(index, () => handleStopRecording(index));
   };
 
-  // Stop Mic Recording
-  const stopRecording = () => {
-    if (mediaRecorderRef.current && recordingIndex !== null) {
-      mediaRecorderRef.current.stop();
-      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
-      setRecordingIndex(null);
-    }
-  };
-
-  // Call Speech scoring API
-  const evaluateSentenceAudio = async (index, audioBlob) => {
-    setEvaluatingIndex(index);
-    setEvaluationStep('compressing');
-    try {
-      // Simulate client side compression stage
-      await new Promise(resolve => setTimeout(resolve, 600));
-      setEvaluationStep('uploading');
-
+  // Stop Mic Recording & Evaluate
+  const handleStopRecording = async (index) => {
+    const audioBlob = await stopRecording();
+    if (audioBlob) {
       const targetText = flatSentences[index].text;
-      const extension = mimeTypeRef.current.includes('mp4') ? 'mp4' : 'webm';
-
-      const formData = new FormData();
-      formData.append('audio', audioBlob, `recording_${index}.${extension}`);
-      formData.append('textToRead', targetText);
-
-      const responsePromise = api.post('/lessons/evaluate-audio', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-
-      // Transition to analyzing step after 1s
-      setTimeout(() => {
-        setEvaluationStep(prev => prev === 'uploading' ? 'analyzing' : prev);
-      }, 1000);
-
-      const response = await responsePromise;
-      const { score } = response.data;
-      const updatedScores = [...sentenceScores];
-      updatedScores[index] = score;
-      setSentenceScores(updatedScores);
-    } catch (err) {
-      console.error('AI Speech Evaluation Error:', err);
-      console.error('Lỗi chấm điểm phát âm. Vui lòng kiểm thử lại.');
-    } finally {
-      setEvaluatingIndex(null);
-      setEvaluationStep(null);
+      try {
+        const result = await evaluateAudio(targetText, audioBlob, index);
+        if (result) {
+          const updatedScores = [...sentenceScores];
+          updatedScores[index] = result.score;
+          setSentenceScores(updatedScores);
+        }
+      } catch (err) {
+        console.error("AI Evaluation failed inside TrialLesson:", err);
+      }
     }
   };
 
@@ -273,9 +145,10 @@ export default function TrialLesson() {
         console.log('Khách vãng lai hoàn thành luyện đọc.');
       }
       setIsFinished(true);
+      toast.success('Lưu kết quả học tập thành công!');
     } catch (err) {
       console.error('Lưu điểm thất bại:', err);
-      console.error('Không thể lưu kết quả học tập. Vui lòng thử lại.');
+      toast.error('Không thể lưu kết quả học tập. Vui lòng thử lại.');
     } finally {
       setIsSubmitting(false);
     }
@@ -331,7 +204,7 @@ export default function TrialLesson() {
             <div className="absolute inset-0 rounded-full border-4 border-brand-green/15"></div>
             <Loader2 className="absolute inset-0 w-14 h-14 text-brand-green animate-spin" strokeWidth={2.5} />
           </div>
-          <p className="text-sm text-gray-500 font-semibold">Đang tải bài học...</p>
+          <p className="text-sm text-gray-555 font-semibold">Đang tải bài học...</p>
         </div>
       </div>
     );
@@ -573,7 +446,7 @@ export default function TrialLesson() {
                 </p>
               </div>
 
-              {/* Progress bar and score dashboard — đặt đầu section để luôn neo tiến độ */}
+              {/* Progress bar and score dashboard */}
               <div className="mb-10 bg-brand-dark rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-10 shadow-lift flex flex-col md:flex-row items-center justify-between gap-7 sm:gap-8 relative overflow-hidden text-white">
                 <div className="absolute -right-10 -top-10 w-48 h-48 bg-white/5 rounded-full blur-2xl pointer-events-none"></div>
                 <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-brand-green/40 rounded-full blur-2xl pointer-events-none"></div>
@@ -606,7 +479,7 @@ export default function TrialLesson() {
 
                 <div className="relative z-10 flex flex-col items-center md:items-end justify-center gap-3 shrink-0 w-full md:w-auto">
                   <div className="text-center md:text-right">
-                    <p className="text-[9px] font-extrabold text-green-100 uppercase tracking-widest mb-1">Điểm trung bình</p>
+                     <p className="text-[9px] font-extrabold text-green-100 uppercase tracking-widest mb-1">Điểm trung bình</p>
                     <p className={`text-4xl sm:text-5xl font-black leading-none tracking-tight ${getScoreTextClass(averageScore)}`} aria-live="polite">
                       {completedCount > 0 ? averageScore : '—'}
                     </p>
@@ -638,14 +511,14 @@ export default function TrialLesson() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
                 {flatSentences.map((s, index) => {
                   const score = sentenceScores[index];
-                  const isRecording = recordingIndex === index;
-                  const isEvaluating = evaluatingIndex === index;
+                  const isCurrentRecording = recordingIndex === index;
+                  const isCurrentEvaluating = evaluatingIndex === index;
                   const isDone = score !== null && score !== undefined;
 
                   return (
                     <article
                       key={index}
-                      className={`relative overflow-hidden bg-white rounded-3xl p-6 shadow-sm border-2 transition-all duration-300 flex flex-col justify-between group ${isRecording
+                      className={`relative overflow-hidden bg-white rounded-3xl p-6 shadow-sm border-2 transition-all duration-300 flex flex-col justify-between group ${isCurrentRecording
                         ? 'border-red-400 shadow-md ring-2 ring-red-100'
                         : isDone
                           ? 'border-brand-green/30 hover:shadow-md hover:border-brand-green/50'
@@ -653,7 +526,7 @@ export default function TrialLesson() {
                         }`}
                     >
                       {/* Hiệu ứng nền nhấp nháy nhẹ khi đang thu âm (UX Indicator) */}
-                      {isRecording && (
+                      {isCurrentRecording && (
                         <div className="absolute -top-10 -right-10 w-32 h-32 bg-red-50 rounded-full blur-3xl animate-pulse pointer-events-none" />
                       )}
 
@@ -663,13 +536,13 @@ export default function TrialLesson() {
                             <span className="text-[10px] font-bold uppercase text-gray-400 tracking-widest">
                               Câu luyện đọc #{index + 1}
                             </span>
-                            {isRecording && (
+                            {isCurrentRecording && (
                               <span className="flex items-center gap-1.5 text-[10px] font-bold text-red-500 uppercase tracking-widest animate-pulse">
                                 <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
                                 Đang thu
                               </span>
                             )}
-                            {isDone && !isRecording && !isEvaluating && (
+                            {isDone && !isCurrentRecording && !isCurrentEvaluating && (
                               <span className="inline-flex items-center gap-1 text-[10px] font-bold text-brand-green uppercase tracking-widest">
                                 <CheckCircle2 className="w-3 h-3" />
                                 Đã đọc
@@ -679,7 +552,7 @@ export default function TrialLesson() {
                           <p className="text-lg sm:text-xl font-bold text-gray-800 leading-snug group-hover:text-gray-900 transition-colors">
                             {s.text}
                           </p>
-                          {isEvaluating && evaluationStep && (
+                          {isCurrentEvaluating && evaluationStep && (
                             <div className="mt-2 flex items-center gap-1.5 text-xs font-bold text-brand-green animate-pulse">
                               <Loader2 className="w-3.5 h-3.5 animate-spin" />
                               <span>
@@ -697,11 +570,11 @@ export default function TrialLesson() {
                             Điểm
                           </span>
                           <div
-                            className={`w-12 h-12 rounded-2xl border flex items-center justify-center font-black text-lg shadow-sm transition-all ${isEvaluating ? 'bg-gray-50 border-gray-100' : 'bg-white border-gray-100'
-                              } ${score !== null && !isEvaluating ? getScoreColorClass(score) : 'text-gray-400'}`}
+                            className={`w-12 h-12 rounded-2xl border flex items-center justify-center font-black text-lg shadow-sm transition-all ${isCurrentEvaluating ? 'bg-gray-50 border-gray-100' : 'bg-white border-gray-100'
+                              } ${score !== null && !isCurrentEvaluating ? getScoreColorClass(score) : 'text-gray-400'}`}
                             aria-live="polite"
                           >
-                            {isEvaluating ? (
+                            {isCurrentEvaluating ? (
                               <Loader2 className="w-5 h-5 text-brand-green animate-spin" />
                             ) : score !== null ? (
                               score
@@ -715,8 +588,8 @@ export default function TrialLesson() {
                       {/* Khu vực nút bấm */}
                       <div className="mt-7 flex items-center gap-3 relative z-10">
                         <button
-                          onClick={() => handleListenTemplate(s.text)}
-                          disabled={isRecording}
+                          onClick={() => playSpeechText(s.text)}
+                          disabled={recordingIndex !== null}
                           className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-brand-light/50 text-brand-green font-bold hover:bg-brand-light transition-colors text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-green/40"
                           aria-label="Nghe câu mẫu"
                         >
@@ -724,9 +597,9 @@ export default function TrialLesson() {
                           <span>Nghe</span>
                         </button>
 
-                        {isRecording ? (
+                        {isCurrentRecording ? (
                           <button
-                            onClick={stopRecording}
+                            onClick={() => handleStopRecording(index)}
                             className="flex-[2] flex items-center justify-center gap-2 py-3 rounded-xl bg-red-500 text-white font-bold shadow-md shadow-red-500/20 hover:bg-red-600 active:scale-[0.98] transition-all cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-300"
                             aria-label="Dừng ghi âm"
                           >
@@ -735,8 +608,8 @@ export default function TrialLesson() {
                           </button>
                         ) : (
                           <button
-                            disabled={recordingIndex !== null || isEvaluating}
-                            onClick={() => startRecording(index)}
+                            disabled={recordingIndex !== null || evaluatingIndex !== null}
+                            onClick={() => handleStartRecording(index)}
                             className="flex-[2] flex items-center justify-center gap-2 py-3 rounded-xl bg-brand-green text-white font-bold shadow-md shadow-brand-green/20 hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 disabled:shadow-none cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-green/50"
                             aria-label={isDone ? 'Đọc lại câu này' : 'Bắt đầu thu âm'}
                           >
@@ -842,7 +715,7 @@ export default function TrialLesson() {
                 />
               </div>
 
-              {/* Tóm tắt số câu đọc tốt (>=80đ) — chỉ là hiển thị, không thêm logic mới */}
+              {/* Tóm tắt số câu đọc tốt (>=80đ) */}
               <div className="flex items-center justify-center gap-2 mt-5 pt-4 border-t border-brand-green/10">
                 <CheckCircle2 className="w-4 h-4 text-brand-green" />
                 <p className="text-xs font-bold text-gray-600">
@@ -901,7 +774,7 @@ export default function TrialLesson() {
               fallbackSrc="https://placehold.co/600x450?text=Ebook+Page"
             />
           ) : (
-            <div className="w-full max-w-[600px] aspect-[4/3] bg-white rounded-2xl flex items-center justify-center font-bold text-gray-500">
+            <div className="w-full max-w-[600px] aspect-[4/3] bg-white rounded-2xl flex items-center justify-center font-bold text-gray-550">
               Không có hình ảnh
             </div>
           )}

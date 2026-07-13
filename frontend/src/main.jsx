@@ -11,6 +11,7 @@ import AdminLayout from './components/layout/AdminLayout.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 import { SocketProvider } from './context/SocketContext.jsx'
 import ScrollToTop from './components/shared/ScrollToTop.jsx'
+import { Toaster } from 'react-hot-toast'
 
 // Lazy loaded page components
 const Learn = lazy(() => import('./pages/Learn.jsx'))
@@ -51,6 +52,7 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <ScrollToTop />
+      <Toaster position="top-center" reverseOrder={false} />
       <AuthProvider>
         <SocketProvider>
           <Suspense fallback={<LoadingSpinner />}>
