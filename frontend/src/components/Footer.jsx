@@ -12,7 +12,7 @@ const Footer = () => {
           {/* Cột 1: Logo & Info */}
           <div className="lg:col-span-2">
             <div className="flex items-center mb-6">
-              <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="cursor-pointer">
+              <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="cursor-pointer" aria-label="Readizen - Trang chủ">
                 <img src="/assets/logo.png" alt="Readizen Logo" className="h-12 lg:h-14 w-auto object-contain" />
               </Link>
             </div>
@@ -56,7 +56,7 @@ const Footer = () => {
 
         </div>
 
-        <div className="border-t border-white/10 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-400 gap-4">
+        <div className="border-t border-white/10 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-300 gap-4">
           <p>© {currentYear} Readizen. All rights reserved.</p>
           <p>Readizen — Truyện tiếng Anh luyện đọc có hướng dẫn cho trẻ 5+</p>
         </div>

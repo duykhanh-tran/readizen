@@ -1,0 +1,15 @@
+# Readizen
+
+Readizen is an innovative, next-generation educational technology (EdTech) platform designed to support English pronunciation, phonics, and literacy for children aged 5 and above.
+
+## Key Modules
+
+- **SmartABC**: Interactive alphabet instruction using speech synthesis, voice recognition, and real-time pronunciation scoring.
+- **Ebook AI Library**: Step-by-step reading practice that allows kids to listen, read, record, and receive human-teacher and AI-driven feedback.
+- **Video Lectures**: Interactive video lessons structured to boost comprehension and listening skills.
+
+## Technology Stack
+
+- **Frontend**: React 19, Vite, Tailwind CSS, Web Audio API.
+- **Backend**: Node.js, Express, MongoDB.
+- **AI Integrations**: AssemblyAI for pronunciation scoring and transcription.

@@ -65,6 +65,10 @@ export function App() {
                 src={src}
                 alt="Readizen Hero Background"
                 className="w-full h-full object-cover"
+                width={1280}
+                height={720}
+                loading={idx === 0 ? "eager" : "lazy"}
+                fetchPriority={idx === 0 ? "high" : "low"}
               />
             </div>
           ))}

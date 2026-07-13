@@ -109,7 +109,7 @@ const Header = () => {
     <header className={`w-full fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isVisible ? 'translate-y-0' : '-translate-y-full'} ${isSolid ? 'bg-[#FFFDF3]/95 backdrop-blur-md border-b border-[#EAE5D1] shadow-sm' : 'bg-transparent border-b border-transparent shadow-none'}`}>
       <div className="px-6 py-4 flex items-center justify-between max-w-7xl mx-auto">
         {/* Cột trái: Logo */}
-        <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex items-center cursor-pointer flex-shrink-0">
+        <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex items-center cursor-pointer flex-shrink-0" aria-label="Readizen - Trang chủ">
           <img src="/assets/logo.png" alt="Readizen Logo" className="h-6 lg:h-8 w-auto object-contain" />
         </Link>
 
@@ -151,9 +151,9 @@ const Header = () => {
                 {isUserDropdownOpen && (
                   <div className="absolute right-0 mt-3 w-64 bg-white border border-[#EAE5D1] rounded-2xl shadow-xl py-2 z-50 animate-in fade-in-50 slide-in-from-top-2 duration-150">
                     <div className="px-4 py-3 border-b border-[#FAF7EE]">
-                      <p className="text-[10px] uppercase tracking-wider font-semibold text-gray-400">Đăng nhập dưới tên</p>
+                      <p className="text-[10px] uppercase tracking-wider font-bold text-gray-500">Đăng nhập dưới tên</p>
                       <p className="font-bold text-gray-800 text-sm truncate mt-1">{user?.fullName || user?.username}</p>
-                      <p className="text-xs text-gray-550 truncate mt-0.5">{user?.email}</p>
+                      <p className="text-xs text-gray-600 truncate mt-0.5">{user?.email}</p>
                     </div>
 
                     <div className="p-1">
@@ -204,6 +204,7 @@ const Header = () => {
           <button
             className="lg:hidden p-2 text-brand-green hover:bg-[#EAE5D1] rounded-md transition-colors"
             onClick={toggleMobileMenu}
+            aria-label={isMobileMenuOpen ? "Đóng menu điều hướng" : "Mở menu điều hướng"}
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -234,7 +235,7 @@ const Header = () => {
                   )}
                   <div>
                     <div className="font-bold text-gray-800 text-sm">{user?.fullName || user?.username}</div>
-                    <div className="text-xs text-gray-550 truncate">{user?.email}</div>
+                    <div className="text-xs text-gray-600 truncate">{user?.email}</div>
                   </div>
                 </div>
 
@@ -352,7 +353,7 @@ const NavItem = ({ text, to, hasDropdown, dropdownItems }) => {
                     }`}
                 >
                   <div className="font-bold text-sm">{item.title}</div>
-                  {item.desc && <div className="text-xs text-gray-550 font-normal mt-1 leading-normal">{item.desc}</div>}
+                  {item.desc && <div className="text-xs text-gray-600 font-normal mt-1 leading-normal">{item.desc}</div>}
                 </Link>
               );
             })}

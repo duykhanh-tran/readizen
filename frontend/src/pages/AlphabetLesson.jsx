@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '../services/axios.js';
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
+import SafeImage from '../components/shared/SafeImage.jsx';
 import useAudioRecorder from '../hooks/useAudioRecorder.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import {
@@ -287,11 +288,15 @@ export default function AlphabetLesson() {
                 <span className="text-[200px] sm:text-[240px] lg:text-[285px] font-black text-brand-green tracking-wide leading-none">{lesson.letter}</span>
               </div>
 
-              <img
-                src={activeVocab.imageUrl || 'https://placehold.co/500x300?text=' + activeVocab.word}
+              <SafeImage
+                src={activeVocab.imageUrl}
                 alt={activeVocab.word}
                 className="relative z-10 h-full max-h-[240px] sm:max-h-[300px] lg:max-h-[340px] w-auto max-w-full object-contain select-none drop-shadow-[0_12px_24px_rgba(15,23,42,0.1)] transition-all duration-700 ease-out group-hover:scale-[1.03]"
-                onError={(e) => { e.target.src = 'https://placehold.co/500x300?text=' + activeVocab.word }}
+                width={500}
+                height={300}
+                loading="eager"
+                fetchPriority="high"
+                fallbackSrc={'https://placehold.co/500x300?text=' + activeVocab.word}
               />
 
               {/* Score badge absolute positioning */}

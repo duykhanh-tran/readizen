@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '../services/axios.js';
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
+import SafeImage from '../components/shared/SafeImage.jsx';
 import {
   Play,
   Volume2,
@@ -432,11 +433,15 @@ export default function TrialLesson() {
               <div className="bg-brand-cream p-4 sm:p-8 flex flex-col items-center justify-center gap-5">
                 <div className="relative mx-auto w-full max-w-[700px]">
                   {currentImageUrl ? (
-                    <img
+                    <SafeImage
                       src={currentImageUrl}
                       alt={`Trang ${carouselIndex + 1}`}
                       className="w-full rounded-3xl shadow-lg border border-white bg-white object-contain aspect-[4/3] select-none"
-                      onError={(e) => { e.target.src = 'https://placehold.co/600x450?text=Ebook+Page' }}
+                      width={600}
+                      height={450}
+                      loading="eager"
+                      fetchPriority="high"
+                      fallbackSrc="https://placehold.co/600x450?text=Ebook+Page"
                     />
                   ) : (
                     <div className="w-full rounded-3xl shadow-lg border border-white bg-white flex items-center justify-center aspect-[4/3] text-gray-450 font-bold">
@@ -873,12 +878,15 @@ export default function TrialLesson() {
 
           {/* Book Page Image */}
           {currentImageUrl ? (
-            <img
+            <SafeImage
               src={currentImageUrl}
               alt={`Trang ${carouselIndex + 1}`}
               className="rounded-2xl shadow-2xl bg-white object-contain select-none max-h-[85vh] max-w-[90vw]"
+              width={800}
+              height={600}
+              loading="lazy"
               onClick={(e) => e.stopPropagation()}
-              onError={(e) => { e.target.src = 'https://placehold.co/600x450?text=Ebook+Page' }}
+              fallbackSrc="https://placehold.co/600x450?text=Ebook+Page"
             />
           ) : (
             <div className="w-full max-w-[600px] aspect-[4/3] bg-white rounded-2xl flex items-center justify-center font-bold text-gray-500">
