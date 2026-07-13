@@ -19,9 +19,13 @@ export default function Tech() {
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <SafeImage
-            src="/assets/tech1.png"
+            src="/assets/tech1_compressed.jpg"
             alt="Công nghệ Readizen"
             className="w-full h-full object-cover"
+            width={1280}
+            height={720}
+            loading="eager"
+            fetchPriority="high"
           />
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/85 to-transparent"></div>

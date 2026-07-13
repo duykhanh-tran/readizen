@@ -110,7 +110,7 @@ const Header = () => {
       <div className="px-6 py-4 flex items-center justify-between max-w-7xl mx-auto">
         {/* Cột trái: Logo */}
         <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex items-center cursor-pointer flex-shrink-0" aria-label="Readizen - Trang chủ">
-          <img src="/assets/logo.png" alt="Readizen Logo" className="h-6 lg:h-8 w-auto object-contain" />
+          <img src="/assets/logo.png" alt="Readizen Logo" className="h-6 lg:h-8 w-auto object-contain" width={150} height={32} />
         </Link>
 
         {/* Cột giữa: Navigation Links */}

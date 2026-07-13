@@ -74,9 +74,13 @@ export default function AlphabetBoard() {
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <SafeImage
-            src="/assets/ABC-01.jpeg"
+            src="/assets/ABC-01_compressed.jpg"
             alt="Bảng chữ cái Readizen"
             className="w-full h-full object-cover"
+            width={1280}
+            height={720}
+            loading="eager"
+            fetchPriority="high"
           />
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/85 to-transparent"></div>

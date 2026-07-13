@@ -129,11 +129,14 @@ export default function Library() {
                 >
                   {/* Image block */}
                   <div className="aspect-[4/3] bg-gray-55 relative overflow-hidden flex items-center justify-center">
-                    <img
+                    <SafeImage
                       src={lesson.coverImage}
                       alt={lesson.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-                      onError={(e) => { e.target.src = 'https://placehold.co/300x200?text=Book+Cover' }}
+                      width={300}
+                      height={225}
+                      loading="lazy"
+                      fallbackSrc="https://placehold.co/300x200?text=Book+Cover"
                     />
                   </div>
 

@@ -13,7 +13,7 @@ const Footer = () => {
           <div className="lg:col-span-2">
             <div className="flex items-center mb-6">
               <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="cursor-pointer" aria-label="Readizen - Trang chủ">
-                <img src="/assets/logo.png" alt="Readizen Logo" className="h-12 lg:h-14 w-auto object-contain" />
+                <img src="/assets/logo.png" alt="Readizen Logo" className="h-12 lg:h-14 w-auto object-contain" width={200} height={56} />
               </Link>
             </div>
             <p className="text-gray-300 text-sm max-w-sm leading-relaxed">

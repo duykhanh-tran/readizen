@@ -118,9 +118,12 @@ export function App() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="w-full aspect-square bg-gray-50 rounded-3xl overflow-hidden shadow-lg border border-gray-100 flex items-center justify-center">
             <SafeImage
-              src="/assets/home5.png"
+              src="/assets/home5_compressed.jpg"
               alt="Hộp sách Readizen"
               className="w-full h-full object-cover"
+              width={400}
+              height={400}
+              loading="lazy"
             />
           </div>
           <div>
