@@ -287,11 +287,57 @@ export const evaluateAudioSpeech = async (req, res) => {
         // Thực tế gọi AssemblyAI SDK
         const client = new AssemblyAI({ apiKey: process.env.ASSEMBLYAI_API_KEY });
         
-        const transcript = await client.transcripts.transcribe({
-          audio: audioBuffer,
-          word_boost: targetWords,
-          boost_param: 'high'
-        });
+        let transcript;
+        try {
+            // 1. Upload audio buffer
+            const uploadResponse = await client.files.upload(audioBuffer);
+            const uploadUrl = uploadResponse.upload_url || uploadResponse;
+
+            // 2. Start transcript polling with 500ms intervals
+            const pollTranscript = async () => {
+                let response = await client.transcripts.create({
+                    audio_url: uploadUrl,
+                    word_boost: targetWords,
+                    boost_param: 'high'
+                });
+                const transcriptId = response.id;
+                
+                const startTime = Date.now();
+                while (response.status === 'queued' || response.status === 'processing') {
+                    if (Date.now() - startTime > 10000) {
+                        console.warn('Background polling loop auto-terminated (10s safety limit reached)');
+                        break;
+                    }
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    response = await client.transcripts.get(transcriptId);
+                }
+                return response;
+            };
+
+            const timeoutPromise = new Promise((_, reject) => {
+                setTimeout(() => {
+                    reject(new Error('AssemblyAI transcription timed out (8s limit reached)'));
+                }, 8000);
+            });
+
+            transcript = await Promise.race([
+                pollTranscript(),
+                timeoutPromise
+            ]);
+        } catch (pollErr) {
+            console.warn('AssemblyAI polling or timeout error:', pollErr.message);
+            return res.status(200).json({
+                score: 0,
+                transcript: "",
+                wordsFeedback: targetWords.map(w => ({
+                    word: w,
+                    cleanWord: normalizeText(w),
+                    confidence: 0,
+                    correct: false
+                })),
+                reason: `AssemblyAI error or timeout: ${pollErr.message}`
+            });
+        }
 
         if (transcript.status === 'error') {
             console.warn('AssemblyAI transcription error:', transcript.error);

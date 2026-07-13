@@ -36,7 +36,8 @@ export default function AlphabetLesson() {
     evaluateAudio,
     playSpeechText,
     clearFeedback,
-    isEvaluating
+    isEvaluating,
+    evaluationStep
   } = useAudioRecorder();
 
   useEffect(() => {
@@ -320,6 +321,17 @@ export default function AlphabetLesson() {
               <div className="text-center select-none">
                 {renderWordWithFeedback(activeVocab.word, activeScore)}
               </div>
+
+              {isEvaluating && evaluationStep && (
+                <div className="flex items-center gap-2 text-xs font-bold text-brand-green bg-brand-light/40 border border-brand-green/10 px-4 py-2 rounded-full animate-pulse -mt-2">
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  <span>
+                    {evaluationStep === 'compressing' && 'Đang nén âm thanh...'}
+                    {evaluationStep === 'uploading' && 'Đang gửi file ghi âm...'}
+                    {evaluationStep === 'analyzing' && 'AI đang phân tích và chấm điểm...'}
+                  </span>
+                </div>
+              )}
 
               {/* Buttons controller */}
               <div className="w-full max-w-2xl flex flex-col sm:flex-row items-center gap-4 mt-1">

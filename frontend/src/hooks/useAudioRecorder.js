@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import api from '../services/axios.js';
 
 // Global reference to handle overlap across hook instances
@@ -9,6 +9,7 @@ if (typeof window !== 'undefined') {
 export default function useAudioRecorder() {
   const [recordingIndex, setRecordingIndex] = useState(null);
   const [evaluatingIndex, setEvaluatingIndex] = useState(null);
+  const [evaluationStep, setEvaluationStep] = useState(null); // 'compressing' | 'uploading' | 'analyzing'
   const [detailedFeedback, setDetailedFeedback] = useState(null);
   const [error, setError] = useState(null);
 
@@ -16,6 +17,14 @@ export default function useAudioRecorder() {
   const audioChunksRef = useRef([]);
   const recordingTimeoutRef = useRef(null);
   const onAutoStopRef = useRef(null);
+  const mimeTypeRef = useRef('audio/webm');
+
+  // Warm up Web Speech Synthesis voices to prevent delayed first play
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.getVoices();
+    }
+  }, []);
 
   // Stops any playing HTML5 Audio and Web SpeechSynthesis to prevent overlap
   const stopAllMedia = useCallback(() => {
@@ -54,9 +63,36 @@ export default function useAudioRecorder() {
 
     if ('speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-US';
       utterance.rate = 0.85; // kid-friendly rate
-      window.speechSynthesis.speak(utterance);
+
+      const setVoiceAndSpeak = () => {
+        const voices = window.speechSynthesis.getVoices();
+        let selectedVoice = voices.find(v => /Google US English/i.test(v.name));
+        if (!selectedVoice) {
+          selectedVoice = voices.find(v => /en-US/i.test(v.lang) || /en_US/i.test(v.lang));
+        }
+        if (!selectedVoice) {
+          selectedVoice = voices.find(v => v.lang.startsWith('en'));
+        }
+
+        if (selectedVoice) {
+          utterance.voice = selectedVoice;
+          utterance.lang = selectedVoice.lang;
+        } else {
+          utterance.lang = 'en-US';
+        }
+        window.speechSynthesis.speak(utterance);
+      };
+
+      const voices = window.speechSynthesis.getVoices();
+      if (voices && voices.length > 0) {
+        setVoiceAndSpeak();
+      } else {
+        window.speechSynthesis.onvoiceschanged = () => {
+          setVoiceAndSpeak();
+          window.speechSynthesis.onvoiceschanged = null;
+        };
+      }
     } else {
       console.warn('Web SpeechSynthesis not supported in this browser.');
     }
@@ -71,8 +107,30 @@ export default function useAudioRecorder() {
     onAutoStopRef.current = onAutoStop;
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          channelCount: { ideal: 1 },
+          sampleRate: { ideal: 16000 },
+          echoCancellation: true,
+          noiseSuppression: true
+        }
+      });
+
+      let selectedMimeType = 'audio/webm';
+      let options = {};
+      if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+        selectedMimeType = 'audio/webm;codecs=opus';
+        options = { mimeType: selectedMimeType, audioBitsPerSecond: 16000 };
+      } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+        selectedMimeType = 'audio/mp4';
+        options = { mimeType: selectedMimeType, audioBitsPerSecond: 16000 };
+      } else if (MediaRecorder.isTypeSupported('audio/webm')) {
+        selectedMimeType = 'audio/webm';
+        options = { mimeType: selectedMimeType, audioBitsPerSecond: 16000 };
+      }
+
+      mimeTypeRef.current = selectedMimeType;
+      const mediaRecorder = new MediaRecorder(stream, options);
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
 
@@ -115,7 +173,7 @@ export default function useAudioRecorder() {
       const mediaRecorder = mediaRecorderRef.current;
       if (mediaRecorder && mediaRecorder.state !== 'inactive') {
         mediaRecorder.onstop = () => {
-          const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+          const audioBlob = new Blob(audioChunksRef.current, { type: mimeTypeRef.current });
           
           // Clean up stream tracks
           if (mediaRecorder.stream) {
@@ -136,27 +194,41 @@ export default function useAudioRecorder() {
     if (!audioBlob) return null;
     
     setEvaluatingIndex(index);
+    setEvaluationStep('compressing');
     setError(null);
 
     try {
+      // Simulate client side compression stage
+      await new Promise(resolve => setTimeout(resolve, 600));
+      setEvaluationStep('uploading');
+
+      const extension = mimeTypeRef.current.includes('mp4') ? 'mp4' : 'webm';
       const formData = new FormData();
-      formData.append('audio', audioBlob, `recording_${index}.webm`);
+      formData.append('audio', audioBlob, `recording_${index}.${extension}`);
       formData.append('textToRead', textToRead);
 
-      const response = await api.post('/lessons/evaluate-audio', formData, {
+      const responsePromise = api.post('/lessons/evaluate-audio', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 
+      // Transition to analyzing step after 1s or if it starts processing
+      setTimeout(() => {
+        setEvaluationStep(prev => prev === 'uploading' ? 'analyzing' : prev);
+      }, 1000);
+
+      const response = await responsePromise;
       const data = response.data; // expects { score, transcript, wordsFeedback }
+      
       setDetailedFeedback(data);
-      setEvaluatingIndex(null);
       return data;
     } catch (err) {
       console.error('AI Speech Evaluation Error:', err);
       setError('SpeechEvaluationFailed');
-      setEvaluatingIndex(null);
       alert('Lỗi chấm điểm phát âm. Vui lòng thử lại.');
       throw err;
+    } finally {
+      setEvaluatingIndex(null);
+      setEvaluationStep(null);
     }
   }, []);
 
@@ -167,6 +239,7 @@ export default function useAudioRecorder() {
   return {
     recordingIndex,
     evaluatingIndex,
+    evaluationStep,
     detailedFeedback,
     error,
     startRecording,

@@ -40,12 +40,14 @@ export default function TrialLesson() {
   const [sentenceScores, setSentenceScores] = useState([]); // array of scores matching flatSentences
   const [recordingIndex, setRecordingIndex] = useState(null); // index in flatSentences
   const [evaluatingIndex, setEvaluatingIndex] = useState(null); // index in flatSentences
+  const [evaluationStep, setEvaluationStep] = useState(null); // 'compressing' | 'uploading' | 'analyzing'
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
 
   // MediaRecorder refs
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
+  const mimeTypeRef = useRef('audio/webm');
 
   // Fetch Lesson details
   useEffect(() => {
@@ -68,6 +70,13 @@ export default function TrialLesson() {
     };
     fetchLesson();
   }, [id]);
+
+  // Warm up Web Speech Synthesis voices to prevent delayed first play
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.getVoices();
+    }
+  }, []);
 
   // Handle Keyboard controls in Fullscreen Modal
   useEffect(() => {
@@ -96,14 +105,36 @@ export default function TrialLesson() {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-US';
+      utterance.rate = 0.85; // kid-friendly rate
+
+      const setVoiceAndSpeak = () => {
+        const voices = window.speechSynthesis.getVoices();
+        let selectedVoice = voices.find(v => /Google US English/i.test(v.name));
+        if (!selectedVoice) {
+          selectedVoice = voices.find(v => /en-US/i.test(v.lang) || /en_US/i.test(v.lang));
+        }
+        if (!selectedVoice) {
+          selectedVoice = voices.find(v => v.lang.startsWith('en'));
+        }
+
+        if (selectedVoice) {
+          utterance.voice = selectedVoice;
+          utterance.lang = selectedVoice.lang;
+        } else {
+          utterance.lang = 'en-US';
+        }
+        window.speechSynthesis.speak(utterance);
+      };
 
       const voices = window.speechSynthesis.getVoices();
-      const englishVoice = voices.find(v => v.lang.startsWith('en'));
-      if (englishVoice) {
-        utterance.voice = englishVoice;
+      if (voices && voices.length > 0) {
+        setVoiceAndSpeak();
+      } else {
+        window.speechSynthesis.onvoiceschanged = () => {
+          setVoiceAndSpeak();
+          window.speechSynthesis.onvoiceschanged = null;
+        };
       }
-      window.speechSynthesis.speak(utterance);
     } else {
       alert('Trình duyệt của bạn không hỗ trợ tính năng đọc văn bản (TTS).');
     }
@@ -114,16 +145,40 @@ export default function TrialLesson() {
     try {
       if (recordingIndex !== null) return;
 
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorderRef.current = new MediaRecorder(stream);
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          channelCount: { ideal: 1 },
+          sampleRate: { ideal: 16000 },
+          echoCancellation: true,
+          noiseSuppression: true
+        }
+      });
+
+      let selectedMimeType = 'audio/webm';
+      let options = {};
+      if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+        selectedMimeType = 'audio/webm;codecs=opus';
+        options = { mimeType: selectedMimeType, audioBitsPerSecond: 16000 };
+      } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+        selectedMimeType = 'audio/mp4';
+        options = { mimeType: selectedMimeType, audioBitsPerSecond: 16000 };
+      } else if (MediaRecorder.isTypeSupported('audio/webm')) {
+        selectedMimeType = 'audio/webm';
+        options = { mimeType: selectedMimeType, audioBitsPerSecond: 16000 };
+      }
+
+      mimeTypeRef.current = selectedMimeType;
+      mediaRecorderRef.current = new MediaRecorder(stream, options);
       audioChunksRef.current = [];
 
       mediaRecorderRef.current.ondataavailable = (event) => {
-        audioChunksRef.current.push(event.data);
+        if (event.data && event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
       };
 
       mediaRecorderRef.current.onstop = async () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        const audioBlob = new Blob(audioChunksRef.current, { type: mimeTypeRef.current });
         await evaluateSentenceAudio(index, audioBlob);
       };
 
@@ -147,17 +202,29 @@ export default function TrialLesson() {
   // Call Speech scoring API
   const evaluateSentenceAudio = async (index, audioBlob) => {
     setEvaluatingIndex(index);
+    setEvaluationStep('compressing');
     try {
+      // Simulate client side compression stage
+      await new Promise(resolve => setTimeout(resolve, 600));
+      setEvaluationStep('uploading');
+
       const targetText = flatSentences[index].text;
+      const extension = mimeTypeRef.current.includes('mp4') ? 'mp4' : 'webm';
 
       const formData = new FormData();
-      formData.append('audio', audioBlob, `recording_${index}.webm`);
+      formData.append('audio', audioBlob, `recording_${index}.${extension}`);
       formData.append('textToRead', targetText);
 
-      const response = await api.post('/lessons/evaluate-audio', formData, {
+      const responsePromise = api.post('/lessons/evaluate-audio', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 
+      // Transition to analyzing step after 1s
+      setTimeout(() => {
+        setEvaluationStep(prev => prev === 'uploading' ? 'analyzing' : prev);
+      }, 1000);
+
+      const response = await responsePromise;
       const { score } = response.data;
       const updatedScores = [...sentenceScores];
       updatedScores[index] = score;
@@ -167,6 +234,7 @@ export default function TrialLesson() {
       alert('Lỗi chấm điểm phát âm. Vui lòng kiểm thử lại.');
     } finally {
       setEvaluatingIndex(null);
+      setEvaluationStep(null);
     }
   };
 
@@ -594,6 +662,16 @@ export default function TrialLesson() {
                           <p className="text-lg sm:text-xl font-bold text-gray-800 leading-snug group-hover:text-gray-900 transition-colors">
                             {s.text}
                           </p>
+                          {isEvaluating && evaluationStep && (
+                            <div className="mt-2 flex items-center gap-1.5 text-xs font-bold text-brand-green animate-pulse">
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                              <span>
+                                {evaluationStep === 'compressing' && 'Đang nén...'}
+                                {evaluationStep === 'uploading' && 'Đang gửi...'}
+                                {evaluationStep === 'analyzing' && 'AI đang chấm...'}
+                              </span>
+                            </div>
+                          )}
                         </div>
 
                         {/* Cụm hiển thị điểm số */}
