@@ -29,11 +29,6 @@ export const createForm = async (req, res) => {
 // 2. Admin lấy toàn bộ danh sách form yêu cầu tư vấn
 export const getAllForms = async (req, res) => {
     try {
-        // Kiểm tra nghiêm ngặt quyền hạn dựa trên role trong Token
-        if (req.user.role !== "admin") {
-            return res.status(403).json({ message: "Truy cập bị từ chối. Bạn không có quyền quản trị." });
-        }
-
         // Lấy danh sách form, đồng thời tìm trong bảng User để lấy thêm fullName và email
         const forms = await Form.find()
             .populate("userId", "fullName email")
@@ -48,10 +43,6 @@ export const getAllForms = async (req, res) => {
 // 3. Admin cập nhật trạng thái xử lý của form (Ví dụ: Từ chưa liên hệ -> Đã liên hệ)
 export const updateFormStatus = async (req, res) => {
     try {
-        if (req.user.role !== "admin") {
-            return res.status(403).json({ message: "Truy cập bị từ chối. Bạn không có quyền quản trị." });
-        }
-
         const { id } = req.params;
         const { status } = req.body;
 

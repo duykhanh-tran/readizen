@@ -37,6 +37,7 @@ export default function AlphabetLesson() {
     evaluateAudio,
     playSpeechText,
     clearFeedback,
+    isRecording,
     isEvaluating,
     evaluationStep
   } = useAudioRecorder();
@@ -65,13 +66,13 @@ export default function AlphabetLesson() {
   }, [id]);
 
   const goPrev = () => {
-    if (isEvaluating || vocabList.length === 0) return;
+    if (isEvaluating || isRecording || vocabList.length === 0) return;
     clearFeedback();
     setWordIndex(prev => (prev === 0 ? vocabList.length - 1 : prev - 1));
   };
 
   const goNext = () => {
-    if (isEvaluating || vocabList.length === 0) return;
+    if (isEvaluating || isRecording || vocabList.length === 0) return;
     clearFeedback();
     setWordIndex(prev => (prev === vocabList.length - 1 ? 0 : prev + 1));
   };
@@ -114,7 +115,7 @@ export default function AlphabetLesson() {
       setIsFinished(true);
     } catch (err) {
       console.error('Error saving alphabet scores:', err);
-      alert('Không thể lưu kết quả học tập. Vui lòng thử lại.');
+      console.error('Không thể lưu kết quả học tập. Vui lòng thử lại.');
     } finally {
       setIsSubmitting(false);
     }
@@ -233,7 +234,7 @@ export default function AlphabetLesson() {
             {/* Floating Left Arrow Button */}
             <button
               onClick={goPrev}
-              disabled={isEvaluating}
+              disabled={isEvaluating || isRecording}
               className="absolute -left-3 sm:-left-6 top-1/2 -translate-y-1/2 z-30 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/95 hover:bg-brand-light border border-brand-green/15 flex items-center justify-center text-gray-700 hover:text-brand-green shadow-md hover:shadow-lg transition-all duration-300 disabled:opacity-40 disabled:hover:bg-white disabled:cursor-not-allowed cursor-pointer backdrop-blur"
               aria-label="Từ trước"
             >
@@ -243,7 +244,7 @@ export default function AlphabetLesson() {
             {/* Floating Right Arrow Button */}
             <button
               onClick={goNext}
-              disabled={isEvaluating}
+              disabled={isEvaluating || isRecording}
               className="absolute -right-3 sm:-right-6 top-1/2 -translate-y-1/2 z-30 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/95 hover:bg-brand-light border border-brand-green/15 flex items-center justify-center text-gray-700 hover:text-brand-green shadow-md hover:shadow-lg transition-all duration-300 disabled:opacity-40 disabled:hover:bg-white disabled:cursor-not-allowed cursor-pointer backdrop-blur"
               aria-label="Từ sau"
             >

@@ -17,8 +17,8 @@ export const logAdminActivity = async (adminId, actionType, module, details) => 
 
         await log.save();
         
-        // Populate the log with admin details (e.g. fullName)
-        const populatedLog = await log.populate('adminId', 'fullName email');
+        // Populate the log with admin details (e.g. username)
+        const populatedLog = await log.populate('adminId', 'username');
 
         // Phát tín hiệu Socket.io tới các Admin đang kết nối
         const io = getIO();

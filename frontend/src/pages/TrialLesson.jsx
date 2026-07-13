@@ -79,6 +79,18 @@ export default function TrialLesson() {
     }
   }, []);
 
+  // Clean up audio recording tracks on unmount to prevent memory/hardware leaks
+  useEffect(() => {
+    return () => {
+      if (mediaRecorderRef.current) {
+        const stream = mediaRecorderRef.current.stream;
+        if (stream) {
+          stream.getTracks().forEach(track => track.stop());
+        }
+      }
+    };
+  }, []);
+
   // Handle Keyboard controls in Fullscreen Modal
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -137,7 +149,7 @@ export default function TrialLesson() {
         };
       }
     } else {
-      alert('Trình duyệt của bạn không hỗ trợ tính năng đọc văn bản (TTS).');
+      console.warn('Trình duyệt của bạn không hỗ trợ tính năng đọc văn bản (TTS).');
     }
   };
 
@@ -186,8 +198,8 @@ export default function TrialLesson() {
       mediaRecorderRef.current.start();
       setRecordingIndex(index);
     } catch (err) {
-      console.error(err);
-      alert('Không thể truy cập Microphone. Vui lòng kiểm tra lại quyền của trình duyệt.');
+      console.error('Microphone access error:', err);
+      console.error('Không thể truy cập Microphone. Vui lòng kiểm tra lại quyền của trình duyệt.');
     }
   };
 
@@ -231,8 +243,8 @@ export default function TrialLesson() {
       updatedScores[index] = score;
       setSentenceScores(updatedScores);
     } catch (err) {
-      console.error(err);
-      alert('Lỗi chấm điểm phát âm. Vui lòng kiểm thử lại.');
+      console.error('AI Speech Evaluation Error:', err);
+      console.error('Lỗi chấm điểm phát âm. Vui lòng kiểm thử lại.');
     } finally {
       setEvaluatingIndex(null);
       setEvaluationStep(null);
@@ -262,8 +274,8 @@ export default function TrialLesson() {
       }
       setIsFinished(true);
     } catch (err) {
-      console.error(err);
-      alert('Không thể lưu kết quả học tập. Vui lòng thử lại.');
+      console.error('Lưu điểm thất bại:', err);
+      console.error('Không thể lưu kết quả học tập. Vui lòng thử lại.');
     } finally {
       setIsSubmitting(false);
     }

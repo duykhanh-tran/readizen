@@ -49,10 +49,6 @@ export const markMessagesAsRead = async (req, res) => {
 // Admin lấy danh sách người dùng để hiển thị hộp thư chat
 export const getChatUsers = async (req, res) => {
     try {
-        if (req.user.role !== 'admin') {
-            return res.status(403).json({ message: "Truy cập bị từ chối. Bạn không có quyền quản trị." });
-        }
-
         // Tối ưu hóa hiệu năng: Thay thế việc JOIN toàn bộ tin nhắn bằng Subpipeline Lookup chỉ lấy tin nhắn mới nhất
         const chatList = await User.aggregate([
             // Stage 1: Chỉ lookup tin nhắn mới nhất của từng người dùng bằng subpipeline và index

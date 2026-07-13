@@ -34,15 +34,19 @@ export default function VideoPlayerFocus() {
       setError(null);
 
       try {
-        // Fetch current video lesson details
-        const lessonRes = await api.get(`/videos/topics/${slug}/lessons/${lessonSlug}`);
-        setLesson(lessonRes.data);
-
         if (shouldFetchTopic) {
-          // Fetch the topic and its list of lessons
-          const topicRes = await api.get(`/videos/topics/${slug}`);
+          // Fetch both current video details and parent topic in parallel
+          const [lessonRes, topicRes] = await Promise.all([
+            api.get(`/videos/topics/${slug}/lessons/${lessonSlug}`),
+            api.get(`/videos/topics/${slug}`)
+          ]);
+          setLesson(lessonRes.data);
           setTopic(topicRes.data);
           setLessons(topicRes.data.lessons || []);
+        } else {
+          // Only fetch current video details
+          const lessonRes = await api.get(`/videos/topics/${slug}/lessons/${lessonSlug}`);
+          setLesson(lessonRes.data);
         }
       } catch (err) {
         console.error('Lỗi khi tải chi tiết video bài học:', err);

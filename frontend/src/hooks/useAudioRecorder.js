@@ -26,6 +26,21 @@ export default function useAudioRecorder() {
     }
   }, []);
 
+  // Robust cleanup to prevent hardware/memory leaks on unmount
+  useEffect(() => {
+    return () => {
+      if (recordingTimeoutRef.current) {
+        clearTimeout(recordingTimeoutRef.current);
+      }
+      if (mediaRecorderRef.current) {
+        const stream = mediaRecorderRef.current.stream;
+        if (stream) {
+          stream.getTracks().forEach(track => track.stop());
+        }
+      }
+    };
+  }, []);
+
   // Stops any playing HTML5 Audio and Web SpeechSynthesis to prevent overlap
   const stopAllMedia = useCallback(() => {
     if (typeof window !== 'undefined') {
@@ -159,7 +174,7 @@ export default function useAudioRecorder() {
     } catch (err) {
       console.error('Microphone access error:', err);
       setError('MicrophonePermissionDenied');
-      alert('Không thể truy cập Microphone. Vui lòng cấp quyền trong cài đặt trình duyệt.');
+      console.error('Không thể truy cập Microphone. Vui lòng cấp quyền trong cài đặt trình duyệt.');
     }
   }, [recordingIndex, evaluatingIndex, stopAllMedia]);
 
@@ -224,7 +239,7 @@ export default function useAudioRecorder() {
     } catch (err) {
       console.error('AI Speech Evaluation Error:', err);
       setError('SpeechEvaluationFailed');
-      alert('Lỗi chấm điểm phát âm. Vui lòng thử lại.');
+      console.error('Lỗi chấm điểm phát âm. Vui lòng thử lại.');
       throw err;
     } finally {
       setEvaluatingIndex(null);

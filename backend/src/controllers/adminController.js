@@ -6,11 +6,6 @@ import AdminActivityLog from '../models/AdminActivityLog.js';
 
 export const getDashboardStats = async (req, res) => {
     try {
-        // Kiểm tra nghiêm ngặt quyền hạn dựa trên role trong Token
-        if (req.user.role !== "admin") {
-            return res.status(403).json({ message: "Truy cập bị từ chối. Bạn không có quyền quản trị." });
-        }
-
         // Truy vấn đếm song song các bảng dữ liệu bằng Promise.all để tăng tốc hiệu năng
         const [totalUsers, totalReadingLessons, totalAlphabetLessons, totalVideoLessons] = await Promise.all([
             User.countDocuments(),
@@ -33,12 +28,8 @@ export const getDashboardStats = async (req, res) => {
 // Lấy danh sách nhật ký hoạt động hệ thống (Admin-only)
 export const getActivityLogs = async (req, res) => {
     try {
-        if (req.user.role !== "admin") {
-            return res.status(403).json({ message: "Truy cập bị từ chối. Bạn không có quyền quản trị." });
-        }
-
         const logs = await AdminActivityLog.find()
-            .populate('adminId', 'fullName email')
+            .populate('adminId', 'username')
             .sort({ createdAt: -1 })
             .limit(100);
 
