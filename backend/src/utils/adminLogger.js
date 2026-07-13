@@ -1,7 +1,7 @@
 import AdminActivityLog from '../models/AdminActivityLog.js';
 import { getIO } from './socketIO.js';
 
-export const logAdminActivity = async (adminId, actionType, module, details) => {
+export const logAdminActivity = async (adminId, actionType, module, details, options = {}) => {
     try {
         if (!adminId) {
             console.error('Cannot log admin activity: adminId is required');
@@ -15,7 +15,7 @@ export const logAdminActivity = async (adminId, actionType, module, details) => 
             details
         });
 
-        await log.save();
+        await log.save(options);
         
         // Populate the log with admin details (e.g. username)
         const populatedLog = await log.populate('adminId', 'username');

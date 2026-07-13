@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import api from '../services/axios.js';
+import { uploadDirectToCloudinary } from '../utils/cloudinaryUpload.js';
 
 // Global reference to handle overlap across hook instances
 if (typeof window !== 'undefined') {
@@ -223,21 +224,16 @@ export default function useAudioRecorder() {
       await new Promise(resolve => setTimeout(resolve, 600));
       setEvaluationStep('uploading');
 
-      const extension = mimeTypeRef.current.includes('mp4') ? 'mp4' : 'webm';
-      const formData = new FormData();
-      formData.append('audio', audioBlob, `recording_${index}.${extension}`);
-      formData.append('textToRead', textToRead);
+      // Upload directly to Cloudinary
+      const audioUrl = await uploadDirectToCloudinary(audioBlob, 'speech');
 
-      const responsePromise = api.post('/lessons/evaluate-audio', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
+      setEvaluationStep('analyzing');
+
+      const response = await api.post('/lessons/evaluate-audio', {
+        audioUrl,
+        textToRead
       });
 
-      // Transition to analyzing step after 1s or if it starts processing
-      setTimeout(() => {
-        setEvaluationStep(prev => prev === 'uploading' ? 'analyzing' : prev);
-      }, 1000);
-
-      const response = await responsePromise;
       const data = response.data; // expects { score, transcript, wordsFeedback }
       
       setDetailedFeedback(data);

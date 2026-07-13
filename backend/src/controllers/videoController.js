@@ -1,6 +1,6 @@
 import VideoTopic from '../models/VideoTopic.js';
 import VideoLesson from '../models/VideoLesson.js';
-import { uploadToCloudinary } from '../lib/cloudinary.js';
+import MediaService from '../services/MediaService.js';
 import { logAdminActivity } from '../utils/adminLogger.js';
 
 // --- CLIENT APIS ---
@@ -251,18 +251,11 @@ export const deleteLesson = async (req, res) => {
 // Upload Media file to Cloudinary (generic handler for MP4 or image thumbnail)
 export const uploadMedia = async (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({ message: 'Không tìm thấy tệp tin tải lên.' });
-    }
-    const secureUrl = await uploadToCloudinary(
-      req.file.buffer,
-      req.file.originalname,
-      req.file.mimetype,
-      'videos'
-    );
+    const secureUrl = await MediaService.upload(req.file, 'videos');
     res.status(200).json({ url: secureUrl });
   } catch (error) {
     console.error('[Upload Media Error]:', error);
-    res.status(500).json({ message: 'Lỗi khi tải tệp tin lên server', error: error.message });
+    const status = error.message.includes('Không tìm thấy') ? 400 : 500;
+    res.status(status).json({ message: error.message });
   }
 };

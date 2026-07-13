@@ -15,6 +15,7 @@ import lessonRoutes from './routes/lessonRoute.js';
 import userRoutes from './routes/userRoute.js';
 import alphabetRoutes from './routes/alphabetRoute.js';
 import videoRoutes from './routes/videoRoute.js';
+import uploadRoutes from './routes/uploadRoute.js';
 import Message from './models/Message.js';
 import { setIO } from './utils/socketIO.js';
 
@@ -61,6 +62,7 @@ app.use('/api/lessons', lessonRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/alphabet', alphabetRoutes);
 app.use('/api/videos', videoRoutes);
+app.use('/api/upload', uploadRoutes);
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -159,8 +161,12 @@ app.use((err, req, res, next) => {
 });
 
 // CHÚ Ý: Chạy `server.listen` thay vì `app.listen`
-connectDB().then(() => {
-    server.listen(PORT, () => {
-        console.log(`🚀 Server (kèm Socket.io) đang chạy trên port ${PORT}`);
+if (process.env.NODE_ENV !== 'test') {
+    connectDB().then(() => {
+        server.listen(PORT, () => {
+            console.log(`🚀 Server (kèm Socket.io) đang chạy trên port ${PORT}`);
+        });
     });
-});
+}
+
+export { app, server };
