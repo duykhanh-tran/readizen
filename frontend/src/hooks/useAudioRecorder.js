@@ -205,7 +205,12 @@ export default function useAudioRecorder() {
           setRecordingIndex(null);
           resolve(audioBlob);
         };
-        mediaRecorder.stop();
+        // Wait 400ms before stopping to capture ending sounds and prevent truncation
+        setTimeout(() => {
+          if (mediaRecorder.state !== 'inactive') {
+            mediaRecorder.stop();
+          }
+        }, 400);
       } else {
         resolve(null);
       }

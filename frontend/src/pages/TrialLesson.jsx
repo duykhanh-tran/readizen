@@ -29,6 +29,14 @@ export default function TrialLesson() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
+  const handleBackToLibrary = () => {
+    if (window.history.state && window.history.state.idx > 0) {
+      navigate(-1);
+    } else {
+      navigate('/library');
+    }
+  };
+
   // Lesson state
   const [lesson, setLesson] = useState(null);
   const [flatSentences, setFlatSentences] = useState([]); // flat practice sentences list
@@ -220,13 +228,13 @@ export default function TrialLesson() {
           </div>
           <h3 className="font-bold text-gray-800 text-lg">Bài học không khả dụng</h3>
           <p className="text-sm text-gray-555 mt-2 mb-7 leading-relaxed">{error || 'Bài học này không tìm thấy.'}</p>
-          <Link
-            to="/library"
-            className="inline-flex items-center gap-2 bg-brand-green hover:bg-brand-dark text-white px-7 py-3 rounded-full text-sm font-bold shadow-md transition-colors"
+          <button
+            onClick={handleBackToLibrary}
+            className="inline-flex items-center gap-2 bg-brand-green hover:bg-brand-dark text-white px-7 py-3 rounded-full text-sm font-bold shadow-md transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4" />
             Quay lại Thư viện
-          </Link>
+          </button>
         </div>
       </div>
     );
@@ -254,15 +262,15 @@ export default function TrialLesson() {
             {/* HERO TITLE SECTION */}
             <section className="pb-12 text-left border-b border-gray-100">
               {/* Nút quay lại (Giữ căn trái để chuẩn UX điều hướng) */}
-              <Link
-                to="/library"
-                className="inline-flex items-center gap-2 px-2 py-2 -ml-2 mb-8 text-sm font-medium text-gray-500 transition-colors rounded-full group hover:text-brand-green focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-green/40"
+              <button
+                onClick={handleBackToLibrary}
+                className="inline-flex items-center gap-2 px-2 py-2 -ml-2 mb-8 text-sm font-medium text-gray-500 transition-colors rounded-full group hover:text-brand-green focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-green/40 cursor-pointer bg-transparent border-none"
               >
                 <span className="p-1 transition-colors rounded-full bg-gray-50 group-hover:bg-brand-green/10">
                   <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
                 </span>
                 <span>Quay lại Thư viện</span>
-              </Link>
+              </button>
 
               {/* Khối Nội dung chính (Được căn giữa toàn bộ) */}
               <div className="flex flex-col items-center text-center">

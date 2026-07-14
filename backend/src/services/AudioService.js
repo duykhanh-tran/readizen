@@ -45,6 +45,17 @@ const getStringSimilarity = (s1, s2) => {
     return (maxLen - dist) / maxLen;
 };
 
+// Helper: Hiệu chỉnh điểm số cho các từ/câu ngắn để tránh chấm điểm quá khắt khe
+const calibrateScore = (rawScore, targetWordsLength, matchedRatio = 1.0) => {
+    if (targetWordsLength <= 2 && rawScore > 0 && matchedRatio >= 0.5) {
+        // Áp dụng hàm làm mịn phi tuyến tính: Score = 100 * (Score_raw / 100)^0.75
+        // Giúp nâng nhẹ các phổ điểm trung bình/khá của từ ngắn lên
+        const calibrated = Math.round(100 * Math.pow(rawScore / 100, 0.75));
+        return Math.max(0, Math.min(100, calibrated));
+    }
+    return Math.max(0, Math.min(100, rawScore));
+};
+
 class AudioService {
     async evaluateSpeech(textToRead, file, audioUrlFromClient = null) {
         if (!file && !audioUrlFromClient) {
@@ -89,11 +100,12 @@ class AudioService {
 
             const similarity = 0.95;
             const avgConfidence = 0.92;
-            const finalScore = Math.round((similarity * 0.6 + avgConfidence * 0.4) * 100);
+            const rawScore = Math.round((similarity * 0.6 + avgConfidence * 0.4) * 100);
+            const finalScore = calibrateScore(rawScore, targetWords.length, 1.0);
 
             console.log('Evaluation Result: MOCK SUCCESS (Score:', finalScore, ')');
             return {
-                score: Math.min(100, Math.max(0, finalScore)),
+                score: finalScore,
                 transcript: textToRead,
                 wordsFeedback: targetWords.map(word => ({
                     word,
@@ -246,13 +258,14 @@ class AudioService {
         });
 
         const averageConfidence = matchedCount > 0 ? (totalConfidence / matchedCount) : 0;
-        const finalScore = Math.round((similarity * 0.6 + averageConfidence * 0.4) * 100);
+        const rawScore = Math.round((similarity * 0.6 + averageConfidence * 0.4) * 100);
+        const finalScore = calibrateScore(rawScore, targetWords.length, matchedCount / targetWords.length);
 
         console.log('Average Confidence:', averageConfidence.toFixed(4));
         console.log('Final Score:', finalScore);
 
         return {
-            score: Math.max(0, Math.min(100, finalScore)),
+            score: finalScore,
             transcript: recognizedText,
             wordsFeedback
         };

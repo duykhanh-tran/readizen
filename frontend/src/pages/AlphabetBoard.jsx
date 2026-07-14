@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import api from '../services/axios.js';
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
@@ -10,13 +10,26 @@ import { Star, Loader2, Award, BookOpen, AlertCircle, Sparkles, Search, ArrowRig
 
 export default function AlphabetBoard() {
   const { isAuthenticated } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [letters, setLetters] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
+  const isFirstMount = useRef(true);
+  
+  // Pagination State (Synchronized with URL params)
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
   const itemsPerPage = 12;
   const navigate = useNavigate();
+
+  const setCurrentPage = (newPage) => {
+    setSearchParams(prev => {
+      const updated = new URLSearchParams(prev);
+      const pageVal = typeof newPage === 'function' ? newPage(currentPage) : newPage;
+      updated.set('page', String(pageVal));
+      return updated;
+    }, { replace: true });
+  };
 
   useEffect(() => {
     const fetchAlphabetList = async () => {
@@ -34,8 +47,12 @@ export default function AlphabetBoard() {
     fetchAlphabetList();
   }, []);
 
-  // Reset page on search change
+  // Reset page on search change (skipped on mount)
   useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return;
+    }
     setCurrentPage(1);
   }, [searchQuery]);
 

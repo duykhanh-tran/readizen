@@ -22,6 +22,14 @@ export default function VideoPlayerFocus() {
   const [lessonLoading, setLessonLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const handleBackToTopic = () => {
+    if (window.history.state && window.history.state.idx > 0) {
+      navigate(-1);
+    } else {
+      navigate(`/videos/${slug}`);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       const shouldFetchTopic = !topic || topic.slug !== slug;
@@ -109,12 +117,12 @@ export default function VideoPlayerFocus() {
             </div>
             <h3 className="font-bold text-gray-800 text-lg">Không thể tải video</h3>
             <p className="text-xs text-gray-500 mt-2 mb-6 leading-relaxed">{error}</p>
-            <Link
-              to={`/videos/${slug}`}
-              className="inline-flex items-center justify-center bg-brand-green hover:bg-brand-dark text-white px-6 py-2.5 rounded-full text-xs font-bold transition shadow"
+            <button
+              onClick={handleBackToTopic}
+              className="inline-flex items-center justify-center bg-brand-green hover:bg-brand-dark text-white px-6 py-2.5 rounded-full text-xs font-bold transition shadow cursor-pointer"
             >
               Quay lại danh sách bài giảng
-            </Link>
+            </button>
           </div>
         )}         {lesson && !isLoading && !error && (() => {
           const isPortrait = lesson.aspectRatio === '9:16';
@@ -129,7 +137,12 @@ export default function VideoPlayerFocus() {
               <div className="flex items-center gap-2 mb-6 text-[10px] sm:text-xs font-black uppercase tracking-wider text-gray-400">
                 <Link to="/videos" className="hover:text-brand-green transition">Chủ đề Video</Link>
                 <span className="text-gray-300">/</span>
-                <Link to={`/videos/${slug}`} className="hover:text-brand-green transition truncate max-w-[150px] sm:max-w-xs">{topic?.title || 'Chủ đề'}</Link>
+                <button
+                  onClick={handleBackToTopic}
+                  className="hover:text-brand-green transition truncate max-w-[150px] sm:max-w-xs font-black uppercase tracking-wider text-gray-400 bg-transparent border-none p-0 cursor-pointer"
+                >
+                  {topic?.title || 'Chủ đề'}
+                </button>
                 <span className="text-gray-300">/</span>
                 <span className="text-brand-green truncate max-w-[150px] sm:max-w-xs">{lesson.title}</span>
               </div>

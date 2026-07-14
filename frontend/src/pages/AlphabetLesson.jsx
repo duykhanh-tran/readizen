@@ -16,6 +16,14 @@ export default function AlphabetLesson() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
+  const handleBackToAlphabet = () => {
+    if (window.history.state && window.history.state.idx > 0) {
+      navigate(-1);
+    } else {
+      navigate('/smartabc');
+    }
+  };
+
   const [lesson, setLesson] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -189,13 +197,13 @@ export default function AlphabetLesson() {
           </div>
           <h3 className="font-bold text-gray-800 text-lg">Bài học không khả dụng</h3>
           <p className="text-sm text-gray-500 mt-2 mb-7 leading-relaxed">{error || 'Không tìm thấy chữ cái này.'}</p>
-          <Link
-            to="/smartabc"
-            className="inline-flex items-center gap-2 bg-brand-green hover:bg-brand-dark text-white px-7 py-2.5 rounded-full text-sm font-bold shadow-md transition"
+          <button
+            onClick={handleBackToAlphabet}
+            className="inline-flex items-center gap-2 bg-brand-green hover:bg-brand-dark text-white px-7 py-2.5 rounded-full text-sm font-bold shadow-md transition cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4" />
             Quay lại bảng chữ cái
-          </Link>
+          </button>
         </div>
       </div>
     );
@@ -218,13 +226,13 @@ export default function AlphabetLesson() {
         <main className="flex-grow max-w-2xl mx-auto px-4 sm:px-6 py-6 w-full flex flex-col justify-center">
           {/* Back button */}
           <div className="mb-4">
-            <Link
-              to="/smartabc"
-              className="inline-flex items-center gap-2 rounded-full border border-brand-green/10 bg-white/80 px-4 py-2 text-xs font-extrabold text-gray-500 shadow-sm backdrop-blur hover:border-brand-green/25 hover:bg-brand-light/50 hover:text-brand-green transition"
+            <button
+              onClick={handleBackToAlphabet}
+              className="inline-flex items-center gap-2 rounded-full border border-brand-green/10 bg-white/80 px-4 py-2 text-xs font-extrabold text-gray-500 shadow-sm backdrop-blur hover:border-brand-green/25 hover:bg-brand-light/50 hover:text-brand-green transition cursor-pointer"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               Quay lại Bảng Chữ Cái
-            </Link>
+            </button>
           </div>
 
           {/* Card Outer Container */}

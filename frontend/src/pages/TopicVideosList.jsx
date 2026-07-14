@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
   AlertCircle,
   ListVideo,
@@ -22,12 +22,24 @@ const YoutubeIcon = () => (
 export default function TopicVideosList() {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [topic, setTopic] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
+
+  // Pagination State (Synchronized with URL params)
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
   const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 12;
+
+  const setCurrentPage = (newPage) => {
+    setSearchParams(prev => {
+      const updated = new URLSearchParams(prev);
+      const pageVal = typeof newPage === 'function' ? newPage(currentPage) : newPage;
+      updated.set('page', String(pageVal));
+      return updated;
+    }, { replace: true });
+  };
 
   useEffect(() => {
     const fetchTopicData = async () => {
