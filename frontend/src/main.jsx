@@ -12,6 +12,7 @@ import { AuthProvider } from './context/AuthContext.jsx'
 import { SocketProvider } from './context/SocketContext.jsx'
 import ScrollToTop from './components/shared/ScrollToTop.jsx'
 import { Toaster } from 'react-hot-toast'
+import FloatingChat from './components/shared/FloatingChat.jsx'
 
 // Lazy loaded page components
 const Learn = lazy(() => import('./pages/Learn.jsx'))
@@ -93,6 +94,7 @@ createRoot(document.getElementById('root')).render(
                 <Route path="videos/edit/:id" element={<EditVideoLesson />} />
               </Route>
             </Routes>
+            <FloatingChat />
           </Suspense>
           <Analytics />
         </SocketProvider>

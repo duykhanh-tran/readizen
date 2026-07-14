@@ -20,7 +20,8 @@ import {
   Award,
   ArrowLeft,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  Bookmark
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 
@@ -51,6 +52,7 @@ export default function TrialLesson() {
   const [sentenceScores, setSentenceScores] = useState([]); // array of scores matching flatSentences
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
 
   // Consume useAudioRecorder Hook
   const {
@@ -63,7 +65,7 @@ export default function TrialLesson() {
     playSpeechText
   } = useAudioRecorder();
 
-  // Fetch Lesson details
+  // Fetch Lesson details and check bookmark status
   useEffect(() => {
     const fetchLesson = async () => {
       try {
@@ -83,7 +85,37 @@ export default function TrialLesson() {
       }
     };
     fetchLesson();
-  }, [id]);
+
+    const checkBookmarkStatus = async () => {
+      if (!isAuthenticated) return;
+      try {
+        const res = await api.get(`/bookmarks/status?itemType=lesson&itemId=${id}`);
+        setIsBookmarked(res.data.bookmarked);
+      } catch (err) {
+        console.error('Lỗi kiểm tra trạng thái bookmark:', err);
+      }
+    };
+    checkBookmarkStatus();
+  }, [id, isAuthenticated]);
+
+  const handleToggleBookmark = async () => {
+    if (!isAuthenticated) {
+      toast.error('Vui lòng đăng nhập để lưu bài học.');
+      return;
+    }
+    try {
+      const res = await api.post('/bookmarks/toggle', { itemType: 'lesson', itemId: id });
+      setIsBookmarked(res.data.bookmarked);
+      if (res.data.bookmarked) {
+        toast.success('Đã lưu bài học thành công!');
+      } else {
+        toast.success('Đã xóa khỏi danh sách lưu trữ.');
+      }
+    } catch (err) {
+      console.error('Lỗi lưu bài học:', err);
+      toast.error('Không thể thực hiện hành động này.');
+    }
+  };
 
   // Handle Keyboard controls in Fullscreen Modal
   useEffect(() => {
@@ -290,9 +322,22 @@ export default function TrialLesson() {
                 </div>
 
                 {/* Tiêu đề bài học */}
-                <h1 className="max-w-4xl mb-6 text-3xl font-bold text-gray-900 md:text-4xl lg:text-5xl leading-tight tracking-tight">
+                <h1 className="max-w-4xl mb-4 text-3xl font-bold text-gray-900 md:text-4xl lg:text-5xl leading-tight tracking-tight">
                   {lesson.title}
                 </h1>
+
+                {/* Bookmark Toggle Button */}
+                <button
+                  onClick={handleToggleBookmark}
+                  className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full border text-xs font-extrabold transition-all duration-200 cursor-pointer ${
+                    isBookmarked 
+                      ? 'bg-brand-green border-brand-green text-white shadow-md hover:bg-brand-dark hover:scale-105' 
+                      : 'bg-white border-gray-200 text-gray-600 hover:text-brand-green hover:border-brand-green hover:bg-brand-light/10 shadow-sm hover:scale-105'
+                  }`}
+                >
+                  <Bookmark className={`w-3.5 h-3.5 ${isBookmarked ? 'fill-current' : ''}`} />
+                  <span>{isBookmarked ? 'Đã lưu bài học' : 'Lưu học sau'}</span>
+                </button>
 
               </div>
             </section>

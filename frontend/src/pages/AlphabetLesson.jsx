@@ -8,8 +8,9 @@ import useAudioRecorder from '../hooks/useAudioRecorder.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import {
   Volume2, Mic, Square, Loader2, ArrowLeft, ChevronLeft,
-  ChevronRight, AlertCircle
+  ChevronRight, AlertCircle, Bookmark
 } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 export default function AlphabetLesson() {
   const { id } = useParams();
@@ -27,6 +28,40 @@ export default function AlphabetLesson() {
   const [lesson, setLesson] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+
+  useEffect(() => {
+    const checkBookmarkStatus = async () => {
+      if (!isAuthenticated || !lesson?._id) return;
+      try {
+        const res = await api.get(`/bookmarks/status?itemType=alphabet&itemId=${lesson._id}`);
+        setIsBookmarked(res.data.bookmarked);
+      } catch (err) {
+        console.error('Lỗi kiểm tra trạng thái bookmark bảng chữ cái:', err);
+      }
+    };
+    checkBookmarkStatus();
+  }, [lesson?._id, isAuthenticated]);
+
+  const handleToggleBookmark = async () => {
+    if (!isAuthenticated) {
+      toast.error('Vui lòng đăng nhập để lưu chữ cái học sau.');
+      return;
+    }
+    if (!lesson?._id) return;
+    try {
+      const res = await api.post('/bookmarks/toggle', { itemType: 'alphabet', itemId: lesson._id });
+      setIsBookmarked(res.data.bookmarked);
+      if (res.data.bookmarked) {
+        toast.success('Đã lưu bài học chữ cái thành công!');
+      } else {
+        toast.success('Đã xóa khỏi danh sách lưu trữ.');
+      }
+    } catch (err) {
+      console.error('Lỗi lưu bookmark chữ cái:', err);
+      toast.error('Không thể thực hiện hành động này.');
+    }
+  };
 
   // Vocabulary Carousel Index
   const [wordIndex, setWordIndex] = useState(0);
@@ -224,14 +259,26 @@ export default function AlphabetLesson() {
 
       {!isFinished ? (
         <main className="flex-grow max-w-2xl mx-auto px-4 sm:px-6 py-6 w-full flex flex-col justify-center">
-          {/* Back button */}
-          <div className="mb-4">
+          {/* Back button & Bookmark action */}
+          <div className="mb-4 flex items-center justify-between gap-4">
             <button
               onClick={handleBackToAlphabet}
               className="inline-flex items-center gap-2 rounded-full border border-brand-green/10 bg-white/80 px-4 py-2 text-xs font-extrabold text-gray-500 shadow-sm backdrop-blur hover:border-brand-green/25 hover:bg-brand-light/50 hover:text-brand-green transition cursor-pointer"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
               Quay lại Bảng Chữ Cái
+            </button>
+
+            <button
+              onClick={handleToggleBookmark}
+              className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-extrabold shadow-sm transition-all duration-200 cursor-pointer ${
+                isBookmarked 
+                  ? 'bg-brand-green border-brand-green text-white hover:bg-brand-dark' 
+                  : 'bg-white/80 border-brand-green/10 text-gray-500 hover:text-brand-green hover:border-brand-green/25'
+              }`}
+            >
+              <Bookmark className={`w-3.5 h-3.5 ${isBookmarked ? 'fill-current' : ''}`} />
+              <span>{isBookmarked ? 'Đã lưu chữ cái' : 'Lưu học sau'}</span>
             </button>
           </div>
 

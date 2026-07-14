@@ -82,7 +82,7 @@ export const login = async (req, res) => {
         res.status(200).json({
             message: 'Đăng nhập thành công',
             accessToken,
-            user: { id: user._id, fullName: user.fullName, email: user.email }
+            user: { id: user._id, fullName: user.fullName, email: user.email, avatarUrl: user.avatarUrl }
         });
     } catch (error) {
         res.status(500).json({ message: 'Lỗi server', error: error.message });

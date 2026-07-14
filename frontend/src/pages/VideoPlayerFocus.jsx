@@ -4,7 +4,9 @@ import api from '../services/axios.js';
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
 import CustomVideoPlayer from '../components/CustomVideoPlayer.jsx';
-import { Loader2, AlertCircle, Tv, Video, Play, ChevronLeft, ChevronRight, BookOpen } from 'lucide-react';
+import { Loader2, AlertCircle, Tv, Video, Play, ChevronLeft, ChevronRight, BookOpen, Bookmark } from 'lucide-react';
+import { useAuth } from '../context/AuthContext.jsx';
+import toast from 'react-hot-toast';
 
 const YoutubeIcon = () => (
   <svg viewBox="0 0 24 24" className="w-3 h-3 fill-current" stroke="none">
@@ -21,12 +23,47 @@ export default function VideoPlayerFocus() {
   const [isLoading, setIsLoading] = useState(true);
   const [lessonLoading, setLessonLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const { isAuthenticated } = useAuth();
 
   const handleBackToTopic = () => {
     if (window.history.state && window.history.state.idx > 0) {
       navigate(-1);
     } else {
       navigate(`/videos/${slug}`);
+    }
+  };
+
+  useEffect(() => {
+    const checkBookmarkStatus = async () => {
+      if (!isAuthenticated || !lesson?._id) return;
+      try {
+        const res = await api.get(`/bookmarks/status?itemType=video&itemId=${lesson._id}`);
+        setIsBookmarked(res.data.bookmarked);
+      } catch (err) {
+        console.error('Lỗi kiểm tra trạng thái bookmark video:', err);
+      }
+    };
+    checkBookmarkStatus();
+  }, [lesson?._id, isAuthenticated]);
+
+  const handleToggleBookmark = async () => {
+    if (!isAuthenticated) {
+      toast.error('Vui lòng đăng nhập để lưu video bài học.');
+      return;
+    }
+    if (!lesson?._id) return;
+    try {
+      const res = await api.post('/bookmarks/toggle', { itemType: 'video', itemId: lesson._id });
+      setIsBookmarked(res.data.bookmarked);
+      if (res.data.bookmarked) {
+        toast.success('Đã lưu video bài giảng thành công!');
+      } else {
+        toast.success('Đã xóa khỏi danh sách lưu trữ.');
+      }
+    } catch (err) {
+      console.error('Lỗi lưu video:', err);
+      toast.error('Không thể thực hiện hành động này.');
     }
   };
 
@@ -217,9 +254,22 @@ export default function VideoPlayerFocus() {
                       </span>
                     </div>
 
-                    <h1 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight mb-5 tracking-tight">
+                    <h1 className="text-2xl sm:text-3xl font-black text-gray-900 leading-tight mb-4 tracking-tight">
                       {lesson.title}
                     </h1>
+
+                    {/* Bookmark Video Button */}
+                    <button
+                      onClick={handleToggleBookmark}
+                      className={`inline-flex items-center gap-2 px-4.5 py-2.5 rounded-full border text-[11px] font-extrabold transition-all duration-200 mb-5 cursor-pointer ${
+                        isBookmarked 
+                          ? 'bg-brand-green border-brand-green text-white shadow-md hover:bg-brand-dark hover:scale-105' 
+                          : 'bg-white border-gray-200 text-gray-600 hover:text-brand-green hover:border-brand-green hover:bg-brand-light/10 shadow-sm hover:scale-105'
+                      }`}
+                    >
+                      <Bookmark className={`w-3.5 h-3.5 ${isBookmarked ? 'fill-current' : ''}`} />
+                      <span>{isBookmarked ? 'Đã lưu video' : 'Lưu xem sau'}</span>
+                    </button>
 
                     {/* Educational Guide Card */}
                     <div className="bg-[#FAFDF6]/60 border border-brand-green/10 rounded-2xl p-4.5 mb-6 space-y-2.5">

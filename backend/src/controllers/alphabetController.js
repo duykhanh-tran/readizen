@@ -1,5 +1,6 @@
 import AlphabetLesson from '../models/AlphabetLesson.js';
 import UserAlphabetScore from '../models/UserAlphabetScore.js';
+import UserAlphabetAttempt from '../models/UserAlphabetAttempt.js';
 import mongoose from 'mongoose';
 import { uploadToCloudinary } from '../lib/cloudinary.js';
 import { logAdminActivity } from '../utils/adminLogger.js';
@@ -116,6 +117,19 @@ export const saveAlphabetScore = async (req, res) => {
             return res.status(400).json({ message: 'Dữ liệu chấm điểm không hợp lệ.' });
         }
 
+        // Save individual attempt history (Option B)
+        const attemptTotal = scores.reduce((sum, ws) => sum + ws.score, 0);
+        const attemptAverage = Math.round(attemptTotal / scores.length);
+
+        const attempt = new UserAlphabetAttempt({
+            userId,
+            alphabetLessonId,
+            averageScore: attemptAverage,
+            wordScores: scores.map(ws => ({ word: ws.word, score: ws.score }))
+        });
+        await attempt.save();
+
+        // Update overall highest scores
         let userScore = await UserAlphabetScore.findOne({ userId, alphabetLessonId });
 
         if (userScore) {
@@ -164,10 +178,38 @@ export const saveAlphabetScore = async (req, res) => {
             await userScore.save();
         }
 
-        res.status(200).json({ message: 'Lưu điểm bảng chữ cái thành công!', score: userScore });
+        res.status(200).json({ message: 'Lưu điểm bảng chữ cái thành công!', score: userScore, attempt });
     } catch (error) {
         console.error('Error in saveAlphabetScore:', error);
         res.status(500).json({ message: 'Lỗi server khi lưu điểm bảng chữ cái', error: error.message });
+    }
+};
+
+// Fetch current user's general alphabet summary scores
+export const getMyAlphabetScores = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const scores = await UserAlphabetScore.find({ userId })
+            .populate('alphabetLessonId', 'letter thumbnail')
+            .sort({ updatedAt: -1 });
+        res.status(200).json(scores);
+    } catch (error) {
+        console.error('Error in getMyAlphabetScores:', error);
+        res.status(500).json({ message: 'Lỗi server khi tải kết quả học tập bảng chữ cái', error: error.message });
+    }
+};
+
+// Fetch current user's detailed list of alphabet attempts (timeline)
+export const getMyAlphabetAttempts = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const attempts = await UserAlphabetAttempt.find({ userId })
+            .populate('alphabetLessonId', 'letter thumbnail')
+            .sort({ createdAt: -1 });
+        res.status(200).json(attempts);
+    } catch (error) {
+        console.error('Error in getMyAlphabetAttempts:', error);
+        res.status(500).json({ message: 'Lỗi server khi tải lịch sử bảng chữ cái', error: error.message });
     }
 };
 

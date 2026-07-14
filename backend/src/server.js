@@ -16,6 +16,7 @@ import userRoutes from './routes/userRoute.js';
 import alphabetRoutes from './routes/alphabetRoute.js';
 import videoRoutes from './routes/videoRoute.js';
 import uploadRoutes from './routes/uploadRoute.js';
+import bookmarkRoutes from './routes/bookmarkRoute.js';
 import Message from './models/Message.js';
 import { setIO } from './utils/socketIO.js';
 
@@ -63,6 +64,7 @@ app.use('/api/user', userRoutes);
 app.use('/api/alphabet', alphabetRoutes);
 app.use('/api/videos', videoRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/bookmarks', bookmarkRoutes);
 
 const server = http.createServer(app);
 const io = new Server(server, {

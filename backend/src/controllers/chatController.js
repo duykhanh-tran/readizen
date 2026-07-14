@@ -1,5 +1,6 @@
 import Message from '../models/Message.js';
 import User from '../models/User.js';
+import jwt from 'jsonwebtoken';
 
 export const getChatHistory = async (req, res) => {
     try {
@@ -108,5 +109,58 @@ export const getChatUsers = async (req, res) => {
         res.status(200).json(chatList);
     } catch (error) {
         res.status(500).json({ message: "Lỗi server", error: error.message });
+    }
+};
+
+export const registerGuestChat = async (req, res) => {
+    try {
+        const { fullName, phone } = req.body;
+
+        if (!fullName || !phone) {
+            return res.status(400).json({ message: 'Vui lòng điền tên và số điện thoại để tiếp tục.' });
+        }
+
+        // Clean the phone number (keep digits only)
+        const cleanPhone = phone.replace(/\D/g, '');
+        if (cleanPhone.length < 9 || cleanPhone.length > 15) {
+            return res.status(400).json({ message: 'Số điện thoại không hợp lệ.' });
+        }
+
+        const placeholderEmail = `guest_${cleanPhone}@readizen.guest`;
+
+        // Check if user already exists
+        let user = await User.findOne({ email: placeholderEmail });
+
+        if (!user) {
+            // Create a guest user (no password needed as they auth by phone)
+            user = new User({
+                fullName: fullName.trim(),
+                email: placeholderEmail,
+                phone: cleanPhone,
+                hashedPassword: 'GUEST_NO_PASSWORD' // placeholder value
+            });
+            await user.save();
+        }
+
+        // Sign a persistent JWT token (7 days) for guest chat session
+        const accessToken = jwt.sign(
+            { id: user._id, role: 'client' },
+            process.env.JWT_SECRET,
+            { expiresIn: '7d' }
+        );
+
+        res.status(200).json({
+            message: 'Đăng ký phòng chat ẩn danh thành công!',
+            accessToken,
+            user: {
+                id: user._id,
+                fullName: user.fullName,
+                email: user.email,
+                phone: user.phone
+            }
+        });
+    } catch (error) {
+        console.error('Error in registerGuestChat:', error);
+        res.status(500).json({ message: 'Lỗi server khi đăng ký chat ẩn danh', error: error.message });
     }
 };
