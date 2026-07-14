@@ -34,11 +34,6 @@ export default function FloatingChat() {
   const [localSocket, setLocalSocket] = useState(null);
   const messagesEndRef = useRef(null);
 
-  // Do not render floating chat bubble on admin pages
-  if (pathname.startsWith('/admin')) {
-    return null;
-  }
-
   // Determine active user context
   const activeUser = isAuthenticated ? authUser : guestUser;
   const tokenToUse = isAuthenticated ? null : guestToken; // null means let axios handle global token, otherwise we pass manually
@@ -203,6 +198,11 @@ export default function FloatingChat() {
 
     setInputMessage('');
   };
+
+  // Do not render floating chat bubble on admin pages
+  if (pathname.startsWith('/admin')) {
+    return null;
+  }
 
   return (
     <div className="fixed bottom-6 right-6 z-50 font-sans text-left">
