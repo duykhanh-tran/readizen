@@ -10,18 +10,8 @@ export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    // Chỉ thiết lập kết nối khi người dùng đã được xác thực hoàn toàn
-    if (!isAuthenticated || !user) {
-      if (socket) {
-        socket.disconnect();
-        setSocket(null);
-        console.log('🔴 Global Socket disconnected due to logout');
-      }
-      return;
-    }
-
     const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
-    const token = getAccessToken();
+    const token = isAuthenticated ? getAccessToken() : null;
 
     const newSocket = io(socketUrl, {
       auth: { token },
@@ -29,19 +19,23 @@ export const SocketProvider = ({ children }) => {
     });
 
     const unsubscribe = addTokenListener((newToken) => {
-      newSocket.auth = { ...newSocket.auth, token: newToken };
-      if (!newSocket.connected) {
-        console.log('🔄 Reconnecting socket with new token...');
-        newSocket.connect();
+      if (isAuthenticated) {
+        newSocket.auth = { ...newSocket.auth, token: newToken };
+        if (!newSocket.connected) {
+          console.log('🔄 Reconnecting socket with new token...');
+          newSocket.connect();
+        }
       }
     });
 
     newSocket.on('connect', () => {
       console.log('🟢 Global Socket connected successfully:', newSocket.id);
       
-      // Tự động join room của người dùng ngay khi kết nối thành công
-      const userId = user.id || user._id;
-      newSocket.emit('join_room', userId);
+      // Tự động join room của người dùng ngay khi kết nối thành công nếu đã xác thực
+      if (isAuthenticated && user) {
+        const userId = user.id || user._id;
+        newSocket.emit('join_room', userId);
+      }
     });
 
     newSocket.on('connect_error', (err) => {
@@ -53,7 +47,7 @@ export const SocketProvider = ({ children }) => {
     return () => {
       unsubscribe();
       newSocket.disconnect();
-      console.log('🔴 Global Socket disconnected on unmount');
+      console.log('🔴 Global Socket disconnected on unmount/reconnect');
     };
   }, [isAuthenticated, user]);
 

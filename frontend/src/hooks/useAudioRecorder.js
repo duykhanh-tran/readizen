@@ -2,6 +2,7 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import api from '../services/axios.js';
 import { uploadDirectToCloudinary } from '../utils/cloudinaryUpload.js';
+import { useSocket } from '../context/SocketContext.jsx';
 
 // Global reference to handle overlap across hook instances
 if (typeof window !== 'undefined') {
@@ -9,6 +10,7 @@ if (typeof window !== 'undefined') {
 }
 
 export default function useAudioRecorder() {
+  const { socket } = useSocket();
   const [recordingIndex, setRecordingIndex] = useState(null);
   const [evaluatingIndex, setEvaluatingIndex] = useState(null);
   const [evaluationStep, setEvaluationStep] = useState(null); // 'compressing' | 'uploading' | 'analyzing'
@@ -234,12 +236,70 @@ export default function useAudioRecorder() {
 
       setEvaluationStep('analyzing');
 
+      const socketId = socket?.id || 'no-socket';
+
       const response = await api.post('/lessons/evaluate-audio', {
         audioUrl,
-        textToRead
+        textToRead,
+        socketId
       });
 
-      const data = response.data; // expects { score, transcript, wordsFeedback }
+      const { jobId } = response.data;
+
+      // Wait for socket notification OR fallback HTTP polling for this jobId
+      const data = await new Promise((resolve, reject) => {
+        let isResolved = false;
+        let pollInterval = null;
+
+        const cleanUp = () => {
+          isResolved = true;
+          if (pollInterval) clearInterval(pollInterval);
+          if (socket) socket.off('speech_evaluated', handleSpeechEvaluated);
+        };
+
+        const handleSpeechEvaluated = (payload) => {
+          if (payload.jobId === jobId) {
+            cleanUp();
+            if (payload.status === 'success') {
+              resolve(payload.result);
+            } else {
+              reject(new Error(payload.error || 'Lỗi chấm điểm giọng nói'));
+            }
+          }
+        };
+
+        // Listen on socket if connected
+        if (socket && socket.connected && socketId !== 'no-socket') {
+          socket.on('speech_evaluated', handleSpeechEvaluated);
+        }
+
+        // Setup HTTP Polling fallback (polls every 1.5s as fallback/insurance)
+        pollInterval = setInterval(async () => {
+          if (isResolved) return;
+          try {
+            const statusRes = await api.get(`/lessons/job-status/${jobId}`);
+            const { status, result, error } = statusRes.data;
+
+            if (status === 'completed') {
+              cleanUp();
+              resolve(result);
+            } else if (status === 'failed') {
+              cleanUp();
+              reject(new Error(error || 'Lỗi chấm điểm giọng nói qua HTTP fallback'));
+            }
+          } catch (pollErr) {
+            console.warn('Job status poll fallback warning:', pollErr.message);
+          }
+        }, 1500);
+
+        // Add a safety timeout (15 seconds)
+        setTimeout(() => {
+          if (!isResolved) {
+            cleanUp();
+            reject(new Error('Yêu cầu chấm điểm bị quá thời gian chờ (15s). Vui lòng thử lại.'));
+          }
+        }, 15000);
+      });
       
       setDetailedFeedback(data);
       toast.success('Chấm điểm phát âm thành công!');
@@ -247,13 +307,13 @@ export default function useAudioRecorder() {
     } catch (err) {
       console.error('AI Speech Evaluation Error:', err);
       setError('SpeechEvaluationFailed');
-      toast.error('Lỗi chấm điểm phát âm. Vui lòng kiểm tra kết nối mạng và thử lại.');
+      toast.error(err.message || 'Lỗi chấm điểm phát âm. Vui lòng kiểm tra kết nối mạng và thử lại.');
       throw err;
     } finally {
       setEvaluatingIndex(null);
       setEvaluationStep(null);
     }
-  }, []);
+  }, [socket]);
 
   const clearFeedback = useCallback(() => {
     setDetailedFeedback(null);

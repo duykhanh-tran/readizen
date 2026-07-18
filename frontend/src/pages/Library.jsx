@@ -5,6 +5,7 @@ import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
 import SafeImage from '../components/shared/SafeImage.jsx';
 import { BookOpen, Search, ArrowRight, Sparkles, Loader2, BookOpenCheck, ChevronLeft, ChevronRight } from 'lucide-react';
+import SkeletonCard from '../components/shared/SkeletonCard.jsx';
 
 export default function Library() {
   const navigate = useNavigate();
@@ -123,8 +124,10 @@ export default function Library() {
 
         {/* List Content */}
         {isLoading ? (
-          <div className="flex justify-center items-center py-24">
-            <Loader2 className="w-10 h-10 text-brand-green animate-spin" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {Array.from({ length: 8 }).map((_, idx) => (
+              <SkeletonCard key={idx} />
+            ))}
           </div>
         ) : filteredLessons.length === 0 ? (
           <div className="bg-white rounded-[2rem] border border-gray-150 p-12 text-center max-w-md mx-auto shadow-sm">

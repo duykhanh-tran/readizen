@@ -41,10 +41,16 @@ export default function FloatingChat() {
   useEffect(() => {
     const handleToggleChatEvent = () => {
       setIsOpen(true);
+      window.dispatchEvent(new CustomEvent('close-smart-code'));
+    };
+    const handleCloseChat = () => {
+      setIsOpen(false);
     };
     window.addEventListener('toggle-floating-chat', handleToggleChatEvent);
+    window.addEventListener('close-floating-chat', handleCloseChat);
     return () => {
       window.removeEventListener('toggle-floating-chat', handleToggleChatEvent);
+      window.removeEventListener('close-floating-chat', handleCloseChat);
     };
   }, []);
 
@@ -208,7 +214,13 @@ export default function FloatingChat() {
     <div className="fixed bottom-6 right-6 z-50 font-sans text-left">
       {/* Floating Chat Bubble Button */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          const nextState = !isOpen;
+          setIsOpen(nextState);
+          if (nextState) {
+            window.dispatchEvent(new CustomEvent('close-smart-code'));
+          }
+        }}
         className="w-14 h-14 bg-gradient-to-tr from-brand-green to-emerald-500 text-white rounded-full flex items-center justify-center shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 relative cursor-pointer group"
         aria-label="Trò chuyện hỗ trợ"
       >
@@ -231,7 +243,7 @@ export default function FloatingChat() {
 
       {/* Popover Chat Window Card */}
       {isOpen && (
-        <div className="absolute bottom-18 right-0 w-[350px] md:w-[380px] h-[500px] bg-white rounded-3xl border border-gray-100 shadow-2xl overflow-hidden flex flex-col transition-all duration-300 transform translate-y-0 opacity-100">
+        <div className="fixed inset-x-4 bottom-24 md:absolute md:inset-auto md:bottom-18 md:right-0 w-auto md:w-[380px] h-[500px] max-h-[75vh] bg-white rounded-3xl border border-gray-100 shadow-2xl overflow-hidden flex flex-col transition-all duration-300 transform translate-y-0 opacity-100">
           {/* Header */}
           <div className="bg-gradient-to-r from-brand-green to-emerald-600 text-white px-5 py-4 flex items-center justify-between shadow-md">
             <div className="flex items-center gap-2.5">

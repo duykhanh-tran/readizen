@@ -20,6 +20,7 @@ export default function EditAlphabetLesson() {
   const [thumbnail, setThumbnail] = useState('');
   const [status, setStatus] = useState('draft');
   const [vocabularies, setVocabularies] = useState([]);
+  const [smartCode, setSmartCode] = useState('');
 
   // Upload States
   const [isUploadingThumbnail, setIsUploadingThumbnail] = useState(false);
@@ -36,6 +37,7 @@ export default function EditAlphabetLesson() {
         setThumbnail(data.thumbnail || '');
         setStatus(data.status || 'draft');
         setVocabularies(data.vocabularies || []);
+        setSmartCode(data.smartCode || '');
       } catch (err) {
         console.error(err);
         setError(err.response?.data?.message || 'Không thể lấy thông tin chi tiết bài học chữ cái.');
@@ -100,6 +102,16 @@ export default function EditAlphabetLesson() {
     setVocabularies(vocabularies.filter((_, i) => i !== index));
   };
 
+  const handleGenerateCode = async () => {
+    try {
+      const response = await api.get('/search/generate-code');
+      setSmartCode(response.data.code);
+    } catch (err) {
+      console.error(err);
+      setError('Không thể tự động tạo mã Smart Code.');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
@@ -122,7 +134,8 @@ export default function EditAlphabetLesson() {
       letter,
       thumbnail,
       status,
-      vocabularies
+      vocabularies,
+      smartCode
     };
 
     try {
@@ -219,6 +232,31 @@ export default function EditAlphabetLesson() {
                 value={letter}
                 className="w-full border border-gray-200 rounded-xl px-4 py-3 text-xs bg-gray-50 font-black text-center text-lg text-gray-800 shadow-sm"
               />
+            </div>
+
+            {/* Smart Code input */}
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest block">Smart Code (4 chữ số)</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  maxLength={4}
+                  placeholder="Ví dụ: 1234"
+                  value={smartCode}
+                  onChange={(e) => setSmartCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                  className="flex-grow border border-gray-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-brand-green shadow-sm bg-white"
+                />
+                <button
+                  type="button"
+                  onClick={handleGenerateCode}
+                  className="bg-brand-light text-brand-green border border-brand-green/20 hover:bg-brand-green hover:text-white px-2.5 py-2 rounded-xl text-[10px] font-bold transition cursor-pointer shrink-0"
+                >
+                  Tạo mã
+                </button>
+              </div>
+              <span className="text-[9px] text-gray-400 font-semibold block leading-tight">
+                Mã 4 số để bé truy cập nhanh. Để trống để tự động sinh khi lưu.
+              </span>
             </div>
 
             {/* Status input */}

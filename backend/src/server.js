@@ -17,8 +17,11 @@ import alphabetRoutes from './routes/alphabetRoute.js';
 import videoRoutes from './routes/videoRoute.js';
 import uploadRoutes from './routes/uploadRoute.js';
 import bookmarkRoutes from './routes/bookmarkRoute.js';
+import searchRoutes from './routes/searchRoute.js';
+import { migrateSmartCodes } from './utils/migrateSmartCodes.js';
 import Message from './models/Message.js';
 import { setIO } from './utils/socketIO.js';
+import { startSpeechEvaluationWorker } from './workers/speechEvaluationWorker.js';
 
 dotenv.config();
 
@@ -65,6 +68,7 @@ app.use('/api/alphabet', alphabetRoutes);
 app.use('/api/videos', videoRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/bookmarks', bookmarkRoutes);
+app.use('/api/search', searchRoutes);
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -89,7 +93,9 @@ io.use((socket, next) => {
     const token = socket.handshake.auth?.token;
 
     if (!token) {
-        return next(new Error('Authentication error: Không tìm thấy Token!'));
+        // Cho phép kết nối dưới tư cách khách (guest) phục vụ chấm điểm phát âm qua socket
+        socket.user = { role: 'guest', id: 'guest_' + socket.id };
+        return next();
     }
 
     try {
@@ -99,7 +105,9 @@ io.use((socket, next) => {
         socket.user = decoded;
         next(); // Token hợp lệ, cho phép kết nối
     } catch (err) {
-        return next(new Error('Authentication error: Token không hợp lệ hoặc đã hết hạn!'));
+        // Token hết hạn hoặc sai thì vẫn cho phép kết nối như khách thay vì chặn đứng
+        socket.user = { role: 'guest', id: 'guest_' + socket.id };
+        return next();
     }
 });
 
@@ -165,8 +173,10 @@ app.use((err, req, res, next) => {
 // CHÚ Ý: Chạy `server.listen` thay vì `app.listen`
 if (process.env.NODE_ENV !== 'test') {
     connectDB().then(() => {
-        server.listen(PORT, () => {
+        server.listen(PORT, async () => {
             console.log(`🚀 Server (kèm Socket.io) đang chạy trên port ${PORT}`);
+            await migrateSmartCodes();
+            startSpeechEvaluationWorker();
         });
     });
 }

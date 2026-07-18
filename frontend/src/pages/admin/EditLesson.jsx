@@ -23,6 +23,7 @@ export default function EditLesson() {
   const [coverImage, setCoverImage] = useState('');
   const [pdfFile, setPdfFile] = useState('');
   const [status, setStatus] = useState('active');
+  const [smartCode, setSmartCode] = useState('');
 
   // Trường mới tách biệt độc lập thay cho pages
   const [ebookImages, setEbookImages] = useState(['']);
@@ -40,6 +41,7 @@ export default function EditLesson() {
         setCoverImage(data.coverImage);
         setPdfFile(data.pdfFile);
         setStatus(data.status || 'active');
+        setSmartCode(data.smartCode || '');
         
         // Chuyển đổi dữ liệu cũ sang định dạng phẳng mới nếu cần
         if (data.ebookImages && data.ebookImages.length > 0) {
@@ -114,6 +116,17 @@ export default function EditLesson() {
       setError(err.response?.data?.message || 'Không thể tải tệp PDF lên.');
     } finally {
       setIsUploadingPdf(false);
+    }
+  };
+
+  // Generate Smart Code
+  const handleGenerateCode = async () => {
+    try {
+      const response = await api.get('/search/generate-code');
+      setSmartCode(response.data.code);
+    } catch (err) {
+      console.error(err);
+      setError('Không thể tự động tạo mã Smart Code.');
     }
   };
 
@@ -200,6 +213,7 @@ export default function EditLesson() {
       formData.append('coverImage', coverImage);
       formData.append('pdfFile', pdfFile);
       formData.append('status', status);
+      formData.append('smartCode', smartCode);
       // Gửi riêng biệt 2 mảng phẳng độc lập
       formData.append('ebookImages', JSON.stringify(ebookImages));
       formData.append('practiceSentences', JSON.stringify(practiceSentences));
@@ -305,6 +319,31 @@ export default function EditLesson() {
                 <option value="active">Hiển thị (Active)</option>
                 <option value="draft">Bản nháp (Draft)</option>
               </select>
+            </div>
+
+            {/* Smart Code input */}
+            <div className="space-y-1.5 md:col-span-2">
+              <label className="text-xs font-black text-gray-700 uppercase tracking-wider">Smart Code (4 chữ số)</label>
+              <div className="flex gap-2">
+                <input 
+                  type="text" 
+                  placeholder="Ví dụ: 1234"
+                  maxLength={4}
+                  value={smartCode} 
+                  onChange={(e) => setSmartCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                  className="flex-grow border border-gray-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-brand-green shadow-sm bg-white"
+                />
+                <button
+                  type="button"
+                  onClick={handleGenerateCode}
+                  className="bg-brand-light text-brand-green border border-brand-green/20 hover:bg-brand-green hover:text-white px-4 py-3 rounded-xl text-xs font-bold transition cursor-pointer flex items-center justify-center shrink-0 min-w-[120px]"
+                >
+                  Tạo mã ngẫu nhiên
+                </button>
+              </div>
+              <span className="text-[10px] text-gray-400 font-semibold block">
+                Mã 4 chữ số duy nhất cho phép trẻ em truy cập nhanh. Để trống để hệ thống tự sinh mã ngẫu nhiên khi lưu.
+              </span>
             </div>
 
             {/* Cover image file upload */}

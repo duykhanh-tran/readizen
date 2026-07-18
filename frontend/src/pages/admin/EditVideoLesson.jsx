@@ -24,6 +24,7 @@ export default function EditVideoLesson() {
   const [thumbnail, setThumbnail] = useState('');
   const [order, setOrder] = useState(0);
   const [status, setStatus] = useState('draft');
+  const [smartCode, setSmartCode] = useState('');
 
   // Uploading States
   const [isUploading, setIsUploading] = useState(false);
@@ -52,7 +53,9 @@ export default function EditVideoLesson() {
           setThumbnail(lesson.thumbnail || '');
           setOrder(lesson.order || 0);
           setStatus(lesson.status || 'draft');
+          setSmartCode(lesson.smartCode || '');
         } else {
+          setSmartCode('');
           // Gán mặc định chủ đề đầu tiên nếu có
           if (topicsRes.data.length > 0) {
             setTopicId(topicsRes.data[0]._id);
@@ -99,6 +102,16 @@ export default function EditVideoLesson() {
     }
   };
 
+  const handleGenerateCode = async () => {
+    try {
+      const response = await api.get('/search/generate-code');
+      setSmartCode(response.data.code);
+    } catch (err) {
+      console.error(err);
+      setError('Không thể tự động tạo mã Smart Code.');
+    }
+  };
+
   // Submit Handler
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -123,7 +136,8 @@ export default function EditVideoLesson() {
         videoUrl,
         thumbnail,
         order: Number(order) || 0,
-        status
+        status,
+        smartCode
       };
 
       if (isEditMode) {
@@ -233,6 +247,31 @@ export default function EditVideoLesson() {
               onChange={(e) => setSlug(e.target.value)}
               className="w-full border border-gray-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-brand-green shadow-sm"
             />
+          </div>
+
+          {/* Smart Code */}
+          <div className="space-y-1.5">
+            <label className="text-gray-500">Smart Code (4 chữ số)</label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                maxLength={4}
+                placeholder="Ví dụ: 1234"
+                value={smartCode}
+                onChange={(e) => setSmartCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                className="flex-grow border border-gray-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-brand-green shadow-sm bg-white"
+              />
+              <button
+                type="button"
+                onClick={handleGenerateCode}
+                className="bg-brand-light text-brand-green border border-brand-green/20 hover:bg-brand-green hover:text-white px-4 py-3 rounded-xl text-xs font-bold transition cursor-pointer flex items-center justify-center shrink-0 min-w-[120px]"
+              >
+                Tạo mã
+              </button>
+            </div>
+            <p className="text-[10px] text-gray-400 font-semibold block leading-tight">
+              Mã 4 số để bé truy cập nhanh. Để trống để tự động sinh khi lưu.
+            </p>
           </div>
 
           {/* Order */}

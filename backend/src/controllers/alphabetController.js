@@ -242,7 +242,7 @@ export const getAdminAlphabetById = async (req, res) => {
 // Create alphabet lesson
 export const createAlphabetLesson = async (req, res) => {
     try {
-        const { letter, thumbnail, vocabularies, status } = req.body;
+        const { letter, thumbnail, vocabularies, status, smartCode } = req.body;
 
         const existing = await AlphabetLesson.findOne({ letter: letter.toUpperCase() });
         if (existing) {
@@ -253,7 +253,8 @@ export const createAlphabetLesson = async (req, res) => {
             letter: letter.toUpperCase(),
             thumbnail,
             vocabularies: vocabularies || [],
-            status: status || 'draft'
+            status: status || 'draft',
+            smartCode
         });
 
         await lesson.save();
@@ -268,7 +269,7 @@ export const createAlphabetLesson = async (req, res) => {
 export const updateAlphabetLesson = async (req, res) => {
     try {
         const { id } = req.params;
-        const { letter, thumbnail, vocabularies, status } = req.body;
+        const { letter, thumbnail, vocabularies, status, smartCode } = req.body;
 
         const lesson = await AlphabetLesson.findById(id);
         if (!lesson) {
@@ -279,6 +280,9 @@ export const updateAlphabetLesson = async (req, res) => {
         lesson.thumbnail = thumbnail !== undefined ? thumbnail : lesson.thumbnail;
         lesson.vocabularies = vocabularies !== undefined ? vocabularies : lesson.vocabularies;
         lesson.status = status !== undefined ? status : lesson.status;
+        if (smartCode !== undefined) {
+            lesson.smartCode = smartCode;
+        }
 
         await lesson.save();
         await logAdminActivity(req.user.id, 'UPDATE', 'Alphabet', `Đã cập nhật chữ cái: "${lesson.letter}"`);

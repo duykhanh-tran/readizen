@@ -1,5 +1,6 @@
 import LessonService from '../services/LessonService.js';
 import AudioService from '../services/AudioService.js';
+import { speechEvaluationQueue } from '../lib/queue.js';
 
 // ================= ADMIN CONTROLLERS =================
 
@@ -102,13 +103,56 @@ export const getUserScores = async (req, res) => {
     }
 };
 
-// Evaluate speaking audio using AssemblyAI with Levenshtein guards
+// Evaluate speaking audio using AssemblyAI with Levenshtein guards (Async via BullMQ)
 export const evaluateAudioSpeech = async (req, res) => {
     try {
-        const result = await AudioService.evaluateSpeech(req.body.textToRead, req.file, req.body.audioUrl);
-        res.status(200).json(result);
+        const { textToRead, audioUrl, socketId } = req.body;
+        if (!audioUrl) {
+            return res.status(400).json({ message: 'Vui lòng gửi đường dẫn âm thanh để chấm điểm.' });
+        }
+        if (!textToRead) {
+            return res.status(400).json({ message: 'Thiếu nội dung câu đọc mẫu (textToRead).' });
+        }
+        if (!socketId) {
+            return res.status(400).json({ message: 'Thiếu định danh kết nối (socketId).' });
+        }
+
+        // Add task to BullMQ
+        const job = await speechEvaluationQueue.add('evaluate-speech', {
+            textToRead,
+            audioUrl,
+            socketId
+        });
+
+        res.status(202).json({
+            jobId: job.id,
+            message: 'Đã nhận yêu cầu chấm điểm. Đang xử lý...'
+        });
     } catch (error) {
-        const status = (error.message.includes('Vui lòng gửi') || error.message.includes('Thiếu nội dung')) ? 400 : 500;
-        res.status(status).json({ message: error.message });
+        res.status(500).json({ message: 'Lỗi khi đưa yêu cầu vào hàng đợi', error: error.message });
+    }
+};
+
+// Check evaluation job status (HTTP Fallback for BullMQ)
+export const getJobStatus = async (req, res) => {
+    try {
+        const { jobId } = req.params;
+        const job = await speechEvaluationQueue.getJob(jobId);
+        
+        if (!job) {
+            return res.status(404).json({ message: 'Không tìm thấy công việc (job) yêu cầu.' });
+        }
+
+        const state = await job.getState(); // 'completed' | 'failed' | 'active' | 'waiting'
+
+        if (state === 'completed') {
+            return res.status(200).json({ status: 'completed', result: job.returnvalue });
+        } else if (state === 'failed') {
+            return res.status(200).json({ status: 'failed', error: job.failedReason || 'Lỗi xử lý chấm điểm' });
+        } else {
+            return res.status(200).json({ status: 'pending' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Lỗi server khi lấy trạng thái công việc', error: error.message });
     }
 };

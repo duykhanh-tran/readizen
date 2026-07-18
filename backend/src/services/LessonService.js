@@ -8,7 +8,7 @@ class LessonService {
         const session = await mongoose.startSession();
         session.startTransaction();
         try {
-            const { title, level, coverImage, pdfFile, ebookImages, practiceSentences, status } = lessonData;
+            const { title, level, coverImage, pdfFile, ebookImages, practiceSentences, status, smartCode } = lessonData;
             const newLesson = new Lesson({
                 title,
                 level,
@@ -16,7 +16,8 @@ class LessonService {
                 pdfFile,
                 ebookImages,
                 practiceSentences,
-                status: status || 'active'
+                status: status || 'active',
+                smartCode
             });
             await newLesson.save({ session });
             await logAdminActivity(userId, 'CREATE', 'Reading', `Đã tạo bài học đọc AI: "${title}"`, { session });
@@ -58,7 +59,7 @@ class LessonService {
         const session = await mongoose.startSession();
         session.startTransaction();
         try {
-            const { title, level, coverImage, pdfFile, ebookImages, practiceSentences, status } = lessonData;
+            const { title, level, coverImage, pdfFile, ebookImages, practiceSentences, status, smartCode } = lessonData;
             const lesson = await Lesson.findById(id).session(session);
             if (!lesson) {
                 throw new Error('Không tìm thấy bài học cần cập nhật.');
@@ -72,6 +73,9 @@ class LessonService {
             lesson.practiceSentences = practiceSentences;
             if (status) {
                 lesson.status = status;
+            }
+            if (smartCode !== undefined) {
+                lesson.smartCode = smartCode;
             }
 
             await lesson.save({ session });

@@ -6,6 +6,7 @@ import Footer from '../components/Footer.jsx';
 import SharedPagination from '../components/shared/SharedPagination.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { Loader2, AlertCircle, Play, BookOpen, Star, ArrowRight, Search } from 'lucide-react';
+import SkeletonCard from '../components/shared/SkeletonCard.jsx';
 
 export default function VideoTopics() {
   const { isAuthenticated } = useAuth();
@@ -139,9 +140,10 @@ export default function VideoTopics() {
 
         {/* Loading / Error States */}
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-24">
-            <Loader2 className="w-10 h-10 animate-spin text-brand-green" />
-            <p className="text-sm text-gray-500 font-bold mt-4">Đang tải các chủ đề học tập...</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {Array.from({ length: 6 }).map((_, idx) => (
+              <SkeletonCard key={idx} />
+            ))}
           </div>
         ) : error ? (
           <div className="max-w-md mx-auto bg-white rounded-3xl border border-red-100 p-8 text-center shadow-lg my-12">

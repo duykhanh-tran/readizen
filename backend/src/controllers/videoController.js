@@ -185,7 +185,7 @@ export const deleteTopic = async (req, res) => {
 // Create Video Lesson
 export const createLesson = async (req, res) => {
   try {
-    const { topicId, title, slug, videoType, aspectRatio, videoUrl, thumbnail, order, status } = req.body;
+    const { topicId, title, slug, videoType, aspectRatio, videoUrl, thumbnail, order, status, smartCode } = req.body;
     const newLesson = new VideoLesson({
       topicId,
       title,
@@ -195,7 +195,8 @@ export const createLesson = async (req, res) => {
       videoUrl,
       thumbnail,
       order: order || 0,
-      status: status || 'draft'
+      status: status || 'draft',
+      smartCode
     });
     await newLesson.save();
     await logAdminActivity(req.user.id, 'CREATE', 'Video', `Đã tạo bài học video: "${newLesson.title}"`);
@@ -209,7 +210,7 @@ export const createLesson = async (req, res) => {
 export const updateLesson = async (req, res) => {
   try {
     const { id } = req.params;
-    const { topicId, title, slug, videoType, aspectRatio, videoUrl, thumbnail, order, status } = req.body;
+    const { topicId, title, slug, videoType, aspectRatio, videoUrl, thumbnail, order, status, smartCode } = req.body;
     const lesson = await VideoLesson.findById(id);
     if (!lesson) {
       return res.status(404).json({ message: 'Không tìm thấy bài học video cần cập nhật.' });
@@ -224,6 +225,9 @@ export const updateLesson = async (req, res) => {
     lesson.thumbnail = thumbnail !== undefined ? thumbnail : lesson.thumbnail;
     lesson.order = order !== undefined ? order : lesson.order;
     lesson.status = status !== undefined ? status : lesson.status;
+    if (smartCode !== undefined) {
+      lesson.smartCode = smartCode;
+    }
 
     await lesson.save();
     await logAdminActivity(req.user.id, 'UPDATE', 'Video', `Đã cập nhật bài học video: "${lesson.title}"`);
