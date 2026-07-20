@@ -1,3 +1,4 @@
+import axios from 'axios';
 import axiosInstance from '../services/axios';
 
 /**
@@ -41,10 +42,9 @@ export const uploadDirectToCloudinary = async (file, folder = 'readizen') => {
 
     // Make request directly to Cloudinary. We use default axios (not our instance)
     // to avoid attaching the application Authorization headers to Cloudinary API.
-    const axiosDirect = await import('axios');
-    const response = await axiosDirect.default.post(uploadUrl, formData, {
+    const response = await axios.post(uploadUrl, formData, {
         headers: {
-            'Content-Type': 'multipart/form-tệp',
+            'Content-Type': 'multipart/form-data',
         }
     });
 
