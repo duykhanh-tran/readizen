@@ -19,3 +19,29 @@
     20%, 40%, 60%, 80% { transform: translateX(4px); }
   }
 }
+
+/* Custom Scrollbars */
+.scrollbar-custom {
+  scrollbar-width: thin !important;
+  scrollbar-color: #106734 #e5e7eb !important;
+}
+
+.scrollbar-custom::-webkit-scrollbar {
+  width: 8px !important;
+  height: 8px !important;
+  display: block !important;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: #e5e7eb !important;
+  border-radius: 4px !important;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background: #106734 !important;
+  border-radius: 4px !important;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+  background: #0B4A25 !important;
+}

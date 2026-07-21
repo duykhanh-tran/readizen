@@ -13,16 +13,38 @@ export default function Chat() {
   const [errorMsg, setErrorMsg] = useState('');
   const [mobileShowChat, setMobileShowChat] = useState(false);
   
-  const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
+  const shouldForceScrollRef = useRef(true);
 
-  // Auto-scroll to bottom of chat
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  // Smart-scroll logic
+  useEffect(() => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+
+    if (shouldForceScrollRef.current) {
+      container.scrollTop = container.scrollHeight;
+      shouldForceScrollRef.current = false;
+    } else if (messages.length > 0) {
+      const lastMsg = messages[messages.length - 1];
+      if (lastMsg) {
+        const isAdminMsg = lastMsg.sender === 'admin';
+        const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 200;
+        
+        if (isAdminMsg || isNearBottom) {
+          container.scrollTo({
+            top: container.scrollHeight,
+            behavior: 'smooth'
+          });
+        }
+      }
+    }
+  }, [messages]);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    if (activeRoomId) {
+      shouldForceScrollRef.current = true;
+    }
+  }, [activeRoomId]);
 
   // Load Rooms (Chat Users)
   const fetchRooms = async () => {
@@ -136,11 +158,11 @@ export default function Chat() {
   );
 
   return (
-    <div className="h-[calc(100vh-160px)] bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden grid grid-cols-12 items-stretch font-sans text-left">
+    <div className="h-[calc(100vh-160px)] bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden flex items-stretch font-sans text-left min-h-0 w-full">
       
-      {/* Rooms Sidebar (Left 4 cols) */}
-      <div className={`col-span-12 md:col-span-4 border-r border-gray-200 flex flex-col h-full bg-gray-50/50 ${mobileShowChat ? 'hidden md:flex' : 'flex'}`}>
-        <div className="p-4 border-b border-gray-200 bg-white">
+      {/* Rooms Sidebar (Left 4 cols equivalent) */}
+      <div className={`w-full md:w-1/3 border-r border-gray-200 flex flex-col h-full bg-gray-50/50 flex-shrink-0 min-h-0 ${mobileShowChat ? 'hidden md:flex' : 'flex'}`}>
+        <div className="p-4 border-b border-gray-200 bg-white flex-shrink-0">
           <h3 className="font-black text-gray-900 text-base mb-3">Hộp thư hỗ trợ</h3>
           <div className="relative">
             <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 pointer-events-none">
@@ -157,7 +179,7 @@ export default function Chat() {
         </div>
 
         {/* Room List */}
-        <div className="flex-grow overflow-y-auto divide-y divide-gray-100 p-2 space-y-1">
+        <div className="flex-grow overflow-y-auto scrollbar-custom divide-y divide-gray-100 p-2 space-y-1 min-h-0 overscroll-contain">
           {errorMsg && (
             <div className="p-4 text-center text-red-500 text-xs flex items-center gap-1.5 justify-center">
               <AlertCircle className="w-4 h-4" />
@@ -215,8 +237,8 @@ export default function Chat() {
         </div>
       </div>
 
-      {/* Message Area (Right 8 cols) */}
-      <div className={`col-span-12 md:col-span-8 flex flex-col h-full bg-white relative ${!mobileShowChat ? 'hidden md:flex' : 'flex'}`}>
+      {/* Message Area (Right 8 cols equivalent) */}
+      <div className={`flex-grow flex flex-col h-full bg-white relative min-h-0 ${!mobileShowChat ? 'hidden md:flex' : 'flex'}`}>
         {activeRoom ? (
           <>
             {/* Header */}
@@ -250,7 +272,7 @@ export default function Chat() {
             </div>
 
             {/* Messages Scroll View */}
-            <div className="flex-grow overflow-y-auto p-6 space-y-4 bg-[#FAF9F5]">
+            <div ref={messagesContainerRef} className="flex-grow overflow-y-auto scrollbar-custom p-6 space-y-4 bg-[#FAF9F5] min-h-0 overscroll-contain">
               {messages.length > 0 ? (
                 messages.map((msg) => {
                   const isAdminMsg = msg.sender === 'admin';
@@ -291,7 +313,6 @@ export default function Chat() {
                   <span>Bắt đầu cuộc trò chuyện mới.</span>
                 </div>
               )}
-              <div ref={messagesEndRef} />
             </div>
 
             {/* Input Box */}

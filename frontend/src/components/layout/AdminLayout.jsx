@@ -49,7 +49,7 @@ export default function AdminLayout() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F4F6F8] font-sans flex text-left relative overflow-x-hidden">
+    <div className="h-screen bg-[#F4F6F8] font-sans flex text-left relative overflow-hidden">
       {/* Mobile Sidebar Backdrop */}
       {isMobileSidebarOpen && (
         <div
@@ -145,7 +145,7 @@ export default function AdminLayout() {
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-grow flex flex-col min-h-screen overflow-x-hidden">
+      <div className="flex-grow flex flex-col h-screen overflow-hidden">
         {/* Top Header */}
         <header className="h-16 bg-white border-b border-gray-200 px-4 lg:px-8 flex items-center justify-between shadow-sm flex-shrink-0">
           <div className="flex items-center gap-3">
