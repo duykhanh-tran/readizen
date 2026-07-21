@@ -20,6 +20,7 @@ export default function EditAlphabetLesson() {
   const [thumbnail, setThumbnail] = useState('');
   const [status, setStatus] = useState('draft');
   const [vocabularies, setVocabularies] = useState([]);
+  const [smartCode, setSmartCode] = useState('');
 
   // Upload States
   const [isUploadingThumbnail, setIsUploadingThumbnail] = useState(false);
@@ -36,6 +37,7 @@ export default function EditAlphabetLesson() {
         setThumbnail(data.thumbnail || '');
         setStatus(data.status || 'draft');
         setVocabularies(data.vocabularies || []);
+        setSmartCode(data.smartCode || '');
       } catch (err) {
         console.error(err);
         setError(err.response?.data?.message || 'Không thể lấy thông tin chi tiết bài học chữ cái.');
@@ -117,12 +119,18 @@ export default function EditAlphabetLesson() {
       return;
     }
 
+    if (smartCode && !/^[0-9]{4}$/.test(smartCode)) {
+      setError('Mã Smart Code phải là dãy số gồm đúng 4 chữ số (ví dụ: 1234).');
+      return;
+    }
+
     setIsSaving(true);
     const payload = {
       letter,
       thumbnail,
       status,
-      vocabularies
+      vocabularies,
+      smartCode
     };
 
     try {
@@ -212,12 +220,25 @@ export default function EditAlphabetLesson() {
 
             {/* Letter input (Read-only since it's preseeded A-Z) */}
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest block">Chữ cái</label>
+              <label className="text-[10px] font-black text-gray-400 tracking-widest block uppercase">Chữ cái</label>
               <input
                 type="text"
                 disabled
                 value={letter}
                 className="w-full border border-gray-200 rounded-xl px-4 py-3 text-xs bg-gray-50 font-black text-center text-lg text-gray-800 shadow-sm"
+              />
+            </div>
+
+            {/* Smart Code input */}
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black text-amber-600 tracking-widest block uppercase">Smart Code</label>
+              <input
+                type="text"
+                maxLength={4}
+                placeholder="Nhập 4 chữ số (ví dụ: 1234)"
+                value={smartCode}
+                onChange={(e) => setSmartCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                className="w-full border border-amber-250 rounded-xl px-4 py-3 text-xs bg-amber-50/20 font-mono font-bold text-center text-lg text-amber-800 shadow-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/35 outline-none"
               />
             </div>
 

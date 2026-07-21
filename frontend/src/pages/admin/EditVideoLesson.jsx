@@ -24,6 +24,7 @@ export default function EditVideoLesson() {
   const [thumbnail, setThumbnail] = useState('');
   const [order, setOrder] = useState(0);
   const [status, setStatus] = useState('draft');
+  const [smartCode, setSmartCode] = useState('');
 
   // Uploading States
   const [isUploading, setIsUploading] = useState(false);
@@ -52,6 +53,7 @@ export default function EditVideoLesson() {
           setThumbnail(lesson.thumbnail || '');
           setOrder(lesson.order || 0);
           setStatus(lesson.status || 'draft');
+          setSmartCode(lesson.smartCode || '');
         } else {
           // Gán mặc định chủ đề đầu tiên nếu có
           if (topicsRes.data.length > 0) {
@@ -111,6 +113,11 @@ export default function EditVideoLesson() {
       return;
     }
 
+    if (smartCode && !/^[0-9]{4}$/.test(smartCode)) {
+      setError('Mã Smart Code phải là dãy số gồm đúng 4 chữ số (ví dụ: 1234).');
+      return;
+    }
+
     setIsSaving(true);
     setError(null);
     try {
@@ -123,7 +130,8 @@ export default function EditVideoLesson() {
         videoUrl,
         thumbnail,
         order: Number(order) || 0,
-        status
+        status,
+        smartCode
       };
 
       if (isEditMode) {
@@ -232,6 +240,19 @@ export default function EditVideoLesson() {
               value={slug}
               onChange={(e) => setSlug(e.target.value)}
               className="w-full border border-gray-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-brand-green shadow-sm"
+            />
+          </div>
+
+          {/* Smart Code */}
+          <div className="space-y-1.5">
+            <label className="text-amber-600 font-bold">Smart Code (Mã điều hướng nhanh 4 chữ số)</label>
+            <input
+              type="text"
+              maxLength={4}
+              placeholder="Để trống để hệ thống tự sinh ngẫu nhiên"
+              value={smartCode}
+              onChange={(e) => setSmartCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
+              className="w-full border border-amber-250 rounded-xl px-4 py-3 text-xs bg-amber-50/20 font-mono font-bold text-amber-800 shadow-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/35 outline-none"
             />
           </div>
 

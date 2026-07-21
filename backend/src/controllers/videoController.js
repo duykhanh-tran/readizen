@@ -1,6 +1,7 @@
 import VideoTopic from '../models/VideoTopic.js';
 import VideoLesson from '../models/VideoLesson.js';
 import MediaService from '../services/MediaService.js';
+import SmartCodeRegistry from '../models/SmartCodeRegistry.js';
 import { logAdminActivity } from '../utils/adminLogger.js';
 
 // --- CLIENT APIS ---
@@ -185,7 +186,18 @@ export const deleteTopic = async (req, res) => {
 // Create Video Lesson
 export const createLesson = async (req, res) => {
   try {
-    const { topicId, title, slug, videoType, aspectRatio, videoUrl, thumbnail, order, status } = req.body;
+    const { topicId, title, slug, videoType, aspectRatio, videoUrl, thumbnail, order, status, smartCode } = req.body;
+
+    if (smartCode) {
+      if (!/^[0-9]{4}$/.test(smartCode)) {
+        return res.status(400).json({ message: 'Mã Smart Code phải gồm đúng 4 chữ số (0-9).' });
+      }
+      const existingCode = await SmartCodeRegistry.findOne({ code: smartCode });
+      if (existingCode) {
+        return res.status(400).json({ message: 'Mã Smart Code này đã được sử dụng cho một bài học khác.' });
+      }
+    }
+
     const newLesson = new VideoLesson({
       topicId,
       title,
@@ -195,7 +207,8 @@ export const createLesson = async (req, res) => {
       videoUrl,
       thumbnail,
       order: order || 0,
-      status: status || 'draft'
+      status: status || 'draft',
+      smartCode: smartCode || undefined
     });
     await newLesson.save();
     await logAdminActivity(req.user.id, 'CREATE', 'Video', `Đã tạo bài học video: "${newLesson.title}"`);
@@ -209,10 +222,21 @@ export const createLesson = async (req, res) => {
 export const updateLesson = async (req, res) => {
   try {
     const { id } = req.params;
-    const { topicId, title, slug, videoType, aspectRatio, videoUrl, thumbnail, order, status } = req.body;
+    const { topicId, title, slug, videoType, aspectRatio, videoUrl, thumbnail, order, status, smartCode } = req.body;
     const lesson = await VideoLesson.findById(id);
     if (!lesson) {
       return res.status(404).json({ message: 'Không tìm thấy bài học video cần cập nhật.' });
+    }
+
+    if (smartCode && smartCode !== lesson.smartCode) {
+      if (!/^[0-9]{4}$/.test(smartCode)) {
+        return res.status(400).json({ message: 'Mã Smart Code phải gồm đúng 4 chữ số (0-9).' });
+      }
+      const existingCode = await SmartCodeRegistry.findOne({ code: smartCode, resourceId: { $ne: id } });
+      if (existingCode) {
+        return res.status(400).json({ message: 'Mã Smart Code này đã được sử dụng cho một bài học khác.' });
+      }
+      lesson.smartCode = smartCode;
     }
 
     lesson.topicId = topicId !== undefined ? topicId : lesson.topicId;

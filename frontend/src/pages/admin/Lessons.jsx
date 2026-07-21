@@ -280,6 +280,11 @@ export default function AdminLessons() {
                       <span className="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase bg-white text-gray-800 border border-gray-200 shadow-sm">
                         Level {lesson.level || 'A'}
                       </span>
+                      {lesson.smartCode && (
+                        <span className="px-2.5 py-1 rounded-lg text-[10px] font-black bg-amber-500 text-white shadow-sm">
+                          Code: {lesson.smartCode}
+                        </span>
+                      )}
                     </div>
                   </div>
 

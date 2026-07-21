@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import Lesson from '../models/Lesson.js';
 import UserScore from '../models/UserScore.js';
+import SmartCodeRegistry from '../models/SmartCodeRegistry.js';
 import { logAdminActivity } from '../utils/adminLogger.js';
 
 class LessonService {
@@ -8,7 +9,18 @@ class LessonService {
         const session = await mongoose.startSession();
         session.startTransaction();
         try {
-            const { title, level, coverImage, pdfFile, ebookImages, practiceSentences, status } = lessonData;
+            const { title, level, coverImage, pdfFile, ebookImages, practiceSentences, status, smartCode } = lessonData;
+            
+            if (smartCode) {
+                if (!/^[0-9]{4}$/.test(smartCode)) {
+                    throw new Error('Mã Smart Code phải gồm đúng 4 chữ số (0-9).');
+                }
+                const existingCode = await SmartCodeRegistry.findOne({ code: smartCode });
+                if (existingCode) {
+                    throw new Error('Mã Smart Code này đã được sử dụng cho một bài học khác.');
+                }
+            }
+
             const newLesson = new Lesson({
                 title,
                 level,
@@ -16,7 +28,8 @@ class LessonService {
                 pdfFile,
                 ebookImages,
                 practiceSentences,
-                status: status || 'active'
+                status: status || 'active',
+                smartCode: smartCode || undefined
             });
             await newLesson.save({ session });
             await logAdminActivity(userId, 'CREATE', 'Reading', `Đã tạo bài học đọc AI: "${title}"`, { session });
@@ -58,10 +71,21 @@ class LessonService {
         const session = await mongoose.startSession();
         session.startTransaction();
         try {
-            const { title, level, coverImage, pdfFile, ebookImages, practiceSentences, status } = lessonData;
+            const { title, level, coverImage, pdfFile, ebookImages, practiceSentences, status, smartCode } = lessonData;
             const lesson = await Lesson.findById(id).session(session);
             if (!lesson) {
                 throw new Error('Không tìm thấy bài học cần cập nhật.');
+            }
+
+            if (smartCode && smartCode !== lesson.smartCode) {
+                if (!/^[0-9]{4}$/.test(smartCode)) {
+                    throw new Error('Mã Smart Code phải gồm đúng 4 chữ số (0-9).');
+                }
+                const existingCode = await SmartCodeRegistry.findOne({ code: smartCode, resourceId: { $ne: id } });
+                if (existingCode) {
+                    throw new Error('Mã Smart Code này đã được sử dụng cho một bài học khác.');
+                }
+                lesson.smartCode = smartCode;
             }
 
             lesson.title = title;

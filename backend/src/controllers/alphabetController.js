@@ -1,6 +1,7 @@
 import AlphabetLesson from '../models/AlphabetLesson.js';
 import UserAlphabetScore from '../models/UserAlphabetScore.js';
 import UserAlphabetAttempt from '../models/UserAlphabetAttempt.js';
+import SmartCodeRegistry from '../models/SmartCodeRegistry.js';
 import mongoose from 'mongoose';
 import { uploadToCloudinary } from '../lib/cloudinary.js';
 import { logAdminActivity } from '../utils/adminLogger.js';
@@ -242,18 +243,29 @@ export const getAdminAlphabetById = async (req, res) => {
 // Create alphabet lesson
 export const createAlphabetLesson = async (req, res) => {
     try {
-        const { letter, thumbnail, vocabularies, status } = req.body;
+        const { letter, thumbnail, vocabularies, status, smartCode } = req.body;
 
         const existing = await AlphabetLesson.findOne({ letter: letter.toUpperCase() });
         if (existing) {
             return res.status(400).json({ message: `Chữ cái ${letter.toUpperCase()} đã tồn tại.` });
         }
 
+        if (smartCode) {
+            if (!/^[0-9]{4}$/.test(smartCode)) {
+                return res.status(400).json({ message: 'Mã Smart Code phải gồm đúng 4 chữ số (0-9).' });
+            }
+            const existingCode = await SmartCodeRegistry.findOne({ code: smartCode });
+            if (existingCode) {
+                return res.status(400).json({ message: 'Mã Smart Code này đã được sử dụng cho một bài học khác.' });
+            }
+        }
+
         const lesson = new AlphabetLesson({
             letter: letter.toUpperCase(),
             thumbnail,
             vocabularies: vocabularies || [],
-            status: status || 'draft'
+            status: status || 'draft',
+            smartCode: smartCode || undefined
         });
 
         await lesson.save();
@@ -268,11 +280,22 @@ export const createAlphabetLesson = async (req, res) => {
 export const updateAlphabetLesson = async (req, res) => {
     try {
         const { id } = req.params;
-        const { letter, thumbnail, vocabularies, status } = req.body;
+        const { letter, thumbnail, vocabularies, status, smartCode } = req.body;
 
         const lesson = await AlphabetLesson.findById(id);
         if (!lesson) {
             return res.status(404).json({ message: 'Không tìm thấy chữ cái.' });
+        }
+
+        if (smartCode && smartCode !== lesson.smartCode) {
+            if (!/^[0-9]{4}$/.test(smartCode)) {
+                return res.status(400).json({ message: 'Mã Smart Code phải gồm đúng 4 chữ số (0-9).' });
+            }
+            const existingCode = await SmartCodeRegistry.findOne({ code: smartCode, resourceId: { $ne: id } });
+            if (existingCode) {
+                return res.status(400).json({ message: 'Mã Smart Code này đã được sử dụng cho một bài học khác.' });
+            }
+            lesson.smartCode = smartCode;
         }
 
         lesson.letter = letter ? letter.toUpperCase() : lesson.letter;

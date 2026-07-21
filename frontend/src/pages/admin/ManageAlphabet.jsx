@@ -84,6 +84,7 @@ export default function ManageAlphabet() {
                   <th className="py-4.5 px-6 w-20 text-center">Chữ cái</th>
                   <th className="py-4.5 px-6 w-28">Hình ảnh</th>
                   <th className="py-4.5 px-6">Từ vựng đính kèm</th>
+                  <th className="py-4.5 px-6 w-24">Smart Code</th>
                   <th className="py-4.5 px-6 w-32">Trạng thái</th>
                   <th className="py-4.5 px-6 w-32 text-right">Thao tác</th>
                 </tr>
@@ -115,6 +116,15 @@ export default function ManageAlphabet() {
                         </div>
                       ) : (
                         <span className="text-gray-400 font-medium italic">Chưa cấu hình từ vựng</span>
+                      )}
+                    </td>
+                    <td className="py-4.5 px-6">
+                      {item.smartCode ? (
+                        <span className="font-mono font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200">
+                          {item.smartCode}
+                        </span>
+                      ) : (
+                        <span className="text-gray-400 italic">N/A</span>
                       )}
                     </td>
                     <td className="py-4.5 px-6">

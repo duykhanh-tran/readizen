@@ -23,6 +23,7 @@ export default function EditLesson() {
   const [coverImage, setCoverImage] = useState('');
   const [pdfFile, setPdfFile] = useState('');
   const [status, setStatus] = useState('active');
+  const [smartCode, setSmartCode] = useState('');
 
   // Trường mới tách biệt độc lập thay cho pages
   const [ebookImages, setEbookImages] = useState(['']);
@@ -40,6 +41,7 @@ export default function EditLesson() {
         setCoverImage(data.coverImage);
         setPdfFile(data.pdfFile);
         setStatus(data.status || 'active');
+        setSmartCode(data.smartCode || '');
         
         // Chuyển đổi dữ liệu cũ sang định dạng phẳng mới nếu cần
         if (data.ebookImages && data.ebookImages.length > 0) {
@@ -192,6 +194,11 @@ export default function EditLesson() {
       return;
     }
 
+    if (smartCode && !/^[0-9]{4}$/.test(smartCode)) {
+      setError('Mã Smart Code phải là dãy số gồm đúng 4 chữ số (ví dụ: 1234).');
+      return;
+    }
+
     setIsSaving(true);
     try {
       const formData = new FormData();
@@ -200,6 +207,7 @@ export default function EditLesson() {
       formData.append('coverImage', coverImage);
       formData.append('pdfFile', pdfFile);
       formData.append('status', status);
+      formData.append('smartCode', smartCode);
       // Gửi riêng biệt 2 mảng phẳng độc lập
       formData.append('ebookImages', JSON.stringify(ebookImages));
       formData.append('practiceSentences', JSON.stringify(practiceSentences));
@@ -277,6 +285,18 @@ export default function EditLesson() {
                 value={title} 
                 onChange={(e) => setTitle(e.target.value)}
                 className="w-full border border-gray-200 rounded-xl px-4 py-3 text-xs focus:outline-none focus:border-brand-green focus:ring-1 focus:ring-brand-green/35 shadow-sm bg-gray-50/30"
+              />
+            </div>
+
+            <div className="space-y-1.5 md:col-span-2">
+              <label className="text-xs font-black text-amber-600 uppercase tracking-wider">Smart Code (Mã điều hướng nhanh 4 chữ số)</label>
+              <input 
+                type="text" 
+                maxLength={4}
+                placeholder="Nhập 4 chữ số (ví dụ: 1234)"
+                value={smartCode} 
+                onChange={(e) => setSmartCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                className="w-full border border-amber-250 rounded-xl px-4 py-3 text-xs font-mono font-bold text-amber-800 bg-amber-50/20 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/35 shadow-sm outline-none"
               />
             </div>
 

@@ -13,6 +13,7 @@ import { SocketProvider } from './context/SocketContext.jsx'
 import ScrollToTop from './components/shared/ScrollToTop.jsx'
 import { Toaster } from 'react-hot-toast'
 import FloatingChat from './components/shared/FloatingChat.jsx'
+import FloatingSmartCode from './components/shared/FloatingSmartCode.jsx'
 
 // Lazy loaded page components
 const Learn = lazy(() => import('./pages/Learn.jsx'))
@@ -95,6 +96,7 @@ createRoot(document.getElementById('root')).render(
               </Route>
             </Routes>
             <FloatingChat />
+            <FloatingSmartCode />
           </Suspense>
           <Analytics />
         </SocketProvider>

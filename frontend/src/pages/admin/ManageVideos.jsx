@@ -395,6 +395,7 @@ export default function ManageVideos() {
                   <th className="py-4 px-6">Ảnh thu nhỏ</th>
                   <th className="py-4 px-6">Bài giảng</th>
                   <th className="py-4 px-6">Slug</th>
+                  <th className="py-4 px-6">Smart Code</th>
                   <th className="py-4 px-6">Chủ đề</th>
                   <th className="py-4 px-6">Nguồn video</th>
                   <th className="py-4 px-6">Tỷ lệ</th>
@@ -405,7 +406,7 @@ export default function ManageVideos() {
               <tbody className="divide-y divide-gray-100 font-semibold text-gray-700">
                 {lessons.length === 0 ? (
                   <tr>
-                    <td colSpan="9" className="text-center py-10 text-gray-400 italic">Không tìm thấy bài giảng video nào</td>
+                    <td colSpan="10" className="text-center py-10 text-gray-400 italic">Không tìm thấy bài giảng video nào</td>
                   </tr>
                 ) : (
                   lessons.map((l) => (
@@ -421,6 +422,15 @@ export default function ManageVideos() {
                       </td>
                       <td className="py-4.5 px-6 font-extrabold text-gray-900 max-w-xs truncate">{l.title}</td>
                       <td className="py-4.5 px-6 text-gray-500 font-mono">{l.slug}</td>
+                      <td className="py-4.5 px-6">
+                        {l.smartCode ? (
+                          <span className="font-mono font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded border border-amber-250">
+                            {l.smartCode}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400 italic">N/A</span>
+                        )}
+                      </td>
                       <td className="py-4.5 px-6"><span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded text-[10px] font-bold">{l.topicTitle || 'Chủ đề'}</span></td>
                       <td className="py-4.5 px-6 font-bold">
                         {l.videoType === 'youtube' && <span className="text-red-600">YouTube</span>}
