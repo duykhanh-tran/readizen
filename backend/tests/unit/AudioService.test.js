@@ -1,4 +1,4 @@
-import AudioService from '../../src/services/AudioService.js';
+import AudioService, { LETTER_HOMOPHONES, normalizeText, getStringSimilarity, calibrateScore } from '../../src/services/AudioService.js';
 
 describe('AudioService Unit Tests', () => {
     beforeAll(() => {
@@ -50,5 +50,28 @@ describe('AudioService Unit Tests', () => {
         await expect(AudioService.evaluateSpeech('', mockFile))
             .rejects
             .toThrow('Thiếu nội dung câu đọc mẫu (textToRead).');
+    });
+
+    describe('Lenient Scoring & Homophones Helpers', () => {
+        it('should correctly normalize letters and retrieve homophones', () => {
+            expect(LETTER_HOMOPHONES['b']).toContain('bee');
+            expect(LETTER_HOMOPHONES['c']).toContain('see');
+            expect(normalizeText('Hello, World!!!')).toBe('hello world');
+        });
+
+        it('should calculate string similarity correctly for soft-matching', () => {
+            // bag vs beg -> length 2/3 similarity
+            const sim = getStringSimilarity('bag', 'beg');
+            expect(sim).toBeCloseTo(0.666, 2);
+            expect(sim).toBeGreaterThanOrEqual(0.6);
+        });
+
+        it('should calibrate score non-linearly to favor short word speakers', () => {
+            // Raw score of 60 for 1 word with perfect match ratio
+            const calibrated = calibrateScore(60, 1, 1.0);
+            // 100 * (60/100)^0.75 = 100 * 0.6^0.75 = 100 * 0.68 = 68
+            expect(calibrated).toBe(68);
+            expect(calibrated).toBeGreaterThan(60);
+        });
     });
 });

@@ -56,6 +56,36 @@ const calibrateScore = (rawScore, targetWordsLength, matchedRatio = 1.0) => {
     return Math.max(0, Math.min(100, rawScore));
 };
 
+// Từ đồng âm cho 26 chữ cái tiếng Anh để tối ưu hóa nhận dạng chữ cái đơn
+const LETTER_HOMOPHONES = {
+    'a': ['a', 'ay', 'eh', 'hey', 'eight', 'ate', 'e'],
+    'b': ['b', 'be', 'bee', 'pea', 'me', 'd', 'p'],
+    'c': ['c', 'see', 'sea', 'she', 'si', 'say', 'k'],
+    'd': ['d', 'de', 'dee', 'the', 'day', 't'],
+    'e': ['e', 'ee', 'he', 'she', 'we', 'yee', 'it'],
+    'f': ['f', 'ef', 'have', 'after', 's'],
+    'g': ['g', 'jee', 'ji', 'she', 'see', 'dji'],
+    'h': ['h', 'aitch', 'each', 'age', 'edge', 'eight'],
+    'i': ['i', 'eye', 'hi', 'my', 'by', 'high', 'ai'],
+    'j': ['j', 'jay', 'gay', 'day', 'djay'],
+    'k': ['k', 'kay', 'ok', 'okay', 'can', 'c'],
+    'l': ['l', 'el', 'well', 'tell', 'al'],
+    'm': ['m', 'em', 'am', 'man', 'n'],
+    'n': ['n', 'en', 'in', 'and', 'end', 'm'],
+    'o': ['o', 'oh', 'owe', 'no', 'go', 'ou'],
+    'p': ['p', 'pe', 'pee', 'pea', 'be', 'b'],
+    'q': ['q', 'cue', 'queue', 'you', 'to', 'kiu'],
+    'r': ['r', 'are', 'our', 'or', 'ah'],
+    's': ['s', 'es', 'is', 'yes', 'as', 'f'],
+    't': ['t', 'te', 'tee', 'tea', 'to', 'day', 'd'],
+    'u': ['u', 'you', 'yew', 'to', 'do', 'iu'],
+    'v': ['v', 've', 'vee', 'we', 'be', 'w'],
+    'w': ['w', 'double', 'doubleu', 'we', 'dubleu'],
+    'x': ['x', 'ex', 'six', 'next', 's'],
+    'y': ['y', 'why', 'my', 'by', 'high', 'wai'],
+    'z': ['z', 'zed', 'zee', 'see', 'the', 'zi']
+};
+
 class AudioService {
     async evaluateSpeech(textToRead, file, audioUrlFromClient = null) {
         if (!file && !audioUrlFromClient) {
@@ -209,7 +239,19 @@ class AudioService {
             };
         }
 
-        const similarity = getStringSimilarity(textToRead, recognizedText);
+        let similarity = getStringSimilarity(textToRead, recognizedText);
+        
+        // Tối ưu hóa so khớp tương đồng (similarity) cho chữ cái đơn và từ vựng ngắn
+        if (targetWords.length === 1) {
+            const cleanTarget = normalizeText(targetWords[0]);
+            const cleanRec = normalizeText(recognizedText);
+            if (cleanTarget.length === 1 && LETTER_HOMOPHONES[cleanTarget]?.includes(cleanRec)) {
+                similarity = 1.0;
+            } else if (cleanTarget.length <= 4 && getStringSimilarity(cleanTarget, cleanRec) >= 0.6) {
+                similarity = Math.max(similarity, getStringSimilarity(cleanTarget, cleanRec));
+            }
+        }
+
         console.log('Similarity score (Levenshtein):', similarity.toFixed(4));
 
         if (similarity < 0.2) {
@@ -233,19 +275,54 @@ class AudioService {
         const wordsFeedback = targetWords.map(targetWord => {
             const cleanTarget = normalizeText(targetWord);
             
-            const matchedWord = recognizedWords.find(recWord => {
-                const cleanRec = normalizeText(recWord.text);
-                return cleanRec === cleanTarget;
-            });
+            let bestMatch = null;
+            let bestMatchType = 'none'; // 'exact', 'homophone', 'soft'
+            let bestMatchSim = 0;
+            let bestMatchConfidence = 0;
 
-            if (matchedWord) {
+            for (const recWord of recognizedWords) {
+                const cleanRec = normalizeText(recWord.text);
+                if (cleanRec === cleanTarget) {
+                    bestMatch = recWord;
+                    bestMatchType = 'exact';
+                    bestMatchSim = 1.0;
+                    bestMatchConfidence = recWord.confidence;
+                    break;
+                }
+                
+                // So khớp từ đồng âm cho chữ cái đơn
+                if (cleanTarget.length === 1 && LETTER_HOMOPHONES[cleanTarget]?.includes(cleanRec)) {
+                    if (bestMatchType !== 'exact') {
+                        bestMatch = recWord;
+                        bestMatchType = 'homophone';
+                        bestMatchSim = 1.0;
+                        bestMatchConfidence = recWord.confidence;
+                    }
+                }
+                
+                // So khớp mềm cho từ vựng ngắn (độ dài <= 4 ký tự)
+                if (cleanTarget.length > 1 && cleanTarget.length <= 4) {
+                    const sim = getStringSimilarity(cleanTarget, cleanRec);
+                    if (sim >= 0.6 && sim > bestMatchSim) {
+                        if (bestMatchType !== 'exact' && bestMatchType !== 'homophone') {
+                            bestMatch = recWord;
+                            bestMatchType = 'soft';
+                            bestMatchSim = sim;
+                            bestMatchConfidence = recWord.confidence;
+                        }
+                    }
+                }
+            }
+
+            if (bestMatch) {
                 matchedCount++;
-                totalConfidence += matchedWord.confidence;
+                const adjustedConfidence = bestMatchConfidence * bestMatchSim;
+                totalConfidence += adjustedConfidence;
                 return {
                     word: targetWord,
                     cleanWord: cleanTarget,
-                    confidence: matchedWord.confidence,
-                    correct: matchedWord.confidence >= 0.6
+                    confidence: adjustedConfidence,
+                    correct: adjustedConfidence >= 0.55 // Ngưỡng nhẹ nhàng hơn cho trẻ em
                 };
             } else {
                 return {
@@ -272,4 +349,5 @@ class AudioService {
     }
 }
 
+export { normalizeText, getLevenshteinDistance, getStringSimilarity, calibrateScore, LETTER_HOMOPHONES };
 export default new AudioService();
