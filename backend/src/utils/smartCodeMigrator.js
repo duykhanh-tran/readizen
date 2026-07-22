@@ -2,10 +2,25 @@ import Lesson from '../models/Lesson.js';
 import AlphabetLesson from '../models/AlphabetLesson.js';
 import VideoLesson from '../models/VideoLesson.js';
 import SmartCodeRegistry from '../models/SmartCodeRegistry.js';
+import SmartCodeConfig from '../models/SmartCodeConfig.js';
 
 export async function migrateSmartCodes() {
     console.log('🔄 Starting Smart Code migration check...');
     try {
+        // 0. Seed smart code configuration if it doesn't exist
+        const defaultConfigs = [
+            { resourceType: 'AlphabetLesson', prefix: '1' },
+            { resourceType: 'Lesson', prefix: '2' },
+            { resourceType: 'VideoLesson', prefix: '3' }
+        ];
+        for (const config of defaultConfigs) {
+            await SmartCodeConfig.findOneAndUpdate(
+                { resourceType: config.resourceType },
+                { $setOnInsert: { prefix: config.prefix } },
+                { upsert: true }
+            );
+        }
+
         // 1. Migrate Lessons
         const lessons = await Lesson.find({});
         for (const doc of lessons) {

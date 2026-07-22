@@ -120,7 +120,7 @@ export default function EditAlphabetLesson() {
     }
 
     if (smartCode && !/^[0-9]{4}$/.test(smartCode)) {
-      setError('Mã Smart Code phải là dãy số gồm đúng 4 chữ số (ví dụ: 1234).');
+      setError('Mã Smart Code phải gồm đúng 4 chữ số (ví dụ: 9142).');
       return;
     }
 
@@ -235,11 +235,14 @@ export default function EditAlphabetLesson() {
               <input
                 type="text"
                 maxLength={4}
-                placeholder="Nhập 4 chữ số (ví dụ: 1234)"
+                placeholder="Nhập mã 4 chữ số"
                 value={smartCode}
                 onChange={(e) => setSmartCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
                 className="w-full border border-amber-250 rounded-xl px-4 py-3 text-xs bg-amber-50/20 font-mono font-bold text-center text-lg text-amber-800 shadow-sm focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/35 outline-none"
               />
+              <p className="text-[9px] text-amber-600 mt-1 font-semibold">
+                * Tự động sinh mã dạng 9XXX nếu để trống. Admin có thể tùy chỉnh cả 4 chữ số.
+              </p>
             </div>
 
             {/* Status input */}

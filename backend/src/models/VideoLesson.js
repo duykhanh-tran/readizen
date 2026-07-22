@@ -64,7 +64,7 @@ videoLessonSchema.pre('validate', async function() {
     this.slug = generateVnSlug(this.title);
   }
   if (!this.smartCode) {
-    this.smartCode = await generateUniqueSmartCode();
+    this.smartCode = await generateUniqueSmartCode('VideoLesson');
   }
 });
 

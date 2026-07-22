@@ -51,7 +51,7 @@ import { generateUniqueSmartCode } from '../utils/codeGenerator.js';
 // Pre-validate hook to generate code if missing
 alphabetLessonSchema.pre('validate', async function() {
     if (!this.smartCode) {
-        this.smartCode = await generateUniqueSmartCode();
+        this.smartCode = await generateUniqueSmartCode('AlphabetLesson');
     }
 });
 

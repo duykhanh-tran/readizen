@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
-import { LayoutDashboard, FileText, MessageSquare, LogOut, Shield, Home, Menu, X, BookOpen, Sparkles, Video } from 'lucide-react';
+import { LayoutDashboard, FileText, MessageSquare, LogOut, Shield, Home, Menu, X, BookOpen, Sparkles, Video, Hash } from 'lucide-react';
 import AdminNotificationBell from './AdminNotificationBell.jsx';
 
 export default function AdminLayout() {

@@ -78,44 +78,53 @@ export default function FloatingSmartCode() {
 
       // Reset inputs & refocus first
       setCode(['', '', '', '']);
-      inputRefs[0].current?.focus();
       setFocusedIndex(0);
+      inputRefs[0].current?.focus();
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleChange = (value, index) => {
-    const cleanValue = value.replace(/\D/g, ''); // Digits only
-    if (!cleanValue) return;
+  // Keypad & Keyboard Input Handlers
+  const handleKeyPress = (num) => {
+    setFocusedIndex((currentFocus) => {
+      setCode((prevCode) => {
+        const newCode = [...prevCode];
+        newCode[currentFocus] = num;
+        return newCode;
+      });
 
-    const newCode = [...code];
-    newCode[index] = cleanValue.slice(-1); // Take only the last digit typed
-    setCode(newCode);
-
-    // Auto-focus next input
-    if (index < 3) {
-      inputRefs[index + 1].current?.focus();
-      setFocusedIndex(index + 1);
-    }
+      const nextIndex = currentFocus < 3 ? currentFocus + 1 : currentFocus;
+      inputRefs[nextIndex].current?.focus();
+      return nextIndex;
+    });
   };
 
-  const handleKeyDown = (e, index) => {
-    if (e.key === 'Backspace') {
-      const newCode = [...code];
-      
-      if (!newCode[index] && index > 0) {
-        // If current box is empty, delete previous box value and focus it
-        newCode[index - 1] = '';
-        setCode(newCode);
-        inputRefs[index - 1].current?.focus();
-        setFocusedIndex(index - 1);
-      } else {
-        // Just clear current box
-        newCode[index] = '';
-        setCode(newCode);
-      }
-    }
+  const handleVirtualBackspace = () => {
+    setFocusedIndex((currentFocus) => {
+      let nextFocus = currentFocus;
+      setCode((prevCode) => {
+        const newCode = [...prevCode];
+        if (newCode[currentFocus] === '' && currentFocus > 0) {
+          nextFocus = currentFocus - 1;
+          newCode[nextFocus] = '';
+        } else {
+          newCode[currentFocus] = '';
+        }
+        return newCode;
+      });
+
+      inputRefs[nextFocus].current?.focus();
+      return nextFocus;
+    });
+  };
+
+  const handleVirtualClear = () => {
+    setCode(['', '', '', '']);
+    setError('');
+    setShake(false);
+    setFocusedIndex(0);
+    inputRefs[0].current?.focus();
   };
 
   const handlePaste = (e) => {
@@ -130,50 +139,57 @@ export default function FloatingSmartCode() {
       }
       setCode(newCode);
 
-      // Focus the appropriate input after paste
       const nextFocusIndex = Math.min(digits.length, 3);
       inputRefs[nextFocusIndex].current?.focus();
       setFocusedIndex(nextFocusIndex);
     }
   };
 
-  // Virtual Keypad Handlers
-  const handleKeyPress = (num) => {
-    const newCode = [...code];
-    newCode[focusedIndex] = num;
-    setCode(newCode);
+  // Global physical keyboard support for Desktop Web
+  useEffect(() => {
+    function handleGlobalKeyDown(e) {
+      if (!isOpen || isLoading) return;
 
-    // Auto-focus the next input
-    if (focusedIndex < 3) {
-      inputRefs[focusedIndex + 1].current?.focus();
-      setFocusedIndex(focusedIndex + 1);
+      // Ignore if user is interacting with an outside input element
+      if (containerRef.current && !containerRef.current.contains(e.target) && e.target.tagName === 'INPUT') {
+        return;
+      }
+
+      if (e.key >= '0' && e.key <= '9') {
+        e.preventDefault();
+        handleKeyPress(e.key);
+      } else if (e.key === 'Backspace') {
+        e.preventDefault();
+        handleVirtualBackspace();
+      } else if (e.key === 'Delete') {
+        e.preventDefault();
+        handleVirtualClear();
+      } else if (e.key === 'Escape') {
+        setIsOpen(false);
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        setFocusedIndex((prev) => {
+          const next = Math.max(0, prev - 1);
+          inputRefs[next].current?.focus();
+          return next;
+        });
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        setFocusedIndex((prev) => {
+          const next = Math.min(3, prev + 1);
+          inputRefs[next].current?.focus();
+          return next;
+        });
+      }
     }
-  };
 
-  const handleVirtualBackspace = () => {
-    const newCode = [...code];
-    
-    // If the currently focused box is empty, delete previous box and focus it
-    if (newCode[focusedIndex] === '' && focusedIndex > 0) {
-      newCode[focusedIndex - 1] = '';
-      setCode(newCode);
-      inputRefs[focusedIndex - 1].current?.focus();
-      setFocusedIndex(focusedIndex - 1);
-    } else {
-      // Just clear current box
-      newCode[focusedIndex] = '';
-      setCode(newCode);
-      inputRefs[focusedIndex].current?.focus();
+    if (isOpen) {
+      window.addEventListener('keydown', handleGlobalKeyDown);
     }
-  };
-
-  const handleVirtualClear = () => {
-    setCode(['', '', '', '']);
-    setError('');
-    setShake(false);
-    inputRefs[0].current?.focus();
-    setFocusedIndex(0);
-  };
+    return () => {
+      window.removeEventListener('keydown', handleGlobalKeyDown);
+    };
+  }, [isOpen, isLoading]);
 
   // Hide on admin route pages
   if (pathname.startsWith('/admin')) {
@@ -182,7 +198,7 @@ export default function FloatingSmartCode() {
 
   return (
     <div className="fixed bottom-24 right-6 z-50 font-sans text-left animate-fade-in" ref={containerRef}>
-      {/* Floating Smart Code Button (Stacked above chat button) */}
+      {/* Floating Smart Code Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-14 h-14 bg-gradient-to-tr from-brand-orange to-amber-500 text-white rounded-full flex items-center justify-center shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 relative cursor-pointer group"
@@ -213,7 +229,7 @@ export default function FloatingSmartCode() {
         )}
       </button>
 
-      {/* Popover OTP Input Window (Opens leftwards from the button) */}
+      {/* Popover OTP Input Window */}
       {isOpen && (
         <div className="absolute bottom-18 right-0 w-[320px] bg-white rounded-3xl border border-gray-100 shadow-2xl overflow-hidden flex flex-col transition-all duration-300 transform translate-y-0 opacity-100 animate-in fade-in slide-in-from-bottom-2 duration-200">
           {/* Header */}
@@ -239,30 +255,44 @@ export default function FloatingSmartCode() {
               Nhập mã 4 chữ số in trong sách học để mở bài tương ứng.
             </p>
 
-            {/* OTP Grid */}
+            {/* OTP Grid with Hardware-Accelerated Smooth Animations */}
             <div className={`flex gap-3 justify-center py-1 ${shake ? 'animate-shake' : ''}`}>
               {code.map((digit, index) => (
-                <input
-                  key={index}
-                  ref={inputRefs[index]}
-                  type="text"
-                  maxLength={1}
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  value={digit}
-                  onFocus={() => setFocusedIndex(index)}
-                  onChange={(e) => handleChange(e.target.value, index)}
-                  onKeyDown={(e) => handleKeyDown(e, index)}
-                  onPaste={handlePaste}
-                  disabled={isLoading}
-                  className={`w-12 h-14 text-center text-2xl font-black rounded-2xl border-2 bg-white transition-all duration-200 focus:outline-none focus:scale-105 ${
-                    error
-                      ? 'border-red-400 text-red-500 focus:border-red-500'
-                      : focusedIndex === index
-                      ? 'border-brand-orange text-brand-orange scale-105 shadow-sm'
-                      : 'border-gray-200 text-gray-800 focus:border-brand-orange'
-                  }`}
-                />
+                <div key={index} className="relative">
+                  <input
+                    ref={inputRefs[index]}
+                    type="text"
+                    maxLength={1}
+                    inputMode="none"
+                    readOnly={true}
+                    value=""
+                    onFocus={() => setFocusedIndex(index)}
+                    onClick={() => setFocusedIndex(index)}
+                    onPaste={handlePaste}
+                    disabled={isLoading}
+                    aria-label={`Mã số thứ ${index + 1}`}
+                    className={`w-12 h-14 text-center rounded-2xl border-2 bg-white transition-all duration-200 ease-out select-none cursor-pointer transform-gpu ${
+                      error
+                        ? 'border-red-400 text-red-500 ring-2 ring-red-100'
+                        : focusedIndex === index
+                        ? 'border-brand-orange ring-4 ring-brand-orange/20 shadow-md scale-[1.04]'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  />
+                  {/* Digit Display overlay for ultra-smooth character entry animation */}
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <span
+                      key={digit ? `${index}-${digit}` : `${index}-empty`}
+                      className={`text-2xl font-black transition-all duration-150 ease-out transform-gpu ${
+                        digit
+                          ? 'scale-100 opacity-100 animate-in zoom-in-50 duration-150'
+                          : 'scale-75 opacity-0'
+                      } ${error ? 'text-red-500' : focusedIndex === index ? 'text-brand-orange' : 'text-gray-800'}`}
+                    >
+                      {digit}
+                    </span>
+                  </div>
+                </div>
               ))}
             </div>
 
@@ -285,14 +315,14 @@ export default function FloatingSmartCode() {
           <div className="bg-[#FAF9F5] px-5 pb-5 pt-1 border-t border-gray-100">
             <div className="grid grid-cols-3 gap-2">
               {['1', '2', '3', '4', '5', '6', '7', '8', '9', 'C', '0', '⌫'].map((key) => {
-                let btnClass = "py-3 rounded-2xl font-black text-sm text-gray-700 bg-white hover:bg-gray-50 active:bg-gray-100 border border-gray-200 transition duration-100 active:scale-95 flex items-center justify-center cursor-pointer shadow-sm select-none h-11";
+                let btnClass = "py-3 rounded-2xl font-black text-sm text-gray-700 bg-white hover:bg-gray-50 active:bg-gray-100 border border-gray-200 transition-all duration-150 active:scale-95 flex items-center justify-center cursor-pointer shadow-sm select-none h-11 transform-gpu";
                 let handler = () => handleKeyPress(key);
                 
                 if (key === 'C') {
-                  btnClass = "py-3 rounded-2xl font-black text-sm text-red-500 bg-red-50 hover:bg-red-100 active:bg-red-200 border border-red-200 transition duration-100 active:scale-95 flex items-center justify-center cursor-pointer shadow-sm select-none h-11";
+                  btnClass = "py-3 rounded-2xl font-black text-sm text-red-500 bg-red-50 hover:bg-red-100 active:bg-red-200 border border-red-200 transition-all duration-150 active:scale-95 flex items-center justify-center cursor-pointer shadow-sm select-none h-11 transform-gpu";
                   handler = handleVirtualClear;
                 } else if (key === '⌫') {
-                  btnClass = "py-3 rounded-2xl font-black text-sm text-amber-600 bg-amber-50 hover:bg-amber-100 active:bg-amber-200 border border-amber-200 transition duration-100 active:scale-95 flex items-center justify-center cursor-pointer shadow-sm select-none h-11";
+                  btnClass = "py-3 rounded-2xl font-black text-sm text-amber-600 bg-amber-50 hover:bg-amber-100 active:bg-amber-200 border border-amber-200 transition-all duration-150 active:scale-95 flex items-center justify-center cursor-pointer shadow-sm select-none h-11 transform-gpu";
                   handler = handleVirtualBackspace;
                 }
 

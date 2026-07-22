@@ -55,7 +55,8 @@ export const findBySmartCode = async (req, res) => {
 
 export const generateCode = async (req, res) => {
     try {
-        const code = await generateUniqueSmartCode();
+        const { type } = req.query;
+        const code = await generateUniqueSmartCode(type || 'Lesson');
         res.status(200).json({ code });
     } catch (error) {
         res.status(500).json({ message: 'Không thể sinh mã Smart Code mới.', error: error.message });

@@ -195,7 +195,7 @@ export default function EditLesson() {
     }
 
     if (smartCode && !/^[0-9]{4}$/.test(smartCode)) {
-      setError('Mã Smart Code phải là dãy số gồm đúng 4 chữ số (ví dụ: 1234).');
+      setError('Mã Smart Code phải gồm đúng 4 chữ số (ví dụ: 9142).');
       return;
     }
 
@@ -289,15 +289,18 @@ export default function EditLesson() {
             </div>
 
             <div className="space-y-1.5 md:col-span-2">
-              <label className="text-xs font-black text-amber-600 uppercase tracking-wider">Smart Code (Mã điều hướng nhanh 4 chữ số)</label>
+              <label className="text-xs font-black text-amber-600 uppercase tracking-wider">Smart Code (Mã điều hướng nhanh)</label>
               <input 
                 type="text" 
                 maxLength={4}
-                placeholder="Nhập 4 chữ số (ví dụ: 1234)"
+                placeholder="Nhập mã 4 chữ số (Ví dụ: 9142)"
                 value={smartCode} 
                 onChange={(e) => setSmartCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
                 className="w-full border border-amber-250 rounded-xl px-4 py-3 text-xs font-mono font-bold text-amber-800 bg-amber-50/20 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/35 shadow-sm outline-none"
               />
+              <p className="text-[10px] text-amber-600 mt-1 font-semibold">
+                * Để trống nếu muốn hệ thống tự động sinh mã dạng 9XXX ngẫu nhiên không trùng lặp. Admin có thể tùy chỉnh cả 4 chữ số.
+              </p>
             </div>
 
             <div className="space-y-1.5">
