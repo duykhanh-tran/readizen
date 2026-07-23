@@ -408,26 +408,26 @@ export default function PodcastHub() {
                       to={`/podcasts/${series.slug}`}
                       className="group flex flex-col cursor-pointer"
                     >
-                      {/* STACKED FILE LAYERS WRAPPER (Visual design matching user prototype image) */}
-                      <div className="relative pt-3.5">
-                        {/* Layer 3 (Deepest Back Stack Edge) */}
-                        <div className="absolute top-0 inset-x-5 h-3 bg-gray-200 rounded-t-2xl border-t border-x border-gray-300 group-hover:-top-0.5 transition-all duration-300" />
+                      {/* STACKED FILE LAYERS WRAPPER (Enhanced 3D Depth Card Deck) */}
+                      <div className="relative pt-4.5 pb-0.5">
+                        {/* Layer 3 (Deepest Back Stack Edge with 3D shadow & elevation) */}
+                        <div className="absolute top-0.5 inset-x-7 h-4 bg-gradient-to-b from-gray-200 via-gray-300 to-gray-400 rounded-t-2xl border-t border-x border-gray-300/80 shadow-xs transition-all duration-300 ease-out group-hover:-top-2 group-hover:inset-x-8 group-hover:shadow-md" />
                         
-                        {/* Layer 2 (Middle Back Stack Edge) */}
-                        <div className="absolute top-1.5 inset-x-2.5 h-3 bg-gray-300 rounded-t-2xl border-t border-x border-gray-400 group-hover:top-1 transition-all duration-300" />
+                        {/* Layer 2 (Middle Back Stack Edge with 3D depth) */}
+                        <div className="absolute top-2.5 inset-x-3.5 h-4 bg-gradient-to-b from-gray-100 via-gray-200 to-gray-300 rounded-t-2xl border-t border-x border-gray-300 shadow-sm transition-all duration-300 ease-out group-hover:top-0 group-hover:inset-x-4 group-hover:shadow-lg" />
 
-                        {/* Layer 1 (Main Front Card Container) */}
-                        <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-gray-900 shadow-md border border-gray-200 group-hover:shadow-xl transition-all duration-300">
+                        {/* Layer 1 (Main Front Card Container with intense 3D drop shadow & tilt elevation) */}
+                        <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-gray-900 shadow-[0_12px_28px_-6px_rgba(0,0,0,0.18),0_4px_12px_-2px_rgba(0,0,0,0.12)] border border-gray-200/80 group-hover:shadow-[0_24px_45px_-8px_rgba(0,0,0,0.35),0_10px_18px_-4px_rgba(0,0,0,0.22)] group-hover:-translate-y-1.5 transition-all duration-300 ease-out">
                           <img
                             src={series.coverAsset?.assetUrl || 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=600&auto=format&fit=crop'}
                             alt={series.title}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-95"
                             onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=600&auto=format&fit=crop'; }}
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent" />
                           
-                          {/* Bottom Right Badge (matching 'Mix' badge in user reference image) */}
-                          <div className="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-lg bg-black/80 backdrop-blur-md text-white text-[10px] font-extrabold flex items-center gap-1.5 border border-white/20">
+                          {/* Bottom Right Badge (Podcast Series) */}
+                          <div className="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-lg bg-black/85 backdrop-blur-md text-white text-[10px] font-extrabold flex items-center gap-1.5 border border-white/20 shadow-md">
                             <ListVideo className="w-3.5 h-3.5 text-brand-yellow" />
                             <span>Podcast Series</span>
                           </div>

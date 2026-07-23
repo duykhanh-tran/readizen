@@ -139,7 +139,9 @@ export default function ManagePodcastEpisodes() {
                 ) : (
                   episodes.map((ep) => (
                     <tr key={ep._id} className="hover:bg-gray-50/50 transition">
-                      <td className="py-4.5 px-6 font-extrabold text-brand-green">Tập {ep.episodeNumber}</td>
+                      <td className="py-4.5 px-6 font-extrabold text-brand-green">
+                        {ep.episodeNumber && ep.seriesId ? `Tập ${ep.episodeNumber}` : <span className="text-gray-400 font-semibold">--</span>}
+                      </td>
                       <td className="py-4.5 px-6 font-extrabold text-red-600 flex items-center gap-1.5 pt-5">
                         <span className="px-2 py-0.5 rounded-full bg-red-50 border border-red-200 text-red-600 font-black">
                           ❤️ {ep.likesCount || 0}

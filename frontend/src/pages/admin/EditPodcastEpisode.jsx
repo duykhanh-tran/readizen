@@ -269,17 +269,26 @@ export default function EditPodcastEpisode() {
               </select>
             </div>
 
-            <div>
-              <label className="block mb-1.5 text-xs font-extrabold text-gray-700">Số tập (Episode #) *</label>
-              <input
-                type="number"
-                required
-                min="1"
-                value={form.episodeNumber}
-                onChange={(e) => setForm({ ...form, episodeNumber: parseInt(e.target.value) || 1 })}
-                className="w-full bg-gray-50 border border-gray-250 rounded-xl px-4 py-3 text-xs font-bold text-gray-800 outline-none focus:border-brand-green/50"
-              />
-            </div>
+            {form.seriesId ? (
+              <div>
+                <label className="block mb-1.5 text-xs font-extrabold text-gray-700">Số tập (Episode #) *</label>
+                <input
+                  type="number"
+                  required
+                  min="1"
+                  value={form.episodeNumber || 1}
+                  onChange={(e) => setForm({ ...form, episodeNumber: parseInt(e.target.value) || 1 })}
+                  className="w-full bg-gray-50 border border-gray-250 rounded-xl px-4 py-3 text-xs font-bold text-gray-800 outline-none focus:border-brand-green/50"
+                />
+              </div>
+            ) : (
+              <div className="flex items-center pt-5">
+                <div className="w-full bg-purple-50/80 border border-purple-200/80 rounded-xl px-4 py-2.5 text-xs font-bold text-purple-700 flex items-center justify-between">
+                  <span>Bài học độc lập (Không yêu cầu Số tập)</span>
+                  <span className="text-[10px] bg-purple-200 text-purple-900 px-2 py-0.5 rounded-full font-black uppercase">Standalone</span>
+                </div>
+              </div>
+            )}
           </div>
 
           <div>

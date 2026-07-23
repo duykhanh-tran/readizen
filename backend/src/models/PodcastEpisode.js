@@ -66,7 +66,8 @@ const podcastEpisodeSchema = new mongoose.Schema({
   },
   episodeNumber: {
     type: Number,
-    required: [true, 'Số tập là bắt buộc'],
+    required: false,
+    default: null,
   },
   contentFormat: {
     type: String,

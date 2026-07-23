@@ -157,17 +157,13 @@ export const getEpisodeBySlugs = async (req, res) => {
       return res.status(404).json({ message: 'Không tìm thấy tập Podcast yêu cầu.' });
     }
 
-    // Fetch episodes for playlist sidebar: series episodes OR latest single episodes
+    // Fetch episodes for playlist sidebar: only if episode belongs to a series
     let seriesPlaylist = [];
     if (episode.seriesId) {
       seriesPlaylist = await PodcastEpisode.find({
         seriesId: episode.seriesId._id,
         status: 'published'
       }).sort({ episodeNumber: 1 }).select('title slug episodeNumber duration thumbnailAsset mediaSource aspectRatio likesCount');
-    } else {
-      seriesPlaylist = await PodcastEpisode.find({
-        status: 'published'
-      }).sort({ publishedAt: -1 }).limit(10).select('title slug episodeNumber duration thumbnailAsset mediaSource aspectRatio likesCount');
     }
 
     // Fetch related episodes from other series
@@ -375,9 +371,13 @@ export const createAdminEpisode = async (req, res) => {
       seoDescription
     } = req.body;
 
-    if (!title || !episodeNumber || !mediaSource || !videoUrl || !thumbnailAsset) {
+    if (!title || !mediaSource || !videoUrl || !thumbnailAsset) {
       return res.status(400).json({ message: 'Vui lòng điền đầy đủ các thông tin bắt buộc.' });
     }
+
+    // If episode belongs to a series, episodeNumber is required (or defaults to 1); otherwise null
+    const finalSeriesId = seriesId || null;
+    const finalEpisodeNumber = finalSeriesId ? (parseInt(episodeNumber, 10) || 1) : null;
 
     // Extract external Video ID and automatically infer contentFormat & aspectRatio
     let externalVideoId = null;
@@ -395,10 +395,10 @@ export const createAdminEpisode = async (req, res) => {
       : [];
 
     const newEpisode = new PodcastEpisode({
-      seriesId: seriesId || null,
+      seriesId: finalSeriesId,
       title,
       slug: slug || generateVnSlug(title),
-      episodeNumber,
+      episodeNumber: finalEpisodeNumber,
       contentFormat,
       mediaSource,
       videoUrl,
@@ -434,8 +434,11 @@ export const updateAdminEpisode = async (req, res) => {
     const { id } = req.params;
     const updateData = { ...req.body };
 
-    if (updateData.seriesId === '') {
+    if (updateData.seriesId === '' || updateData.seriesId === null) {
       updateData.seriesId = null;
+      updateData.episodeNumber = null;
+    } else if (updateData.episodeNumber) {
+      updateData.episodeNumber = parseInt(updateData.episodeNumber, 10) || 1;
     }
 
     if (updateData.title && !updateData.slug) {
