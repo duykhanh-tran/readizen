@@ -319,11 +319,6 @@ export default function BookmarksTab() {
                         <span className="text-[9px] font-black uppercase text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full">
                           Tập {podcast.episodeNumber}
                         </span>
-                        {podcast.smartCode && (
-                          <span className="text-[9px] font-bold text-brand-green bg-brand-light px-2 py-0.5 rounded-full">
-                            Mã: {podcast.smartCode}
-                          </span>
-                        )}
                       </div>
                       <h4 className="font-bold text-gray-900 text-xs truncate group-hover:text-brand-green transition">
                         {podcast.title}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Sparkles, Headphones, Share2, FileText, ChevronDown, ChevronLeft, ChevronRight, Loader2, AlertCircle, Play, BookOpen, ListVideo, Bookmark } from 'lucide-react';
+import { Sparkles, Headphones, Share2, FileText, ChevronDown, ChevronLeft, ChevronRight, Loader2, AlertCircle, Play, BookOpen, ListVideo, Bookmark, Heart } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../services/axios.js';
 import Header from '../components/Header.jsx';
@@ -41,6 +41,8 @@ export default function PodcastWatch() {
   const [isSummaryOpen, setIsSummaryOpen] = useState(true);
   const [isMobilePlaylistOpen, setIsMobilePlaylistOpen] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [likesCount, setLikesCount] = useState(0);
+  const [hasLiked, setHasLiked] = useState(false);
   // Shared Dynamic Content Panel Tab: 'none' | 'audio' | 'vocab' | 'transcript'
   const [activeTab, setActiveTab] = useState('none');
 
@@ -53,6 +55,10 @@ export default function PodcastWatch() {
         setEpisode(res.data.episode);
         setSeriesPlaylist(res.data.seriesPlaylist || []);
         setRelatedEpisodes(res.data.relatedEpisodes || []);
+        setLikesCount(res.data.episode?.likesCount || 0);
+        if (res.data.episode?._id) {
+          setHasLiked(!!localStorage.getItem(`liked_podcast_${res.data.episode._id}`));
+        }
       } catch (err) {
         console.error('Lỗi khi tải tập Podcast:', err);
         setError(err.response?.data?.message || 'Không thể kết nối đến máy chủ.');
@@ -64,14 +70,31 @@ export default function PodcastWatch() {
     fetchEpisodeData();
   }, [seriesSlug, episodeSlug]);
 
-  // Check Bookmark status for this podcast episode
+  // Check Bookmark status for this podcast episode (only if user is logged in)
   useEffect(() => {
-    if (episode?._id) {
+    const token = localStorage.getItem('token');
+    if (episode?._id && token) {
       api.get(`/bookmarks/status?itemType=podcast&itemId=${episode._id}`)
-        .then(res => setIsBookmarked(res.data.bookmarked))
-        .catch(err => console.error('Lỗi kiểm tra bookmark status:', err));
+        .then(res => setIsBookmarked(res.data?.bookmarked || false))
+        .catch(() => setIsBookmarked(false));
+    } else {
+      setIsBookmarked(false);
     }
   }, [episode]);
+
+  const handleLikeEpisode = async () => {
+    if (!episode?._id || hasLiked) return;
+    try {
+      const res = await api.post(`/podcasts/episodes/${episode._id}/like`);
+      setLikesCount(res.data.likesCount);
+      setHasLiked(true);
+      localStorage.setItem(`liked_podcast_${episode._id}`, 'true');
+      toast('Cảm ơn bạn đã thả tim cho bài học này! ❤️', { icon: '💖' });
+    } catch (err) {
+      console.error('Lỗi khi thả tim:', err);
+      toast.error('Không thể thả tim bài học lúc này.');
+    }
+  };
 
   const handleToggleBookmark = async () => {
     if (!episode?._id) return;
@@ -121,6 +144,15 @@ export default function PodcastWatch() {
     }
   };
 
+  const handleVideoEnded = () => {
+    if (nextEpisode) {
+      toast('Đã xem xong tập! Tự động chuyển sang bài tiếp theo...', { icon: '⏭️' });
+      navigate(`/podcasts/${seriesSlug}/${nextEpisode.slug}`);
+    } else {
+      toast.success('Bạn đã xem xong tập cuối cùng trong Playlist!');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#F8F8F8] text-gray-900 font-sans antialiased overflow-x-hidden flex flex-col pt-20 lg:pt-24 text-left">
       <Header />
@@ -147,387 +179,35 @@ export default function PodcastWatch() {
             </button>
           </div>
         ) : episode && (
-          <div className="lg:grid lg:grid-cols-12 lg:gap-6 xl:gap-8 lg:pt-6">
+          <div className="space-y-6 lg:pt-4">
 
-            {/* ================= LEFT MAIN CONTENT (8 Columns) ================= */}
-            <div className="lg:col-span-8 xl:col-span-8 bg-white lg:bg-transparent">
-
-              {/* ADAPTIVE VIDEO PLAYER ENGINE */}
-              <section className="relative">
-                <AdaptivePlayerEngine
-                  mediaSource={episode.mediaSource}
-                  videoUrl={episode.videoUrl}
-                  externalVideoId={episode.externalVideoId}
-                  aspectRatio={episode.aspectRatio}
-                  thumbnail={episode.thumbnailAsset?.assetUrl}
-                  title={episode.title}
-                />
-              </section>
-
-              {/* VIDEO METADATA SECTION */}
-              <section className="px-4 sm:px-0 pt-4 pb-4 lg:pt-5 lg:pb-5 border-b border-gray-100 lg:border-none">
-                <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold leading-snug tracking-tight">
-                  {episode.title}
-                </h1>
-
-                <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs sm:text-sm text-gray-500 font-semibold">
-                  <Link to={`/podcasts/${seriesSlug}`} className="hover:text-brand-green transition underline font-bold">
-                    {episode.seriesId?.title || 'Readizen Podcast'}
-                  </Link>
-                  <span aria-hidden="true">•</span>
-                  <span className="font-bold">Tập {episode.episodeNumber}</span>
-                  {episode.smartCode && (
-                    <>
-                      <span aria-hidden="true">•</span>
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-bold shadow-xs">
-                        <Sparkles className="w-3.5 h-3.5 text-brand-green" />
-                        <span className="text-gray-600 font-medium">Smart Code:</span>
-                        <span className="text-brand-green font-extrabold tracking-wider">{episode.smartCode}</span>
-                      </div>
-                    </>
-                  )}
-                </div>
-
-                {/* Channel / Host Row */}
-                <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-11 h-11 rounded-full bg-brand-green text-white flex items-center justify-center flex-shrink-0 text-xl font-bold shadow-sm">
-                      🦉
-                    </div>
-                    <div className="min-w-0">
-                      <p className="font-extrabold text-gray-900 leading-none truncate">
-                        {episode.seriesId?.title || 'Readizen Podcast'}
-                      </p>
-                      <p className="text-xs text-gray-500 font-semibold mt-1 truncate">
-                        {episode.seriesId?.host || 'Luyện đọc tiếng Anh tại nhà'}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* REDESIGNED ACTION TOOLBAR (Grouping Lesson Tools & Social Channels cleanly) */}
-                <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white p-3.5 rounded-2xl border border-gray-150 shadow-soft">
-                  {/* Left Group: Lesson Tools & Actions */}
-                  <div className="flex flex-wrap items-center gap-2">
-                    {/* 0. Lưu bài học Button */}
-                    <button
-                      type="button"
-                      onClick={handleToggleBookmark}
-                      className={`h-9 px-3.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition cursor-pointer ${isBookmarked ? 'bg-brand-green text-white shadow-sm' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}
-                    >
-                      <Bookmark className={`w-3.5 h-3.5 ${isBookmarked ? 'fill-current' : ''}`} />
-                      <span>{isBookmarked ? 'Đã lưu' : 'Lưu bài học'}</span>
-                    </button>
-
-                    {episode.audioAsset?.assetUrl && (
-                      <button
-                        type="button"
-                        onClick={() => handleToggleTab('audio')}
-                        className={`h-9 px-3.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition cursor-pointer ${activeTab === 'audio' ? 'bg-brand-green text-white shadow-sm' : 'bg-brand-light/80 text-brand-green hover:bg-brand-mint'}`}
-                      >
-                        <Headphones className="w-3.5 h-3.5" /> Audio MP3
-                      </button>
-                    )}
-
-                    {episode.relatedVocabulary && episode.relatedVocabulary.length > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => handleToggleTab('vocab')}
-                        className={`h-9 px-3.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition cursor-pointer ${activeTab === 'vocab' ? 'bg-brand-green text-white shadow-sm' : 'bg-amber-50 text-amber-800 border border-amber-200/80 hover:bg-amber-100'}`}
-                      >
-                        <BookOpen className="w-3.5 h-3.5" /> Từ mới ({episode.relatedVocabulary.length})
-                      </button>
-                    )}
-
-                    <button
-                      type="button"
-                      onClick={() => handleToggleTab('transcript')}
-                      className={`h-9 px-3.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition cursor-pointer ${activeTab === 'transcript' ? 'bg-brand-green text-white shadow-sm' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}
-                    >
-                      <FileText className="w-3.5 h-3.5" /> Transcript
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={handleCopyLink}
-                      className="h-9 px-3.5 rounded-xl bg-gray-100 text-gray-800 font-bold text-xs flex items-center gap-1.5 hover:bg-gray-200 transition cursor-pointer"
-                    >
-                      <Share2 className="w-3.5 h-3.5" /> Chia sẻ
-                    </button>
-                  </div>
-
-                  {/* Right Group: Official Social Brand Channels */}
-                  <div className="flex items-center gap-1.5 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100">
-                    {siteSocialLinks.youtube && (
-                      <a
-                        href={siteSocialLinks.youtube}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="h-9 px-3 rounded-xl bg-red-50 text-red-600 border border-red-200/60 font-bold text-xs flex items-center gap-1 hover:bg-red-100 transition"
-                        title="Kênh YouTube Readizen"
-                      >
-                        <YoutubeIcon /> <span className="hidden xs:inline">YouTube</span>
-                      </a>
-                    )}
-                    {siteSocialLinks.tiktok && (
-                      <a
-                        href={siteSocialLinks.tiktok}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="h-9 px-3 rounded-xl bg-zinc-900 text-white font-bold text-xs flex items-center gap-1 hover:bg-black transition"
-                        title="Kênh TikTok Readizen"
-                      >
-                        <TiktokIcon /> <span className="hidden xs:inline">TikTok</span>
-                      </a>
-                    )}
-                    {siteSocialLinks.facebook && (
-                      <a
-                        href={siteSocialLinks.facebook}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="h-9 px-3 rounded-xl bg-blue-50 text-blue-600 border border-blue-200/60 font-bold text-xs flex items-center gap-1 hover:bg-blue-100 transition"
-                        title="Trang Facebook Readizen"
-                      >
-                        <FacebookIcon /> <span className="hidden xs:inline">Facebook</span>
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </section>
-
-              {/* MOBILE & TABLET COLLAPSIBLE PLAYLIST ACCORDION (YouTube Style) */}
-              <section className="lg:hidden px-4 sm:px-0 py-2">
-                <div className="bg-white rounded-2xl border border-gray-200 shadow-soft overflow-hidden">
-                  <div className="p-4 flex items-center justify-between gap-2 border-b border-gray-100">
-                    <button
-                      type="button"
-                      onClick={() => setIsMobilePlaylistOpen(!isMobilePlaylistOpen)}
-                      className="flex items-center gap-2 text-left flex-grow min-w-0"
-                    >
-                      <ListVideo className="w-5 h-5 text-brand-green shrink-0" />
-                      <div className="min-w-0">
-                        <p className="text-[10px] font-bold text-brand-green uppercase tracking-wider">Playlist Series ({seriesPlaylist.length} tập)</p>
-                        <h3 className="text-xs font-extrabold text-gray-900 truncate">{episode.seriesId?.title}</h3>
-                      </div>
-                    </button>
-
-                    {/* Navigation Buttons: Bài trước & Bài sau */}
-                    <div className="flex items-center gap-1 shrink-0">
-                      <button
-                        type="button"
-                        onClick={handlePrevClick}
-                        disabled={!prevEpisode}
-                        className="p-1.5 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed transition"
-                        title="Bài trước"
-                      >
-                        <ChevronLeft className="w-4 h-4" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleNextClick}
-                        disabled={!nextEpisode}
-                        className="p-1.5 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed transition"
-                        title="Bài sau"
-                      >
-                        <ChevronRight className="w-4 h-4" />
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => setIsMobilePlaylistOpen(!isMobilePlaylistOpen)}
-                        className="p-1.5 text-gray-500"
-                      >
-                        <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isMobilePlaylistOpen ? 'rotate-180' : ''}`} />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Expanded Playlist Items */}
-                  {isMobilePlaylistOpen && (
-                    <div className="max-h-72 overflow-y-auto scrollbar-custom divide-y divide-gray-100 bg-gray-50/50">
-                      {seriesPlaylist.map((item) => {
-                        const isCurrent = item.slug === episodeSlug;
-                        return (
-                          <Link
-                            key={item._id}
-                            to={`/podcasts/${seriesSlug}/${item.slug}`}
-                            className={`flex gap-3 p-3 transition group ${isCurrent ? 'bg-brand-light/50 border-l-4 border-brand-green' : 'hover:bg-gray-100'}`}
-                          >
-                            <div className="w-24 aspect-video rounded-lg bg-gray-200 flex items-center justify-center text-gray-400 text-base shrink-0 relative overflow-hidden">
-                              <img
-                                src={item.thumbnailAsset?.assetUrl || 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=200&auto=format&fit=crop'}
-                                alt={item.title}
-                                className="w-full h-full object-cover"
-                                onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=200&auto=format&fit=crop'; }}
-                              />
-                              {isCurrent && (
-                                <div className="absolute inset-0 bg-brand-green/20 flex items-center justify-center">
-                                  <span className="bg-brand-green text-white p-1 rounded-full animate-pulse">
-                                    <Play className="w-2.5 h-2.5 fill-current ml-0.5" />
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-                            <div className="min-w-0 flex flex-col justify-center">
-                              <p className={`text-xs font-bold line-clamp-2 ${isCurrent ? 'text-brand-green' : 'text-gray-900'}`}>
-                                Tập {item.episodeNumber}: {item.title}
-                              </p>
-                            </div>
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              </section>
-
-              {/* TÓM TẮT NỘI DUNG TẬP - LUÔN LUÔN HIỂN THỊ */}
-              <section className="px-4 sm:px-0 py-3 lg:py-0 lg:mt-1 border-b border-gray-100 lg:border-none">
-                <div className="bg-gray-100 rounded-2xl overflow-hidden transition-all duration-300">
-                  <button
-                    type="button"
-                    onClick={() => setIsSummaryOpen(!isSummaryOpen)}
-                    className="w-full text-left p-4 lg:p-5 outline-none focus:outline-none flex items-start justify-between gap-3 cursor-pointer"
-                  >
-                    <div>
-                      <p className="text-sm lg:text-base font-extrabold text-gray-900">
-                        Tóm tắt nội dung tập
-                      </p>
-                      <p className="mt-1 text-xs lg:text-sm text-gray-700 leading-relaxed whitespace-pre-line">
-                        {episode.summary || 'Chưa có thông tin tóm tắt nội dung cho tập này.'}
-                      </p>
-                    </div>
-
-                    <div className={`mt-1 text-gray-500 transition-transform duration-300 ${isSummaryOpen ? 'rotate-180' : ''}`}>
-                      <ChevronDown className="w-5 h-5" />
-                    </div>
-                  </button>
-                </div>
-              </section>
-
-              {/* KHUNG NỘI DUNG ĐỘNG DÙNG CHUNG (AUDIO / TỪ MỚI / TRANSCRIPT) */}
-              {activeTab !== 'none' && (
-                <section className="px-4 sm:px-0 py-4 lg:mt-4 transition-all duration-300">
-                  <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-soft space-y-4">
-                    {/* Panel Header */}
-                    <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-                      <h3 className="text-sm font-extrabold text-gray-900 flex items-center gap-2">
-                        {activeTab === 'audio' && (
-                          <>
-                            <Headphones className="w-4 h-4 text-brand-green" />
-                            Trình phát Audio MP3
-                          </>
-                        )}
-                        {activeTab === 'vocab' && (
-                          <>
-                            <Sparkles className="w-4 h-4 text-amber-600" />
-                            Từ Mới Liên Quan Trong Bài Học
-                          </>
-                        )}
-                        {activeTab === 'transcript' && (
-                          <>
-                            <FileText className="w-4 h-4 text-brand-green" />
-                            Lời Thoại Bài Học (Transcript)
-                          </>
-                        )}
-                      </h3>
-                      <button
-                        type="button"
-                        onClick={() => setActiveTab('none')}
-                        className="text-xs font-bold text-gray-400 hover:text-gray-600 cursor-pointer"
-                      >
-                        Đóng
-                      </button>
-                    </div>
-
-                    {/* Panel Body: 1. Audio MP3 */}
-                    {activeTab === 'audio' && episode.audioAsset?.assetUrl && (
-                      <div>
-                        <p className="text-xs text-gray-500 font-semibold mb-3">Thích hợp dành cho lúc ba mẹ bận rộn không tiện xem video</p>
-                        <audio controls preload="metadata" className="w-full">
-                          <source src={episode.audioAsset.assetUrl} type="audio/mpeg" />
-                          Trình duyệt của bạn không hỗ trợ phát thẻ Audio.
-                        </audio>
-                      </div>
-                    )}
-
-                    {/* Panel Body: 2. Từ Mới Liên Quan */}
-                    {activeTab === 'vocab' && (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {episode.relatedVocabulary && episode.relatedVocabulary.length > 0 ? (
-                          episode.relatedVocabulary.map((v, i) => (
-                            <div key={i} className="bg-amber-50/50 border border-amber-200/60 p-3 rounded-xl space-y-1">
-                              <p className="text-xs font-bold text-amber-900">{v.term}</p>
-                              {v.meaning && <p className="text-xs font-semibold text-gray-800">{v.meaning}</p>}
-                              {v.note && <p className="text-[11px] font-medium text-gray-500 italic">{v.note}</p>}
-                            </div>
-                          ))
-                        ) : (
-                          <p className="text-xs text-gray-400 italic">Chưa có danh sách từ mới cho tập này.</p>
-                        )}
-                      </div>
-                    )}
-
-                    {/* Panel Body: 3. Transcript */}
-                    {activeTab === 'transcript' && (
-                      <div className="text-xs sm:text-sm text-gray-700 leading-relaxed whitespace-pre-line max-h-96 overflow-y-auto font-sans p-3 bg-gray-50 rounded-xl border border-gray-100">
-                        {episode.transcript && episode.transcript.trim() ? (
-                          episode.transcript
-                        ) : (
-                          <p className="text-gray-400 italic">Transcript của tập này đang được cập nhật.</p>
-                        )}
-                      </div>
-                    )}
-                  </div>
+            {/* ================= 1. TOP ROW: VIDEO PLAYER (8 COLS) + PLAYLIST CARD (4 COLS) ================= */}
+            {/* items-stretch guarantees the Right Playlist Card height is 100% EQUAL to the Video Player! */}
+            <div className="lg:grid lg:grid-cols-12 lg:gap-6 xl:gap-8 items-stretch">
+              
+              {/* Left Column (8 cols): Video Player */}
+              <div className="lg:col-span-8 xl:col-span-8 flex flex-col justify-center">
+                <section className="relative w-full">
+                  <AdaptivePlayerEngine
+                    mediaSource={episode.mediaSource}
+                    videoUrl={episode.videoUrl}
+                    externalVideoId={episode.externalVideoId}
+                    aspectRatio={episode.aspectRatio}
+                    thumbnail={episode.thumbnailAsset?.assetUrl}
+                    title={episode.title}
+                    onEnded={handleVideoEnded}
+                  />
                 </section>
-              )}
+              </div>
 
-              {/* RELATED EPISODES GRID */}
-              <section className="px-4 sm:px-0 py-5 lg:mt-6">
-                <h2 className="text-lg lg:text-xl font-extrabold mb-4">Các tập Podcast khác</h2>
-                <div className="space-y-4 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
-                  {relatedEpisodes.map((rel) => (
-                    <Link
-                      key={rel._id}
-                      to={`/podcasts/${rel.seriesId?.slug || seriesSlug}/${rel.slug}`}
-                      className="flex gap-3 bg-white rounded-2xl p-3 border border-gray-150 hover:shadow-soft transition group"
-                    >
-                      <div className="w-36 lg:w-40 aspect-video rounded-xl bg-gray-200 flex items-center justify-center text-gray-400 text-2xl shrink-0 relative overflow-hidden">
-                        <img
-                          src={rel.thumbnailAsset?.assetUrl || 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=300&auto=format&fit=crop'}
-                          alt={rel.title}
-                          className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform"
-                          onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=300&auto=format&fit=crop'; }}
-                        />
-                        <span className="z-10 text-white group-hover:scale-110 transition-transform bg-black/40 p-2 rounded-full backdrop-blur-sm">
-                          <Play className="w-4 h-4 fill-current ml-0.5" />
-                        </span>
-                      </div>
-                      <div className="min-w-0 flex flex-col justify-center">
-                        <h3 className="text-xs lg:text-sm font-bold leading-snug line-clamp-2 group-hover:text-brand-green transition">
-                          {rel.title}
-                        </h3>
-                        <p className="mt-1 text-[11px] text-gray-500 font-semibold">{rel.seriesId?.title || 'Readizen Podcast'}</p>
-                        <p className="text-[10px] text-brand-green font-bold mt-1">Tập {rel.episodeNumber}</p>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </section>
-
-            </div>
-
-            {/* ================= RIGHT SIDEBAR DESKTOP (4 Columns) ================= */}
-            <aside className="hidden lg:block lg:col-span-4 xl:col-span-4">
-              <div className="sticky top-28 space-y-5">
-
-                {/* DESKTOP PLAYLIST WIDGET (WITH PREV/NEXT BUTTONS & SCROLLBAR) */}
-                <section className="bg-white rounded-3xl border border-gray-200 shadow-soft overflow-hidden">
-                  <div className="p-4 sm:p-5 border-b border-gray-100">
+              {/* Right Column (4 cols): Playlist Card - Height 100% EQUAL to Video Player */}
+              <div className="hidden lg:flex lg:col-span-4 xl:col-span-4 flex-col h-full min-h-0">
+                <section className="bg-white rounded-3xl border border-gray-200 shadow-soft overflow-hidden h-full flex flex-col">
+                  <div className="p-4 sm:p-5 border-b border-gray-100 shrink-0 bg-white">
                     <div className="flex items-center justify-between gap-2">
                       <div className="min-w-0 flex-grow">
                         <p className="text-[10px] font-bold text-brand-green uppercase tracking-wider">Playlist Series ({seriesPlaylist.length} tập)</p>
-                        <h2 className="text-sm sm:text-base font-extrabold leading-snug mt-0.5 text-gray-900 line-clamp-2">
+                        <h2 className="text-sm sm:text-base font-extrabold leading-snug mt-0.5 text-gray-900 line-clamp-1">
                           {episode.seriesId?.title}
                         </h2>
                       </div>
@@ -556,8 +236,8 @@ export default function PodcastWatch() {
                     </div>
                   </div>
 
-                  {/* Playlist Scrollable Items List */}
-                  <div className="max-h-[380px] overflow-y-auto scrollbar-custom divide-y divide-gray-100">
+                  {/* Scrollable Items List */}
+                  <div className="flex-1 overflow-y-auto scrollbar-custom divide-y divide-gray-100 min-h-0">
                     {seriesPlaylist.map((item) => {
                       const isCurrent = item.slug === episodeSlug;
                       return (
@@ -566,7 +246,7 @@ export default function PodcastWatch() {
                           to={`/podcasts/${seriesSlug}/${item.slug}`}
                           className={`flex gap-3 p-3.5 transition group ${isCurrent ? 'bg-brand-light/40 border-l-4 border-brand-green' : 'hover:bg-gray-50'}`}
                         >
-                          <div className="w-28 aspect-video rounded-xl bg-gray-200 flex items-center justify-center text-gray-400 text-xl shrink-0 relative overflow-hidden shadow-sm">
+                          <div className="w-24 aspect-video rounded-xl bg-gray-200 flex items-center justify-center text-gray-400 text-xl shrink-0 relative overflow-hidden shadow-xs">
                             <img
                               src={item.thumbnailAsset?.assetUrl || 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=200&auto=format&fit=crop'}
                               alt={item.title}
@@ -591,9 +271,373 @@ export default function PodcastWatch() {
                     })}
                   </div>
                 </section>
+              </div>
+            </div>
+
+            {/* ================= 2. BOTTOM ROW: METADATA & CONTENT (8 COLS) + RELATED EPISODES (4 COLS) ================= */}
+            <div className="lg:grid lg:grid-cols-12 lg:gap-6 xl:gap-8 items-start">
+
+              {/* Bottom Left (8 cols): Metadata, Toolbar, Summary, Tabs */}
+              <div className="lg:col-span-8 xl:col-span-8 space-y-4 bg-white lg:bg-transparent">
+
+                {/* VIDEO METADATA SECTION */}
+                <section className="px-4 sm:px-0 pt-2 pb-4 border-b border-gray-100 lg:border-none">
+                  <h1 className="text-xl sm:text-2xl lg:text-3xl font-extrabold leading-snug tracking-tight">
+                    {episode.title}
+                  </h1>
+
+                  <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs sm:text-sm text-gray-500 font-semibold">
+                    <Link to={`/podcasts/${seriesSlug}`} className="hover:text-brand-green transition underline font-bold">
+                      {episode.seriesId?.title || 'Readizen Podcast'}
+                    </Link>
+                    <span aria-hidden="true">•</span>
+                    <span className="font-bold">Tập {episode.episodeNumber}</span>
+                  </div>
+
+                  {/* MOBILE PLAYLIST ACCORDION - Moved right below title & subtitle on mobile */}
+                  <div className="lg:hidden mt-3">
+                    <div className="bg-white rounded-2xl border border-gray-200 shadow-soft overflow-hidden">
+                      <div className="p-3.5 flex items-center justify-between gap-2 border-b border-gray-100">
+                        <button
+                          type="button"
+                          onClick={() => setIsMobilePlaylistOpen(!isMobilePlaylistOpen)}
+                          className="flex items-center gap-2 text-left flex-grow min-w-0 cursor-pointer"
+                        >
+                          <ListVideo className="w-5 h-5 text-brand-green shrink-0" />
+                          <div className="min-w-0">
+                            <p className="text-[10px] font-bold text-brand-green uppercase tracking-wider">Playlist Series ({seriesPlaylist.length} tập)</p>
+                            <h3 className="text-xs font-extrabold text-gray-900 truncate">{episode.seriesId?.title}</h3>
+                          </div>
+                        </button>
+
+                        <div className="flex items-center gap-1 shrink-0">
+                          <button
+                            type="button"
+                            onClick={handlePrevClick}
+                            disabled={!prevEpisode}
+                            className="p-1.5 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer"
+                          >
+                            <ChevronLeft className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleNextClick}
+                            disabled={!nextEpisode}
+                            className="p-1.5 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed transition cursor-pointer"
+                          >
+                            <ChevronRight className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setIsMobilePlaylistOpen(!isMobilePlaylistOpen)}
+                            className="p-1.5 text-gray-500 cursor-pointer"
+                          >
+                            <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isMobilePlaylistOpen ? 'rotate-180' : ''}`} />
+                          </button>
+                        </div>
+                      </div>
+
+                      {isMobilePlaylistOpen && (
+                        <div className="max-h-72 overflow-y-auto scrollbar-custom divide-y divide-gray-100 bg-gray-50/50">
+                          {seriesPlaylist.map((item) => {
+                            const isCurrent = item.slug === episodeSlug;
+                            return (
+                              <Link
+                                key={item._id}
+                                to={`/podcasts/${seriesSlug}/${item.slug}`}
+                                className={`flex gap-3 p-3 transition group ${isCurrent ? 'bg-brand-light/50 border-l-4 border-brand-green' : 'hover:bg-gray-100'}`}
+                              >
+                                <div className="w-24 aspect-video rounded-lg bg-gray-200 flex items-center justify-center text-gray-400 text-base shrink-0 relative overflow-hidden">
+                                  <img
+                                    src={item.thumbnailAsset?.assetUrl || 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=200&auto=format&fit=crop'}
+                                    alt={item.title}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=200&auto=format&fit=crop'; }}
+                                  />
+                                  {isCurrent && (
+                                    <div className="absolute inset-0 bg-brand-green/20 flex items-center justify-center">
+                                      <span className="bg-brand-green text-white p-1 rounded-full animate-pulse">
+                                        <Play className="w-2.5 h-2.5 fill-current ml-0.5" />
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="min-w-0 flex flex-col justify-center">
+                                  <p className={`text-xs font-bold line-clamp-2 ${isCurrent ? 'text-brand-green font-extrabold' : 'text-gray-900 group-hover:text-brand-green'}`}>
+                                    Tập {item.episodeNumber}: {item.title}
+                                  </p>
+                                </div>
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Channel / Host Row - Clean Frameless Layout */}
+                  <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 py-1">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-11 h-11 rounded-full bg-brand-green text-white flex items-center justify-center flex-shrink-0 text-xl font-bold shadow-sm">
+                        🦉
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-extrabold text-gray-900 leading-none truncate text-sm sm:text-base">
+                          {episode.seriesId?.title || 'Readizen Podcast'}
+                        </p>
+                        <p className="text-xs text-gray-500 font-semibold mt-1 truncate">
+                          {episode.seriesId?.host || 'Luyện đọc tiếng Anh tại nhà'}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Button Thả tim ngay bên cạnh Tên Series / List */}
+                    <button
+                      type="button"
+                      onClick={handleLikeEpisode}
+                      disabled={hasLiked}
+                      className={`h-10 px-4 rounded-full font-extrabold text-xs flex items-center gap-2 transition cursor-pointer shrink-0 shadow-sm ${hasLiked ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-red-500 hover:bg-red-600 text-white'}`}
+                    >
+                      <Heart className={`w-4 h-4 ${hasLiked ? 'fill-current text-red-600' : 'fill-current text-white'}`} />
+                      <span>{hasLiked ? `Đã thả tim (${likesCount})` : `Thả tim (${likesCount})`}</span>
+                    </button>
+                  </div>
+
+                  {/* ACTION TOOLBAR - Clean Frameless Layout */}
+                  <div className="mt-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-1">
+                    {/* Left Group: Lesson Tools & Actions */}
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={handleToggleBookmark}
+                        className={`h-9 px-3.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition cursor-pointer ${isBookmarked ? 'bg-brand-green text-white shadow-sm' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}
+                      >
+                        <Bookmark className={`w-3.5 h-3.5 ${isBookmarked ? 'fill-current' : ''}`} />
+                        <span>{isBookmarked ? 'Đã lưu' : 'Lưu bài học'}</span>
+                      </button>
+
+                      {episode.audioAsset?.assetUrl && (
+                        <button
+                          type="button"
+                          onClick={() => handleToggleTab('audio')}
+                          className={`h-9 px-3.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition cursor-pointer ${activeTab === 'audio' ? 'bg-brand-green text-white shadow-sm' : 'bg-brand-light/80 text-brand-green hover:bg-brand-mint'}`}
+                        >
+                          <Headphones className="w-3.5 h-3.5" /> Audio MP3
+                        </button>
+                      )}
+
+                      {episode.relatedVocabulary && episode.relatedVocabulary.length > 0 && (
+                        <button
+                          type="button"
+                          onClick={() => handleToggleTab('vocab')}
+                          className={`h-9 px-3.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition cursor-pointer ${activeTab === 'vocab' ? 'bg-brand-green text-white shadow-sm' : 'bg-amber-50 text-amber-800 border border-amber-200/80 hover:bg-amber-100'}`}
+                        >
+                          <BookOpen className="w-3.5 h-3.5" /> Từ mới ({episode.relatedVocabulary.length})
+                        </button>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={() => handleToggleTab('transcript')}
+                        className={`h-9 px-3.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition cursor-pointer ${activeTab === 'transcript' ? 'bg-brand-green text-white shadow-sm' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}
+                      >
+                        <FileText className="w-3.5 h-3.5" /> Transcript
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={handleCopyLink}
+                        className="h-9 px-3.5 rounded-xl bg-gray-100 text-gray-800 font-bold text-xs flex items-center gap-1.5 hover:bg-gray-200 transition cursor-pointer"
+                      >
+                        <Share2 className="w-3.5 h-3.5" /> Chia sẻ
+                      </button>
+                    </div>
+
+                    {/* Right Group: Official Social Brand Channels */}
+                    <div className="flex items-center gap-1.5 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100">
+                      {siteSocialLinks.youtube && (
+                        <a
+                          href={siteSocialLinks.youtube}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="h-9 px-3 rounded-xl bg-red-50 text-red-600 border border-red-200/60 font-bold text-xs flex items-center gap-1 hover:bg-red-100 transition"
+                          title="Kênh YouTube Readizen"
+                        >
+                          <YoutubeIcon /> <span className="hidden xs:inline">YouTube</span>
+                        </a>
+                      )}
+                      {siteSocialLinks.tiktok && (
+                        <a
+                          href={siteSocialLinks.tiktok}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="h-9 px-3 rounded-xl bg-zinc-900 text-white font-bold text-xs flex items-center gap-1 hover:bg-black transition"
+                          title="Kênh TikTok Readizen"
+                        >
+                          <TiktokIcon /> <span className="hidden xs:inline">TikTok</span>
+                        </a>
+                      )}
+                      {siteSocialLinks.facebook && (
+                        <a
+                          href={siteSocialLinks.facebook}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="h-9 px-3 rounded-xl bg-blue-50 text-blue-600 border border-blue-200/60 font-bold text-xs flex items-center gap-1 hover:bg-blue-100 transition"
+                          title="Trang Facebook Readizen"
+                        >
+                          <FacebookIcon /> <span className="hidden xs:inline">Facebook</span>
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </section>
+
+
+
+                {/* TÓM TẮT NỘI DUNG TẬP */}
+                <section className="px-4 sm:px-0 py-1">
+                  <div className="bg-gray-100/80 rounded-2xl overflow-hidden transition-all duration-300">
+                    <button
+                      type="button"
+                      onClick={() => setIsSummaryOpen(!isSummaryOpen)}
+                      className="w-full text-left p-4 lg:p-5 outline-none flex items-start justify-between gap-3 cursor-pointer"
+                    >
+                      <div>
+                        <p className="text-sm lg:text-base font-extrabold text-gray-900">
+                          Tóm tắt nội dung tập
+                        </p>
+                        <p className="mt-1 text-xs lg:text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+                          {episode.summary || 'Chưa có thông tin tóm tắt nội dung cho tập này.'}
+                        </p>
+                      </div>
+
+                      <div className={`mt-1 text-gray-500 transition-transform duration-300 ${isSummaryOpen ? 'rotate-180' : ''}`}>
+                        <ChevronDown className="w-5 h-5" />
+                      </div>
+                    </button>
+                  </div>
+                </section>
+
+                {/* KHUNG NỘI DUNG ĐỘNG DÙNG CHUNG */}
+                {activeTab !== 'none' && (
+                  <section className="px-4 sm:px-0 py-2">
+                    <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-soft space-y-4">
+                      <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+                        <h3 className="text-sm font-extrabold text-gray-900 flex items-center gap-2">
+                          {activeTab === 'audio' && <><Headphones className="w-4 h-4 text-brand-green" /> Trình phát Audio MP3</>}
+                          {activeTab === 'vocab' && <><Sparkles className="w-4 h-4 text-amber-600" /> Từ Mới Liên Quan Trong Bài Học</>}
+                          {activeTab === 'transcript' && <><FileText className="w-4 h-4 text-brand-green" /> Lời Thoại Bài Học (Transcript)</>}
+                        </h3>
+                        <button type="button" onClick={() => setActiveTab('none')} className="text-xs font-bold text-gray-400 hover:text-gray-600 cursor-pointer">Đóng</button>
+                      </div>
+
+                      {activeTab === 'audio' && episode.audioAsset?.assetUrl && (
+                        <div>
+                          <p className="text-xs text-gray-500 font-semibold mb-3">Thích hợp dành cho lúc ba mẹ bận rộn không tiện xem video</p>
+                          <audio controls preload="metadata" className="w-full">
+                            <source src={episode.audioAsset.assetUrl} type="audio/mpeg" />
+                          </audio>
+                        </div>
+                      )}
+
+                      {activeTab === 'vocab' && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {episode.relatedVocabulary && episode.relatedVocabulary.length > 0 ? (
+                            episode.relatedVocabulary.map((v, i) => (
+                              <div key={i} className="bg-amber-50/50 border border-amber-200/60 p-3 rounded-xl space-y-1">
+                                <p className="text-xs font-bold text-amber-900">{v.term}</p>
+                                {v.meaning && <p className="text-xs font-semibold text-gray-800">{v.meaning}</p>}
+                                {v.note && <p className="text-[11px] font-medium text-gray-500 italic">{v.note}</p>}
+                              </div>
+                            ))
+                          ) : (
+                            <p className="text-xs text-gray-400 italic">Chưa có danh sách từ mới cho tập này.</p>
+                          )}
+                        </div>
+                      )}
+
+                      {activeTab === 'transcript' && (
+                        <div className="text-xs sm:text-sm text-gray-700 leading-relaxed whitespace-pre-line max-h-96 overflow-y-auto font-sans p-3 bg-gray-50 rounded-xl border border-gray-100">
+                          {episode.transcript && episode.transcript.trim() ? episode.transcript : <p className="text-gray-400 italic">Transcript của tập này đang được cập nhật.</p>}
+                        </div>
+                      )}
+                    </div>
+                  </section>
+                )}
+
+                {/* MOBILE RELATED EPISODES */}
+                {relatedEpisodes.length > 0 && (
+                  <section className="px-4 sm:px-0 py-4 lg:hidden border-t border-gray-100 mt-2">
+                    <h2 className="text-lg font-extrabold mb-3 text-gray-900">Các tập Podcast khác</h2>
+                    <div className="space-y-3">
+                      {relatedEpisodes.map((rel) => (
+                        <Link
+                          key={rel._id}
+                          to={`/podcasts/${rel.seriesId?.slug || seriesSlug}/${rel.slug}`}
+                          className="flex gap-3 bg-white rounded-2xl p-3 border border-gray-150 hover:shadow-soft transition group"
+                        >
+                          <div className="w-32 aspect-video rounded-xl bg-gray-200 flex items-center justify-center text-gray-400 text-2xl shrink-0 relative overflow-hidden">
+                            <img
+                              src={rel.thumbnailAsset?.assetUrl || 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=300&auto=format&fit=crop'}
+                              alt={rel.title}
+                              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform"
+                              onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=300&auto=format&fit=crop'; }}
+                            />
+                            <span className="z-10 text-white group-hover:scale-110 transition-transform bg-black/40 p-1.5 rounded-full backdrop-blur-sm">
+                              <Play className="w-3.5 h-3.5 fill-current ml-0.5" />
+                            </span>
+                          </div>
+                          <div className="min-w-0 flex flex-col justify-center">
+                            <h3 className="text-xs font-bold leading-snug line-clamp-2 group-hover:text-brand-green transition">
+                              {rel.title}
+                            </h3>
+                            <p className="mt-1 text-[10px] text-gray-500 font-semibold">{rel.seriesId?.title || 'Readizen Podcast'}</p>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </section>
+                )}
 
               </div>
-            </aside>
+
+              {/* Bottom Right (4 cols): Các tập Podcast khác (DESKTOP) */}
+              <div className="hidden lg:block lg:col-span-4 xl:col-span-4">
+                {relatedEpisodes.length > 0 && (
+                  <section className="bg-white rounded-3xl border border-gray-200 p-5 shadow-soft space-y-4 sticky top-28">
+                    <h2 className="text-base font-extrabold text-gray-900">Các tập Podcast khác</h2>
+                    <div className="space-y-3">
+                      {relatedEpisodes.map((rel) => (
+                        <Link
+                          key={rel._id}
+                          to={`/podcasts/${rel.seriesId?.slug || seriesSlug}/${rel.slug}`}
+                          className="flex gap-3 bg-gray-50/80 hover:bg-gray-100 rounded-2xl p-2.5 border border-gray-150 transition group"
+                        >
+                          <div className="w-28 aspect-video rounded-xl bg-gray-200 flex items-center justify-center shrink-0 relative overflow-hidden shadow-xs">
+                            <img
+                              src={rel.thumbnailAsset?.assetUrl || 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=300&auto=format&fit=crop'}
+                              alt={rel.title}
+                              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform"
+                              onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=300&auto=format&fit=crop'; }}
+                            />
+                            <span className="z-10 text-white group-hover:scale-110 transition-transform bg-black/40 p-1.5 rounded-full backdrop-blur-sm">
+                              <Play className="w-3 h-3 fill-current ml-0.5" />
+                            </span>
+                          </div>
+                          <div className="min-w-0 flex flex-col justify-center">
+                            <h3 className="text-xs font-bold leading-snug line-clamp-2 group-hover:text-brand-green transition text-gray-900">
+                              {rel.title}
+                            </h3>
+                            <p className="mt-1 text-[10px] text-gray-500 font-semibold truncate">{rel.seriesId?.title || 'Readizen Podcast'}</p>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </section>
+                )}
+              </div>
+
+            </div>
 
           </div>
         )}

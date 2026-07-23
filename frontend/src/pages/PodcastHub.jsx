@@ -1,9 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Headphones, Sparkles, Play, Tv, Film, ChevronRight, Loader2, AlertCircle, Search, X, Star, ArrowRight } from 'lucide-react';
+import { Headphones, Sparkles, Play, Tv, Film, ChevronLeft, ChevronRight, Loader2, AlertCircle, Search, X, Star, ArrowRight, ListVideo, Clock, Heart } from 'lucide-react';
 import api from '../services/axios.js';
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
+
+const formatDate = (dateString) => {
+  if (!dateString) return 'Mới đăng';
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return 'Mới đăng';
+  return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+};
 
 export default function PodcastHub() {
   const navigate = useNavigate();
@@ -21,7 +28,18 @@ export default function PodcastHub() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Horizontal Scroll Refs
+  const longVideosScrollRef = useRef(null);
+  const shortsScrollRef = useRef(null);
+
   const heroBgImage = '/assets/m1.jpg';
+
+  const handleScroll = (ref, direction) => {
+    if (ref.current) {
+      const scrollAmount = direction === 'left' ? -380 : 380;
+      ref.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
 
   // Sync search input if URL query changes
   useEffect(() => {
@@ -78,11 +96,11 @@ export default function PodcastHub() {
   const { featuredSeries, latestShorts, latestEpisodes } = hubData;
 
   return (
-    <div className="min-h-screen bg-white text-gray-800 font-sans antialiased selection:bg-brand-light/40 overflow-x-hidden flex flex-col">
+    <div className="min-h-screen bg-[#FAF9F6] text-gray-900 font-sans antialiased selection:bg-brand-light/40 overflow-x-hidden flex flex-col">
       <Header />
 
       {/* ================= SECTION 1: HERO (Đồng bộ font & layout trang Videos, Library) ================= */}
-      <header className="relative w-full py-20 lg:py-32 min-h-[560px] flex items-center overflow-hidden font-sans">
+      <header className="relative w-full py-20 lg:py-32 min-h-[520px] flex items-center overflow-hidden font-sans">
         {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <img
@@ -116,7 +134,7 @@ export default function PodcastHub() {
       </header>
 
       {/* ================= SECTION 2: BỐ CỤC KHUNG TABS (Home | Videos | Shorts | Podcasts | 🔍) ================= */}
-      <main id="podcast-content" className="flex-grow max-w-7xl mx-auto px-6 py-12 w-full text-left font-sans">
+      <main id="podcast-content" className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full text-left font-sans">
         
         {/* Top Horizontal Bar matching user prototype layout */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-200 pb-3 mb-8">
@@ -135,21 +153,21 @@ export default function PodcastHub() {
               onClick={() => setView('long')}
               className={`pb-2.5 transition relative whitespace-nowrap cursor-pointer text-sm sm:text-base ${currentView === 'long' ? 'text-gray-900 font-extrabold border-b-2 border-brand-green' : 'text-gray-500 hover:text-gray-900'}`}
             >
-              Videos
+              Videos 
             </button>
             <button
               type="button"
               onClick={() => setView('short')}
               className={`pb-2.5 transition relative whitespace-nowrap cursor-pointer text-sm sm:text-base ${currentView === 'short' ? 'text-gray-900 font-extrabold border-b-2 border-brand-green' : 'text-gray-500 hover:text-gray-900'}`}
             >
-              Shorts
+              Shorts 
             </button>
             <button
               type="button"
               onClick={() => setView('playlist')}
               className={`pb-2.5 transition relative whitespace-nowrap cursor-pointer text-sm sm:text-base ${currentView === 'playlist' ? 'text-gray-900 font-extrabold border-b-2 border-brand-green' : 'text-gray-500 hover:text-gray-900'}`}
             >
-              Podcasts
+              Playlist
             </button>
           </div>
 
@@ -162,7 +180,7 @@ export default function PodcastHub() {
               type="text"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Tìm kiếm tập podcast, từ khóa..."
+              placeholder="Tìm kiếm tập podcast..."
               className="w-full pl-10 pr-9 py-2.5 rounded-2xl bg-white border border-gray-200 text-xs font-semibold focus:border-brand-green focus:outline-none transition shadow-sm"
             />
             {searchInput && (
@@ -196,91 +214,172 @@ export default function PodcastHub() {
             </button>
           </div>
         ) : (
-          <div className="space-y-12">
-            {/* 1. PLAYLIST / PODCAST SERIES SECTION (Shown on 'all' or 'playlist') */}
-            {(currentView === 'all' || currentView === 'playlist') && featuredSeries.length > 0 && (
-              <section className="space-y-6">
+          <div className="space-y-14">
+            
+            {/* ================= TẦNG 1 (TRÊN CÙNG): VIDEO DÀI (16:9) VỚI NÚT LƯỚT SANG PHẢI / TRÁI ================= */}
+            {(currentView === 'all' || currentView === 'long') && (
+              <section className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900">Danh Mục Podcast Series</h2>
-                    <p className="text-xs text-gray-500 mt-1 font-semibold">Các chuỗi bài học Podcast được biên soạn theo từng chủ đề cho ba mẹ và học sinh</p>
+                    <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900 flex items-center gap-2">
+                      <Film className="w-5 h-5 text-brand-green" />
+                      Podcasts
+                    </h2>
+                    <p className="text-xs text-gray-500 mt-1 font-semibold">Tập bài học chất lượng cao, chữ hiển thị rõ ràng ngay phía dưới video</p>
                   </div>
+
+                  {/* Navigation Arrows for Left / Right Scrolling */}
+                  {latestEpisodes.length > 0 && (
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleScroll(longVideosScrollRef, 'left')}
+                        className="w-9 h-9 rounded-full bg-white border border-gray-200 text-gray-700 hover:bg-brand-green hover:text-white hover:border-brand-green transition flex items-center justify-center shadow-xs cursor-pointer"
+                        title="Lướt sang trái"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleScroll(longVideosScrollRef, 'right')}
+                        className="w-9 h-9 rounded-full bg-white border border-gray-200 text-gray-700 hover:bg-brand-green hover:text-white hover:border-brand-green transition flex items-center justify-center shadow-xs cursor-pointer"
+                        title="Lướt sang phải"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {featuredSeries.map((series) => (
-                    <Link
-                      key={series._id}
-                      to={`/podcasts/${series.slug}`}
-                      className="group bg-white rounded-3xl border border-gray-150 shadow-soft overflow-hidden hover:shadow-lift transition-all duration-300 flex flex-col"
-                    >
-                      <div className="aspect-[16/9] w-full bg-gray-100 relative overflow-hidden">
-                        <img
-                          src={series.coverAsset?.assetUrl || 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=600&auto=format&fit=crop'}
-                          alt={series.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                          onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=600&auto=format&fit=crop'; }}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </div>
+                {latestEpisodes.length === 0 ? (
+                  <div className="text-center py-16 bg-white rounded-3xl border border-gray-100 text-gray-400">
+                    <p className="text-xs font-semibold">Không tìm thấy video dài nào phù hợp.</p>
+                  </div>
+                ) : (
+                  <div
+                    ref={longVideosScrollRef}
+                    className="flex gap-5 overflow-x-auto hide-scrollbar pb-4 pt-1 snap-x scroll-smooth"
+                  >
+                    {latestEpisodes.map((ep) => (
+                      <Link
+                        key={ep._id}
+                        to={`/podcasts/${ep.seriesId?.slug || 'single'}/${ep.slug}`}
+                        className="group shrink-0 w-72 sm:w-80 md:w-88 flex flex-col cursor-pointer snap-start"
+                      >
+                        {/* 16:9 Rectangle Thumbnail Container */}
+                        <div className="aspect-video w-full rounded-2xl overflow-hidden bg-gray-900 relative shadow-sm border border-gray-200/90 group-hover:shadow-md transition">
+                          <img
+                            src={ep.thumbnailAsset?.assetUrl || 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=500&auto=format&fit=crop'}
+                            alt={ep.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=500&auto=format&fit=crop'; }}
+                          />
+                          <div className="absolute inset-0 bg-black/20 group-hover:bg-black/35 transition-colors" />
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <span className="w-11 h-11 rounded-full bg-black/65 backdrop-blur-sm text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                              <Play className="w-5 h-5 fill-current ml-0.5" />
+                            </span>
+                          </div>
+                        </div>
 
-                      <div className="p-5 flex-grow flex flex-col justify-between">
-                        <div>
-                          <h3 className="text-base font-extrabold text-gray-900 group-hover:text-brand-green transition line-clamp-1">
-                            {series.title}
+                        {/* Title, Publication Time and Heart Likes Count strictly below 16:9 Thumbnail */}
+                        <div className="mt-2.5 text-left">
+                          <h3 className="text-sm font-extrabold text-gray-900 group-hover:text-brand-green transition line-clamp-2 leading-snug">
+                            {ep.title}
                           </h3>
-                          <p className="text-xs text-gray-500 font-medium mt-1.5 line-clamp-2 leading-relaxed whitespace-pre-line">
-                            {series.description || 'Chưa có mô tả cho series này.'}
+                          <p className="text-[11px] text-gray-400 font-semibold mt-1 flex items-center gap-2">
+                            <span className="flex items-center gap-1">
+                              <Clock className="w-3.5 h-3.5 text-gray-400" />
+                              <span>{formatDate(ep.publishedAt || ep.createdAt)}</span>
+                            </span>
+                            <span>•</span>
+                            <span className="flex items-center gap-1 text-red-500 font-bold">
+                              <Heart className="w-3.5 h-3.5 fill-current text-red-500" />
+                              <span>{ep.likesCount || 0}</span>
+                            </span>
                           </p>
                         </div>
-
-                        <div className="mt-4 pt-3 border-t border-gray-50 flex items-center justify-between text-xs font-bold text-brand-green">
-                          <span>Xem Series bài học</span>
-                          <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </section>
             )}
 
-            {/* 2. SHORTS CAROUSEL SHELF (Shown on 'all' or 'short') */}
+            {/* ================= TẦNG 2 (GIỮA): VIDEO SHORTS DỌC (9:16) CHỮ PHÍA DƯỚI ================= */}
             {(currentView === 'all' || currentView === 'short') && latestShorts.length > 0 && (
-              <section className="space-y-4 bg-gray-50 p-6 rounded-3xl border border-gray-150 shadow-soft">
+              <section className="space-y-4 bg-purple-50/40 p-6 rounded-3xl border border-purple-100 shadow-soft">
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] font-bold text-purple-600 uppercase tracking-wider">Video Ngắn 30s</span>
-                    <h2 className="text-xl font-extrabold text-gray-900">Readizen Shorts Luyện Đọc Nhanh (9:16)</h2>
+                    <span className="text-[10px] font-extrabold text-purple-700 bg-purple-100 px-2.5 py-0.5 rounded-full uppercase tracking-wider">Video Ngắn 30s</span>
+                    <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900 mt-1 flex items-center gap-2">
+                      <Tv className="w-5 h-5 text-purple-600" />
+                      Podcasts Shorts
+                    </h2>
                   </div>
-                  <Link to="/podcasts/shorts" className="text-xs font-bold text-brand-green hover:underline flex items-center gap-1">
-                    <span>Xem tất cả Shorts</span>
-                    <ChevronRight className="w-3.5 h-3.5" />
-                  </Link>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleScroll(shortsScrollRef, 'left')}
+                      className="w-9 h-9 rounded-full bg-white border border-gray-200 text-gray-700 hover:bg-purple-600 hover:text-white hover:border-purple-600 transition flex items-center justify-center shadow-xs cursor-pointer"
+                      title="Lướt sang trái"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleScroll(shortsScrollRef, 'right')}
+                      className="w-9 h-9 rounded-full bg-white border border-gray-200 text-gray-700 hover:bg-purple-600 hover:text-white hover:border-purple-600 transition flex items-center justify-center shadow-xs cursor-pointer"
+                      title="Lướt sang phải"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
 
-                <div className="flex gap-4 overflow-x-auto hide-scrollbar pb-2 pt-1">
+                {/* Shorts List Horizontal Row */}
+                <div
+                  ref={shortsScrollRef}
+                  className="flex gap-4 overflow-x-auto hide-scrollbar pb-3 pt-1 snap-x scroll-smooth"
+                >
                   {latestShorts.map((short) => (
                     <Link
                       key={short._id}
                       to={`/podcasts/${short.seriesId?.slug || 'readizen'}/${short.slug}`}
-                      className="group shrink-0 w-36 sm:w-44 aspect-[9/16] bg-black rounded-2xl relative overflow-hidden shadow-md hover:scale-105 transition-transform duration-300"
+                      className="group shrink-0 w-36 sm:w-44 flex flex-col cursor-pointer snap-start"
                     >
-                      <img
-                        src={short.thumbnailAsset?.assetUrl || 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=300&auto=format&fit=crop'}
-                        alt={short.title}
-                        className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
-                        onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=300&auto=format&fit=crop'; }}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="w-10 h-10 rounded-full bg-white/30 backdrop-blur-md text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                          <Play className="w-5 h-5 fill-current ml-0.5" />
-                        </span>
+                      {/* 9:16 Vertical Thumbnail Container */}
+                      <div className="aspect-[9/16] w-full rounded-2xl overflow-hidden bg-gray-900 relative shadow-sm border border-gray-200 group-hover:shadow-md transition">
+                        <img
+                          src={short.thumbnailAsset?.assetUrl || 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=300&auto=format&fit=crop'}
+                          alt={short.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=300&auto=format&fit=crop'; }}
+                        />
+                        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/35 transition-colors" />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <span className="w-10 h-10 rounded-full bg-white/30 backdrop-blur-md text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                            <Play className="w-5 h-5 fill-current ml-0.5" />
+                          </span>
+                        </div>
                       </div>
-                      <div className="absolute bottom-3 inset-x-3 text-white">
-                        <p className="text-xs font-extrabold line-clamp-2 leading-snug drop-shadow-sm">
+
+                      {/* Title, Publication Time and Heart Likes Count strictly below 9:16 Thumbnail */}
+                      <div className="mt-2.5 text-left">
+                        <h4 className="text-xs font-extrabold text-gray-900 group-hover:text-purple-700 transition line-clamp-2 leading-snug">
                           {short.title}
+                        </h4>
+                        <p className="text-[10px] text-gray-400 font-semibold mt-1 flex items-center gap-1.5">
+                          <span className="flex items-center gap-1">
+                            <Clock className="w-3 h-3 text-gray-400" />
+                            <span>{formatDate(short.publishedAt || short.createdAt)}</span>
+                          </span>
+                          <span>•</span>
+                          <span className="flex items-center gap-0.5 text-red-500 font-bold">
+                            <Heart className="w-3 h-3 fill-current text-red-500" />
+                            <span>{short.likesCount || 0}</span>
+                          </span>
                         </p>
                       </div>
                     </Link>
@@ -289,67 +388,64 @@ export default function PodcastHub() {
               </section>
             )}
 
-            {/* 3. LONG-FORM EPISODES / VIDEOS GRID (Shown on 'all' or 'long') */}
-            {(currentView === 'all' || currentView === 'long') && (
+            {/* ================= TẦNG 3 (DƯỚI CÙNG): DANH MỤC PODCAST SERIES DẠNG TỆP (STACKED FILES) ================= */}
+            {(currentView === 'all' || currentView === 'playlist') && featuredSeries.length > 0 && (
               <section className="space-y-6">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between border-b border-gray-200 pb-3">
                   <div>
-                    <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900">
-                      {currentView === 'long' ? 'Video Bài Học Dài (16:9)' : 'Các Tập Podcast & Video Mới Nhất'}
+                    <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900 flex items-center gap-2">
+                      <ListVideo className="w-5.5 h-5.5 text-brand-green" />
+                      Danh Mục Podcast Series
                     </h2>
-                    <p className="text-xs text-gray-500 mt-1 font-semibold">Cập nhật liên tục các bài học video trực quan và sinh động</p>
+                    <p className="text-xs text-gray-500 mt-1 font-semibold">Các album chủ đề được xếp dạng tệp bài học (Stacked Cards)</p>
                   </div>
                 </div>
 
-                {latestEpisodes.length === 0 ? (
-                  <div className="text-center py-16 bg-white rounded-3xl border border-gray-100 text-gray-400">
-                    <p className="text-xs font-semibold">Không tìm thấy tập Podcast nào phù hợp.</p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {latestEpisodes.map((ep) => (
-                      <Link
-                        key={ep._id}
-                        to={`/podcasts/${ep.seriesId?.slug || 'readizen'}/${ep.slug}`}
-                        className="group bg-white rounded-3xl border border-gray-150 shadow-soft overflow-hidden hover:shadow-lift transition-all duration-300 flex flex-col"
-                      >
-                        <div className="aspect-video w-full bg-gray-100 relative overflow-hidden">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 pt-2">
+                  {featuredSeries.map((series) => (
+                    <Link
+                      key={series._id}
+                      to={`/podcasts/${series.slug}`}
+                      className="group flex flex-col cursor-pointer"
+                    >
+                      {/* STACKED FILE LAYERS WRAPPER (Visual design matching user prototype image) */}
+                      <div className="relative pt-3.5">
+                        {/* Layer 3 (Deepest Back Stack Edge) */}
+                        <div className="absolute top-0 inset-x-5 h-3 bg-gray-200 rounded-t-2xl border-t border-x border-gray-300 group-hover:-top-0.5 transition-all duration-300" />
+                        
+                        {/* Layer 2 (Middle Back Stack Edge) */}
+                        <div className="absolute top-1.5 inset-x-2.5 h-3 bg-gray-300 rounded-t-2xl border-t border-x border-gray-400 group-hover:top-1 transition-all duration-300" />
+
+                        {/* Layer 1 (Main Front Card Container) */}
+                        <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-gray-900 shadow-md border border-gray-200 group-hover:shadow-xl transition-all duration-300">
                           <img
-                            src={ep.thumbnailAsset?.assetUrl || 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=500&auto=format&fit=crop'}
-                            alt={ep.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=500&auto=format&fit=crop'; }}
+                            src={series.coverAsset?.assetUrl || 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=600&auto=format&fit=crop'}
+                            alt={series.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-95"
+                            onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=600&auto=format&fit=crop'; }}
                           />
-                          <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <span className="w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm text-brand-green flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                              <Play className="w-6 h-6 fill-current ml-0.5" />
-                            </span>
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                          
+                          {/* Bottom Right Badge (matching 'Mix' badge in user reference image) */}
+                          <div className="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-lg bg-black/80 backdrop-blur-md text-white text-[10px] font-extrabold flex items-center gap-1.5 border border-white/20">
+                            <ListVideo className="w-3.5 h-3.5 text-brand-yellow" />
+                            <span>Podcast Series</span>
                           </div>
                         </div>
+                      </div>
 
-                        <div className="p-5 flex-grow flex flex-col justify-between">
-                          <div>
-                            <span className="text-[9px] font-bold uppercase text-brand-green bg-brand-light px-2 py-0.5 rounded">
-                              {ep.seriesId?.title || 'Podcast'}
-                            </span>
-                            <h3 className="text-sm font-extrabold text-gray-900 mt-2 group-hover:text-brand-green transition line-clamp-2 leading-snug">
-                              Tập {ep.episodeNumber}: {ep.title}
-                            </h3>
-                            <p className="text-xs text-gray-500 font-medium mt-1.5 line-clamp-2 leading-relaxed whitespace-pre-line">
-                              {ep.summary || 'Bấm để xem tóm tắt nội dung bài học...'}
-                            </p>
-                          </div>
-
-                          <div className="mt-4 pt-3 border-t border-gray-50 flex items-center justify-between text-xs font-bold text-brand-green">
-                            <span>Xem tập bài học</span>
-                            <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
-                          </div>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                )}
+                      {/* Title & Metadata Text STRICTLY BELOW the Stacked File Card */}
+                      <div className="mt-3.5 text-left px-1">
+                        <h3 className="text-base font-extrabold text-gray-900 group-hover:text-brand-green transition line-clamp-1">
+                          {series.title}
+                        </h3>
+                        <p className="text-xs text-gray-500 font-medium mt-1 line-clamp-2 leading-relaxed">
+                          {series.host || 'Readizen Podcast'} • {series.description || 'Chuỗi bài học Podcast chia sẻ phương pháp luyện đọc tiếng Anh'}
+                        </p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
               </section>
             )}
           </div>

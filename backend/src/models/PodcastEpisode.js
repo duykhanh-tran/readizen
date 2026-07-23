@@ -51,7 +51,8 @@ const podcastEpisodeSchema = new mongoose.Schema({
   seriesId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'PodcastSeries',
-    required: [true, 'Podcast Series là bắt buộc'],
+    required: false,
+    default: null,
     index: true,
   },
   title: {
@@ -125,13 +126,10 @@ const podcastEpisodeSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  smartCode: {
-    type: String,
-    unique: true,
-    sparse: true,
-    minlength: 4,
-    maxlength: 4,
-    match: /^[0-9]{4}$/
+  likesCount: {
+    type: Number,
+    default: 0,
+    min: 0,
   },
   seoTitle: {
     type: String,
@@ -150,34 +148,7 @@ podcastEpisodeSchema.pre('validate', async function() {
   if (this.status === 'published' && !this.publishedAt) {
     this.publishedAt = new Date();
   }
-  if (!this.smartCode) {
-    this.smartCode = await generateUniqueSmartCode();
-  }
 });
-
-// Post-save hook to synchronize SmartCodeRegistry
-podcastEpisodeSchema.post('save', async function(doc) {
-  if (doc.smartCode) {
-    const session = doc.$session();
-    await SmartCodeRegistry.findOneAndUpdate(
-      { resourceId: doc._id },
-      { code: doc.smartCode, resourceId: doc._id, resourceType: 'PodcastEpisode' },
-      { upsert: true, new: true, session }
-    );
-  }
-});
-
-// Post-findOneAndDelete hook to clean up registry
-podcastEpisodeSchema.post('findOneAndDelete', async function(doc) {
-  if (doc) {
-    const session = this.options?.session;
-    await SmartCodeRegistry.deleteOne({ resourceId: doc._id }, { session });
-  }
-});
-
-// Unique compound indexes
-podcastEpisodeSchema.index({ seriesId: 1, slug: 1 }, { unique: true });
-podcastEpisodeSchema.index({ seriesId: 1, episodeNumber: 1 }, { unique: true });
 
 const PodcastEpisode = mongoose.model('PodcastEpisode', podcastEpisodeSchema);
 export default PodcastEpisode;

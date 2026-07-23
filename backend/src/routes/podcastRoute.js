@@ -5,6 +5,7 @@ import {
   getShortsEpisodes,
   getSeriesBySlug,
   getEpisodeBySlugs,
+  likeEpisode,
   getAdminSeries,
   getAdminSeriesById,
   createAdminSeries,
@@ -32,6 +33,7 @@ router.get('/hub', optionalVerifyToken, getHubData);
 router.get('/shorts', optionalVerifyToken, getShortsEpisodes);
 router.get('/series/:seriesSlug', optionalVerifyToken, getSeriesBySlug);
 router.get('/series/:seriesSlug/episodes/:episodeSlug', optionalVerifyToken, getEpisodeBySlugs);
+router.post('/episodes/:id/like', likeEpisode);
 
 // --- ADMIN MANAGEMENT ROUTES (Protected by verifyAdmin) ---
 // Series CRUD

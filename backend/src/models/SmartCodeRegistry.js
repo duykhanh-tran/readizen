@@ -17,7 +17,7 @@ const smartCodeRegistrySchema = new mongoose.Schema({
     resourceType: {
         type: String,
         required: true,
-        enum: ['Lesson', 'AlphabetLesson', 'VideoLesson', 'PodcastEpisode']
+        enum: ['Lesson', 'AlphabetLesson', 'VideoLesson']
     }
 }, { timestamps: true });
 

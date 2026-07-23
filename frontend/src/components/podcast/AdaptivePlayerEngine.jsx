@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Play, Loader2, Tv, Video } from 'lucide-react';
 
 const YoutubeIcon = () => (
@@ -13,7 +13,8 @@ export default function AdaptivePlayerEngine({
   externalVideoId = '',
   aspectRatio = '16:9',
   thumbnail = '',
-  title = ''
+  title = '',
+  onEnded = () => {}
 }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -21,14 +22,14 @@ export default function AdaptivePlayerEngine({
   const isPortrait = aspectRatio === '9:16';
   const aspectClass = isPortrait ? 'aspect-[9/16] max-w-[340px]' : 'aspect-video w-full';
 
-  // Format YouTube embed URL securely using youtube-nocookie
+  // Format YouTube embed URL securely using youtube-nocookie with enablejsapi=1
   const getYouTubeEmbedUrl = () => {
     let id = externalVideoId;
     if (!id && videoUrl) {
       const match = videoUrl.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/);
       if (match && match[2].length === 11) id = match[2];
     }
-    return id ? `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0` : null;
+    return id ? `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&enablejsapi=1` : null;
   };
 
   // Format TikTok embed URL
@@ -41,9 +42,43 @@ export default function AdaptivePlayerEngine({
     return id ? `https://www.tiktok.com/embed/v2/${id}` : null;
   };
 
+  // Listen to YouTube postMessage events for video completion (YT.PlayerState.ENDED = 0)
+  useEffect(() => {
+    if (!isPlaying || mediaSource !== 'youtube') return;
+
+    const handleMessage = (event) => {
+      try {
+        const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+        if (data && (data.event === 'onStateChange' || data.info === 0)) {
+          if (data.info === 0) { // 0 is YT.PlayerState.ENDED
+            if (typeof onEnded === 'function') {
+              onEnded();
+            }
+          }
+        }
+      } catch (err) {
+        // Ignore non-json messages
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [isPlaying, mediaSource, onEnded]);
+
   const handlePlayClick = () => {
     setIsLoading(true);
     setIsPlaying(true);
+  };
+
+  const handleIframeLoad = (e) => {
+    setIsLoading(false);
+    try {
+      if (e.target && e.target.contentWindow) {
+        e.target.contentWindow.postMessage(JSON.stringify({ event: 'listening' }), '*');
+      }
+    } catch (err) {
+      // Ignore iframe cross-origin postMessage errors
+    }
   };
 
   return (
@@ -110,7 +145,7 @@ export default function AdaptivePlayerEngine({
             <iframe
               src={getYouTubeEmbedUrl()}
               title={title}
-              onLoad={() => setIsLoading(false)}
+              onLoad={handleIframeLoad}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
               className="w-full h-full border-none"
@@ -134,6 +169,7 @@ export default function AdaptivePlayerEngine({
               src={videoUrl}
               controls
               autoPlay
+              onEnded={onEnded}
               onCanPlay={() => setIsLoading(false)}
               className="w-full h-full object-contain"
             >

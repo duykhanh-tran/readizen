@@ -255,11 +255,6 @@ export default function PodcastSeriesDetail() {
                         <div className="mt-3 pt-2 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-400 font-semibold">
                           <div className="flex items-center gap-2">
                             <span className="text-brand-green font-bold">Tập {ep.episodeNumber}</span>
-                            {ep.smartCode && (
-                              <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-brand-green font-bold text-[10px] border border-emerald-200">
-                                Mã: {ep.smartCode}
-                              </span>
-                            )}
                           </div>
                           <span className="group-hover:text-brand-green transition flex items-center gap-1 font-bold">
                             Xem ngay <ChevronRight className="w-3.5 h-3.5" />

@@ -12,8 +12,7 @@ export async function migrateSmartCodes() {
         const defaultConfigs = [
             { resourceType: 'AlphabetLesson', prefix: '1' },
             { resourceType: 'Lesson', prefix: '2' },
-            { resourceType: 'VideoLesson', prefix: '3' },
-            { resourceType: 'PodcastEpisode', prefix: '4' }
+            { resourceType: 'VideoLesson', prefix: '3' }
         ];
         for (const config of defaultConfigs) {
             await SmartCodeConfig.findOneAndUpdate(
@@ -22,6 +21,9 @@ export async function migrateSmartCodes() {
                 { upsert: true }
             );
         }
+
+        // Delete any legacy PodcastEpisode config
+        await SmartCodeConfig.deleteOne({ resourceType: 'PodcastEpisode' });
 
         // 1. Migrate Lessons
         const lessons = await Lesson.find({});
@@ -64,21 +66,6 @@ export async function migrateSmartCodes() {
                 await SmartCodeRegistry.findOneAndUpdate(
                     { resourceId: doc._id },
                     { code: doc.smartCode, resourceId: doc._id, resourceType: 'VideoLesson' },
-                    { upsert: true }
-                );
-            }
-        }
-
-        // 4. Migrate PodcastEpisodes
-        const podcastEpisodes = await PodcastEpisode.find({});
-        for (const doc of podcastEpisodes) {
-            if (!doc.smartCode) {
-                console.log(`Generating Smart Code for PodcastEpisode: ${doc.title}`);
-                await doc.save();
-            } else {
-                await SmartCodeRegistry.findOneAndUpdate(
-                    { resourceId: doc._id },
-                    { code: doc.smartCode, resourceId: doc._id, resourceType: 'PodcastEpisode' },
                     { upsert: true }
                 );
             }

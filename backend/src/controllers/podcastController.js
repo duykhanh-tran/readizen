@@ -130,26 +130,45 @@ export const getEpisodeBySlugs = async (req, res) => {
   try {
     const { seriesSlug, episodeSlug } = req.params;
 
-    const series = await PodcastSeries.findOne({ slug: seriesSlug });
-    if (!series) {
-      return res.status(404).json({ message: 'Không tìm thấy Podcast Series.' });
+    let episode = null;
+    let series = null;
+
+    if (seriesSlug && seriesSlug !== 'single' && seriesSlug !== 'readizen') {
+      series = await PodcastSeries.findOne({ slug: seriesSlug });
     }
 
-    const episode = await PodcastEpisode.findOne({
-      seriesId: series._id,
-      slug: episodeSlug,
-      status: 'published'
-    }).populate('seriesId', 'title slug coverAsset host targetAudience');
+    if (series) {
+      episode = await PodcastEpisode.findOne({
+        seriesId: series._id,
+        slug: episodeSlug,
+        status: 'published'
+      }).populate('seriesId', 'title slug coverAsset host targetAudience');
+    }
+
+    // Fallback: If not found in series or standalone episode without series
+    if (!episode) {
+      episode = await PodcastEpisode.findOne({
+        slug: episodeSlug,
+        status: 'published'
+      }).populate('seriesId', 'title slug coverAsset host targetAudience');
+    }
 
     if (!episode) {
       return res.status(404).json({ message: 'Không tìm thấy tập Podcast yêu cầu.' });
     }
 
-    // Fetch all episodes in the same series for playlist sidebar
-    const seriesPlaylist = await PodcastEpisode.find({
-      seriesId: series._id,
-      status: 'published'
-    }).sort({ episodeNumber: 1 }).select('title slug episodeNumber duration thumbnailAsset mediaSource aspectRatio');
+    // Fetch episodes for playlist sidebar: series episodes OR latest single episodes
+    let seriesPlaylist = [];
+    if (episode.seriesId) {
+      seriesPlaylist = await PodcastEpisode.find({
+        seriesId: episode.seriesId._id,
+        status: 'published'
+      }).sort({ episodeNumber: 1 }).select('title slug episodeNumber duration thumbnailAsset mediaSource aspectRatio likesCount');
+    } else {
+      seriesPlaylist = await PodcastEpisode.find({
+        status: 'published'
+      }).sort({ publishedAt: -1 }).limit(10).select('title slug episodeNumber duration thumbnailAsset mediaSource aspectRatio likesCount');
+    }
 
     // Fetch related episodes from other series
     const relatedEpisodes = await PodcastEpisode.find({
@@ -168,6 +187,27 @@ export const getEpisodeBySlugs = async (req, res) => {
   } catch (error) {
     console.error('Lỗi khi lấy chi tiết tập Podcast:', error);
     res.status(500).json({ message: 'Không thể tải chi tiết tập Podcast.' });
+  }
+};
+
+// POST /api/podcasts/episodes/:id/like (Public endpoint for guest & logged in users)
+export const likeEpisode = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const episode = await PodcastEpisode.findByIdAndUpdate(
+      id,
+      { $inc: { likesCount: 1 } },
+      { new: true }
+    ).select('likesCount');
+
+    if (!episode) {
+      return res.status(404).json({ message: 'Không tìm thấy tập Podcast.' });
+    }
+
+    res.json({ likesCount: episode.likesCount });
+  } catch (error) {
+    console.error('Lỗi khi thả tim Podcast:', error);
+    res.status(500).json({ message: 'Không thể thả tim bài học.' });
   }
 };
 
@@ -332,22 +372,11 @@ export const createAdminEpisode = async (req, res) => {
       transcript,
       status,
       seoTitle,
-      seoDescription,
-      smartCode
+      seoDescription
     } = req.body;
 
-    if (!seriesId || !title || !episodeNumber || !mediaSource || !videoUrl || !thumbnailAsset) {
+    if (!title || !episodeNumber || !mediaSource || !videoUrl || !thumbnailAsset) {
       return res.status(400).json({ message: 'Vui lòng điền đầy đủ các thông tin bắt buộc.' });
-    }
-
-    if (smartCode) {
-      if (!/^[0-9]{4}$/.test(smartCode)) {
-        return res.status(400).json({ message: 'Mã Smart Code phải gồm đúng 4 chữ số (ví dụ: 9142).' });
-      }
-      const existingCode = await SmartCodeRegistry.findOne({ code: smartCode });
-      if (existingCode) {
-        return res.status(400).json({ message: `Mã Smart Code ${smartCode} đã được sử dụng cho một bài học khác.` });
-      }
     }
 
     // Extract external Video ID and automatically infer contentFormat & aspectRatio
@@ -366,7 +395,7 @@ export const createAdminEpisode = async (req, res) => {
       : [];
 
     const newEpisode = new PodcastEpisode({
-      seriesId,
+      seriesId: seriesId || null,
       title,
       slug: slug || generateVnSlug(title),
       episodeNumber,
@@ -385,8 +414,7 @@ export const createAdminEpisode = async (req, res) => {
       status: status || 'draft',
       publishedAt: status === 'published' ? new Date() : null,
       seoTitle,
-      seoDescription,
-      smartCode: smartCode || undefined
+      seoDescription
     });
 
     await newEpisode.save();
@@ -394,7 +422,7 @@ export const createAdminEpisode = async (req, res) => {
   } catch (error) {
     console.error('Lỗi khi tạo tập Podcast:', error);
     if (error.code === 11000) {
-      return res.status(400).json({ message: 'Số tập (episodeNumber), slug hoặc mã Smart Code đã bị trùng trong hệ thống.' });
+      return res.status(400).json({ message: 'Số tập (episodeNumber) hoặc slug đã bị trùng trong hệ thống.' });
     }
     res.status(500).json({ message: error.message || 'Không thể tạo tập Podcast.' });
   }
@@ -406,14 +434,8 @@ export const updateAdminEpisode = async (req, res) => {
     const { id } = req.params;
     const updateData = { ...req.body };
 
-    if (updateData.smartCode) {
-      if (!/^[0-9]{4}$/.test(updateData.smartCode)) {
-        return res.status(400).json({ message: 'Mã Smart Code phải gồm đúng 4 chữ số (ví dụ: 9142).' });
-      }
-      const existingCode = await SmartCodeRegistry.findOne({ code: updateData.smartCode, resourceId: { $ne: id } });
-      if (existingCode) {
-        return res.status(400).json({ message: `Mã Smart Code ${updateData.smartCode} đã được sử dụng cho một bài học khác.` });
-      }
+    if (updateData.seriesId === '') {
+      updateData.seriesId = null;
     }
 
     if (updateData.title && !updateData.slug) {
@@ -442,7 +464,7 @@ export const updateAdminEpisode = async (req, res) => {
     }
 
     Object.assign(episodeToUpdate, updateData);
-    await episodeToUpdate.save(); // Triggers pre & post save hooks to sync SmartCodeRegistry!
+    await episodeToUpdate.save();
 
     res.json(episodeToUpdate);
   } catch (error) {
