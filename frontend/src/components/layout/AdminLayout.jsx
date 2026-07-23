@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
-import { LayoutDashboard, FileText, MessageSquare, LogOut, Shield, Home, Menu, X, BookOpen, Sparkles, Video, Hash } from 'lucide-react';
+import { LayoutDashboard, FileText, MessageSquare, LogOut, Shield, Home, Menu, X, BookOpen, Sparkles, Video, Hash, Folder, Tv } from 'lucide-react';
 import AdminNotificationBell from './AdminNotificationBell.jsx';
 
 export default function AdminLayout() {
@@ -35,6 +35,16 @@ export default function AdminLayout() {
       name: 'Video bài giảng',
       path: '/admin/videos',
       icon: Video
+    },
+    {
+      name: 'Podcast Series',
+      path: '/admin/podcasts/series',
+      icon: Folder
+    },
+    {
+      name: 'Tập Podcast',
+      path: '/admin/podcasts/episodes',
+      icon: Tv
     },
     {
       name: 'Form tư vấn',

@@ -8,7 +8,7 @@ const userBookmarkSchema = new mongoose.Schema({
     },
     itemType: {
         type: String,
-        enum: ['lesson', 'video', 'alphabet'],
+        enum: ['lesson', 'video', 'alphabet', 'podcast'],
         required: true
     },
     lessonId: {
@@ -25,13 +25,18 @@ const userBookmarkSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'AlphabetLesson',
         required: false
+    },
+    podcastEpisodeId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'PodcastEpisode',
+        required: false
     }
 }, {
     timestamps: true
 });
 
-// A user can bookmark a specific lesson, video, or alphabet lesson only once
-userBookmarkSchema.index({ userId: 1, itemType: 1, lessonId: 1, videoLessonId: 1, alphabetLessonId: 1 }, { unique: true });
+// A user can bookmark a specific lesson, video, alphabet, or podcast episode only once
+userBookmarkSchema.index({ userId: 1, itemType: 1, lessonId: 1, videoLessonId: 1, alphabetLessonId: 1, podcastEpisodeId: 1 }, { unique: true });
 
 const UserBookmark = mongoose.model('UserBookmark', userBookmarkSchema);
 export default UserBookmark;

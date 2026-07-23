@@ -117,6 +117,7 @@ const Header = () => {
         <nav className="hidden lg:flex items-center space-x-10">
           <NavItem text="Phương pháp" hasDropdown dropdownItems={methodDropdownItems} />
           <NavItem text="Tài nguyên" hasDropdown dropdownItems={resourceDropdownItems} />
+          <NavItem text="Podcasts" to="/podcasts" />
           <NavItem text="Về Readizen" to="/about" />
         </nav>
 
@@ -216,6 +217,7 @@ const Header = () => {
         <div className="lg:hidden absolute top-full left-0 w-full bg-[#FFFDF3] border-b border-[#EAE5D1] shadow-2xl flex flex-col py-4 px-6 space-y-2 animate-in slide-in-from-top-2 duration-200 z-50">
           <MobileNavItem text="Phương pháp" hasDropdown dropdownItems={methodDropdownItems} onClick={() => setIsMobileMenuOpen(false)} />
           <MobileNavItem text="Tài nguyên" hasDropdown dropdownItems={resourceDropdownItems} onClick={() => setIsMobileMenuOpen(false)} />
+          <MobileNavItem text="Podcasts" to="/podcasts" onClick={() => setIsMobileMenuOpen(false)} />
           <MobileNavItem text="Về Readizen" to="/about" onClick={() => setIsMobileMenuOpen(false)} />
 
           <div className="pt-6 pb-2 border-t border-[#EAE5D1] flex flex-col gap-3">
@@ -302,6 +304,9 @@ const isRouteActive = (itemUrl, currentPath) => {
   }
   if (itemUrl === '/videos') {
     return currentPath === '/videos' || currentPath.startsWith('/videos/');
+  }
+  if (itemUrl === '/podcasts') {
+    return currentPath === '/podcasts' || currentPath.startsWith('/podcasts/');
   }
   return currentPath === itemUrl;
 };

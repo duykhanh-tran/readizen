@@ -1,6 +1,7 @@
 import UserBookmark from '../models/UserBookmark.js';
 import Lesson from '../models/Lesson.js';
 import VideoLesson from '../models/VideoLesson.js';
+import PodcastEpisode from '../models/PodcastEpisode.js';
 
 // Toggle bookmark: Adds if not exists, removes if exists
 export const toggleBookmark = async (req, res) => {
@@ -8,7 +9,7 @@ export const toggleBookmark = async (req, res) => {
         const userId = req.user.id;
         const { itemType, itemId } = req.body;
 
-        if (!itemType || !['lesson', 'video', 'alphabet'].includes(itemType) || !itemId) {
+        if (!itemType || !['lesson', 'video', 'alphabet', 'podcast'].includes(itemType) || !itemId) {
             return res.status(400).json({ message: 'Dữ liệu yêu cầu không hợp lệ.' });
         }
 
@@ -19,7 +20,9 @@ export const toggleBookmark = async (req, res) => {
                 ? { lessonId: itemId } 
                 : itemType === 'video' 
                 ? { videoLessonId: itemId } 
-                : { alphabetLessonId: itemId })
+                : itemType === 'alphabet'
+                ? { alphabetLessonId: itemId }
+                : { podcastEpisodeId: itemId })
         };
 
         const existing = await UserBookmark.findOne(query);
@@ -30,7 +33,7 @@ export const toggleBookmark = async (req, res) => {
         } else {
             const newBookmark = new UserBookmark(query);
             await newBookmark.save();
-            return res.status(201).json({ bookmarked: true, message: 'Đã lưu thành công!' });
+            return res.status(201).json({ bookmarked: true, message: 'Đã lưu bài học thành công!' });
         }
     } catch (error) {
         console.error('Error in toggleBookmark:', error);
@@ -60,13 +63,22 @@ export const getMyBookmarks = async (req, res) => {
                 path: 'alphabetLessonId',
                 select: 'letter thumbnail'
             })
+            .populate({
+                path: 'podcastEpisodeId',
+                select: 'title episodeNumber slug thumbnailAsset seriesId smartCode duration',
+                populate: {
+                    path: 'seriesId',
+                    select: 'slug title host'
+                }
+            })
             .sort({ createdAt: -1 });
 
         // Filter out orphaned bookmarks (items deleted by admin)
         const validBookmarks = bookmarks.filter(b => 
             (b.itemType === 'lesson' && b.lessonId) || 
             (b.itemType === 'video' && b.videoLessonId) ||
-            (b.itemType === 'alphabet' && b.alphabetLessonId)
+            (b.itemType === 'alphabet' && b.alphabetLessonId) ||
+            (b.itemType === 'podcast' && b.podcastEpisodeId)
         );
 
         res.status(200).json(validBookmarks);
@@ -82,7 +94,7 @@ export const getBookmarkStatus = async (req, res) => {
         const userId = req.user.id;
         const { itemType, itemId } = req.query;
 
-        if (!itemType || !['lesson', 'video', 'alphabet'].includes(itemType) || !itemId) {
+        if (!itemType || !['lesson', 'video', 'alphabet', 'podcast'].includes(itemType) || !itemId) {
             return res.status(400).json({ message: 'Thiếu thông tin truy vấn.' });
         }
 
@@ -93,7 +105,9 @@ export const getBookmarkStatus = async (req, res) => {
                 ? { lessonId: itemId } 
                 : itemType === 'video' 
                 ? { videoLessonId: itemId } 
-                : { alphabetLessonId: itemId })
+                : itemType === 'alphabet'
+                ? { alphabetLessonId: itemId }
+                : { podcastEpisodeId: itemId })
         };
 
         const existing = await UserBookmark.findOne(query);

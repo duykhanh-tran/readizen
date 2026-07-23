@@ -1,6 +1,7 @@
 import Lesson from '../models/Lesson.js';
 import AlphabetLesson from '../models/AlphabetLesson.js';
 import VideoLesson from '../models/VideoLesson.js';
+import PodcastEpisode from '../models/PodcastEpisode.js';
 import SmartCodeRegistry from '../models/SmartCodeRegistry.js';
 import SmartCodeConfig from '../models/SmartCodeConfig.js';
 
@@ -11,7 +12,8 @@ export async function migrateSmartCodes() {
         const defaultConfigs = [
             { resourceType: 'AlphabetLesson', prefix: '1' },
             { resourceType: 'Lesson', prefix: '2' },
-            { resourceType: 'VideoLesson', prefix: '3' }
+            { resourceType: 'VideoLesson', prefix: '3' },
+            { resourceType: 'PodcastEpisode', prefix: '4' }
         ];
         for (const config of defaultConfigs) {
             await SmartCodeConfig.findOneAndUpdate(
@@ -62,6 +64,21 @@ export async function migrateSmartCodes() {
                 await SmartCodeRegistry.findOneAndUpdate(
                     { resourceId: doc._id },
                     { code: doc.smartCode, resourceId: doc._id, resourceType: 'VideoLesson' },
+                    { upsert: true }
+                );
+            }
+        }
+
+        // 4. Migrate PodcastEpisodes
+        const podcastEpisodes = await PodcastEpisode.find({});
+        for (const doc of podcastEpisodes) {
+            if (!doc.smartCode) {
+                console.log(`Generating Smart Code for PodcastEpisode: ${doc.title}`);
+                await doc.save();
+            } else {
+                await SmartCodeRegistry.findOneAndUpdate(
+                    { resourceId: doc._id },
+                    { code: doc.smartCode, resourceId: doc._id, resourceType: 'PodcastEpisode' },
                     { upsert: true }
                 );
             }

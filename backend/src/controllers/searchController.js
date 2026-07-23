@@ -2,6 +2,7 @@ import SmartCodeRegistry from '../models/SmartCodeRegistry.js';
 import Lesson from '../models/Lesson.js';
 import AlphabetLesson from '../models/AlphabetLesson.js';
 import VideoLesson from '../models/VideoLesson.js';
+import PodcastEpisode from '../models/PodcastEpisode.js';
 import { generateUniqueSmartCode } from '../utils/codeGenerator.js';
 
 export const findBySmartCode = async (req, res) => {
@@ -39,6 +40,13 @@ export const findBySmartCode = async (req, res) => {
             }
             const topicSlug = details.topicId ? details.topicId.slug : 'unknown';
             redirectUrl = `/videos/${topicSlug}/${details.slug}`;
+        } else if (registry.resourceType === 'PodcastEpisode') {
+            details = await PodcastEpisode.findById(registry.resourceId).populate('seriesId', 'slug');
+            if (!details) {
+                return res.status(404).json({ message: 'Tập Podcast không còn tồn tại.' });
+            }
+            const seriesSlug = details.seriesId ? details.seriesId.slug : 'readizen';
+            redirectUrl = `/podcasts/${seriesSlug}/${details.slug}`;
         }
 
         res.status(200).json({
@@ -59,6 +67,6 @@ export const generateCode = async (req, res) => {
         const code = await generateUniqueSmartCode(type || 'Lesson');
         res.status(200).json({ code });
     } catch (error) {
-        res.status(500).json({ message: 'Không thể sinh mã Smart Code mới.', error: error.message });
+        res.status(500).json({ message: 'Lỗi khi tạo mã Smart Code.', error: error.message });
     }
 };

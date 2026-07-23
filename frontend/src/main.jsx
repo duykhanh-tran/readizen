@@ -32,6 +32,12 @@ const VideoTopics = lazy(() => import('./pages/VideoTopics.jsx'))
 const TopicVideosList = lazy(() => import('./pages/TopicVideosList.jsx'))
 const VideoPlayerFocus = lazy(() => import('./pages/VideoPlayerFocus.jsx'))
 
+// Podcast Client pages
+const PodcastHub = lazy(() => import('./pages/PodcastHub.jsx'))
+const PodcastShortsFeed = lazy(() => import('./pages/PodcastShortsFeed.jsx'))
+const PodcastSeriesDetail = lazy(() => import('./pages/PodcastSeriesDetail.jsx'))
+const PodcastWatch = lazy(() => import('./pages/PodcastWatch.jsx'))
+
 // Admin lazy loaded page components
 const AdminDashboard = lazy(() => import('./pages/admin/Dashboard.jsx'))
 const AdminForms = lazy(() => import('./pages/admin/Forms.jsx'))
@@ -42,6 +48,12 @@ const ManageAlphabet = lazy(() => import('./pages/admin/ManageAlphabet.jsx'))
 const EditAlphabetLesson = lazy(() => import('./pages/admin/EditAlphabetLesson.jsx'))
 const ManageVideos = lazy(() => import('./pages/admin/ManageVideos.jsx'))
 const EditVideoLesson = lazy(() => import('./pages/admin/EditVideoLesson.jsx'))
+
+// Admin Podcast pages
+const ManagePodcastSeries = lazy(() => import('./pages/admin/ManagePodcastSeries.jsx'))
+const EditPodcastSeries = lazy(() => import('./pages/admin/EditPodcastSeries.jsx'))
+const ManagePodcastEpisodes = lazy(() => import('./pages/admin/ManagePodcastEpisodes.jsx'))
+const EditPodcastEpisode = lazy(() => import('./pages/admin/EditPodcastEpisode.jsx'))
 
 const LoadingSpinner = () => (
   <div className="min-h-screen w-full flex flex-col items-center justify-center bg-[#FFFDF3]">
@@ -78,6 +90,12 @@ createRoot(document.getElementById('root')).render(
               <Route path="/videos/:slug" element={<TopicVideosList />} />
               <Route path="/videos/:slug/:lessonSlug" element={<VideoPlayerFocus />} />
 
+              {/* Public Podcast Routes */}
+              <Route path="/podcasts" element={<PodcastHub />} />
+              <Route path="/podcasts/shorts" element={<PodcastShortsFeed />} />
+              <Route path="/podcasts/:seriesSlug" element={<PodcastSeriesDetail />} />
+              <Route path="/podcasts/:seriesSlug/:episodeSlug" element={<PodcastWatch />} />
+
               {/* Protected Client Route */}
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               
@@ -93,6 +111,14 @@ createRoot(document.getElementById('root')).render(
                 <Route path="videos" element={<ManageVideos />} />
                 <Route path="videos/create" element={<EditVideoLesson />} />
                 <Route path="videos/edit/:id" element={<EditVideoLesson />} />
+
+                {/* Admin Podcast Routes */}
+                <Route path="podcasts/series" element={<ManagePodcastSeries />} />
+                <Route path="podcasts/series/create" element={<EditPodcastSeries />} />
+                <Route path="podcasts/series/edit/:id" element={<EditPodcastSeries />} />
+                <Route path="podcasts/episodes" element={<ManagePodcastEpisodes />} />
+                <Route path="podcasts/episodes/create" element={<EditPodcastEpisode />} />
+                <Route path="podcasts/episodes/edit/:id" element={<EditPodcastEpisode />} />
               </Route>
             </Routes>
             <FloatingChat />
