@@ -1,5 +1,6 @@
 import PodcastSeries from '../models/PodcastSeries.js';
 import PodcastEpisode from '../models/PodcastEpisode.js';
+import SmartCodeRegistry from '../models/SmartCodeRegistry.js';
 import MediaStorageService from '../services/MediaStorageService.js';
 import { generateVnSlug } from '../utils/slugify.js';
 
@@ -331,11 +332,22 @@ export const createAdminEpisode = async (req, res) => {
       transcript,
       status,
       seoTitle,
-      seoDescription
+      seoDescription,
+      smartCode
     } = req.body;
 
     if (!seriesId || !title || !episodeNumber || !mediaSource || !videoUrl || !thumbnailAsset) {
       return res.status(400).json({ message: 'Vui lòng điền đầy đủ các thông tin bắt buộc.' });
+    }
+
+    if (smartCode) {
+      if (!/^[0-9]{4}$/.test(smartCode)) {
+        return res.status(400).json({ message: 'Mã Smart Code phải gồm đúng 4 chữ số (ví dụ: 9142).' });
+      }
+      const existingCode = await SmartCodeRegistry.findOne({ code: smartCode });
+      if (existingCode) {
+        return res.status(400).json({ message: `Mã Smart Code ${smartCode} đã được sử dụng cho một bài học khác.` });
+      }
     }
 
     // Extract external Video ID and automatically infer contentFormat & aspectRatio
@@ -373,7 +385,8 @@ export const createAdminEpisode = async (req, res) => {
       status: status || 'draft',
       publishedAt: status === 'published' ? new Date() : null,
       seoTitle,
-      seoDescription
+      seoDescription,
+      smartCode: smartCode || undefined
     });
 
     await newEpisode.save();
@@ -381,7 +394,7 @@ export const createAdminEpisode = async (req, res) => {
   } catch (error) {
     console.error('Lỗi khi tạo tập Podcast:', error);
     if (error.code === 11000) {
-      return res.status(400).json({ message: 'Số tập (episodeNumber) hoặc slug đã bị trùng trong Series này.' });
+      return res.status(400).json({ message: 'Số tập (episodeNumber), slug hoặc mã Smart Code đã bị trùng trong hệ thống.' });
     }
     res.status(500).json({ message: error.message || 'Không thể tạo tập Podcast.' });
   }
@@ -392,6 +405,16 @@ export const updateAdminEpisode = async (req, res) => {
   try {
     const { id } = req.params;
     const updateData = { ...req.body };
+
+    if (updateData.smartCode) {
+      if (!/^[0-9]{4}$/.test(updateData.smartCode)) {
+        return res.status(400).json({ message: 'Mã Smart Code phải gồm đúng 4 chữ số (ví dụ: 9142).' });
+      }
+      const existingCode = await SmartCodeRegistry.findOne({ code: updateData.smartCode, resourceId: { $ne: id } });
+      if (existingCode) {
+        return res.status(400).json({ message: `Mã Smart Code ${updateData.smartCode} đã được sử dụng cho một bài học khác.` });
+      }
+    }
 
     if (updateData.title && !updateData.slug) {
       updateData.slug = generateVnSlug(updateData.title);
@@ -413,12 +436,15 @@ export const updateAdminEpisode = async (req, res) => {
       updateData.relatedVocabulary = updateData.relatedVocabulary.filter(item => item && item.term && item.term.trim() !== '');
     }
 
-    const updatedEpisode = await PodcastEpisode.findByIdAndUpdate(id, updateData, { new: true, runValidators: true });
-    if (!updatedEpisode) {
+    const episodeToUpdate = await PodcastEpisode.findById(id);
+    if (!episodeToUpdate) {
       return res.status(404).json({ message: 'Không tìm thấy tập Podcast để cập nhật.' });
     }
 
-    res.json(updatedEpisode);
+    Object.assign(episodeToUpdate, updateData);
+    await episodeToUpdate.save(); // Triggers pre & post save hooks to sync SmartCodeRegistry!
+
+    res.json(episodeToUpdate);
   } catch (error) {
     console.error('Lỗi khi cập nhật tập Podcast:', error);
     res.status(500).json({ message: error.message || 'Không thể cập nhật tập Podcast.' });

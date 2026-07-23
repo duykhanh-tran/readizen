@@ -121,6 +121,7 @@ export default function ManagePodcastEpisodes() {
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-100 text-gray-500 font-bold uppercase tracking-wider">
                   <th className="py-4 px-6">Tập #</th>
+                  <th className="py-4 px-6 font-mono text-amber-800">Smart Code</th>
                   <th className="py-4 px-6">Ảnh thu nhỏ</th>
                   <th className="py-4 px-6">Tiêu đề tập</th>
                   <th className="py-4 px-6">Series</th>
@@ -139,6 +140,15 @@ export default function ManagePodcastEpisodes() {
                   episodes.map((ep) => (
                     <tr key={ep._id} className="hover:bg-gray-50/50 transition">
                       <td className="py-4.5 px-6 font-extrabold text-brand-green">Tập {ep.episodeNumber}</td>
+                      <td className="py-4.5 px-6 font-mono font-bold text-amber-800">
+                        {ep.smartCode ? (
+                          <span className="px-2 py-0.5 rounded bg-amber-50 border border-amber-200 text-amber-900 font-extrabold">
+                            {ep.smartCode}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400 font-normal">--</span>
+                        )}
+                      </td>
                       <td className="py-4.5 px-6">
                         <img
                           src={ep.thumbnailAsset?.assetUrl || 'https://placehold.co/100?text=Thumb'}

@@ -35,6 +35,7 @@ export default function EditPodcastEpisode() {
     relatedVocabulary: [{ term: '', meaning: '', note: '' }],
     transcript: '',
     status: 'draft',
+    smartCode: '',
     seoTitle: '',
     seoDescription: ''
   });
@@ -80,6 +81,7 @@ export default function EditPodcastEpisode() {
             relatedVocabulary: ep.relatedVocabulary?.length ? ep.relatedVocabulary : [{ term: '', meaning: '', note: '' }],
             transcript: ep.transcript || '',
             status: ep.status || 'draft',
+            smartCode: ep.smartCode || '',
             seoTitle: ep.seoTitle || '',
             seoDescription: ep.seoDescription || ''
           });
@@ -299,7 +301,7 @@ export default function EditPodcastEpisode() {
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block mb-1.5 text-xs font-extrabold text-gray-700">Trạng thái xuất bản</label>
               <select
@@ -312,9 +314,25 @@ export default function EditPodcastEpisode() {
               </select>
             </div>
 
+            {/* Smart Code Input */}
+            <div>
+              <label className="block mb-1.5 text-xs font-bold text-amber-700 flex items-center gap-1">
+                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                Smart Code (Mã 4 chữ số)
+              </label>
+              <input
+                type="text"
+                maxLength={4}
+                placeholder="Ví dụ: 9142 (Tự tạo nếu rỗng)"
+                value={form.smartCode || ''}
+                onChange={(e) => setForm({ ...form, smartCode: e.target.value.replace(/\D/g, '').slice(0, 4) })}
+                className="w-full bg-amber-50/30 border border-amber-300 rounded-xl px-4 py-3 text-xs font-mono font-extrabold text-amber-900 outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/35"
+              />
+            </div>
+
             {/* Automatic Detection Badge Notice */}
             <div>
-              <label className="block mb-1.5 text-xs font-extrabold text-gray-700">Tự động nhận diện kiểu hiển thị</label>
+              <label className="block mb-1.5 text-xs font-extrabold text-gray-700">Kiểu hiển thị</label>
               <div className="bg-brand-light/35 border border-brand-green/20 rounded-xl p-3 flex items-center justify-between text-xs font-bold text-brand-green">
                 <span className="flex items-center gap-1.5">
                   {autoDetected.isShort ? <Tv className="w-4 h-4" /> : <Film className="w-4 h-4" />}
