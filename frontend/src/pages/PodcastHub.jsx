@@ -32,7 +32,7 @@ export default function PodcastHub() {
   const longVideosScrollRef = useRef(null);
   const shortsScrollRef = useRef(null);
 
-  const heroBgImage = '/assets/m1.jpg';
+  const heroBgImage = '/assets/podcast_1.jpeg';
 
   const handleScroll = (ref, direction) => {
     if (ref.current) {

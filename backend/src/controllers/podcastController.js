@@ -387,6 +387,15 @@ export const createAdminEpisode = async (req, res) => {
       externalVideoId = extractTikTokId(videoUrl);
     }
 
+    // Automatic unique slug generation to avoid duplicate slug collisions
+    let baseSlug = slug || generateVnSlug(title);
+    let finalSlug = baseSlug;
+    let counter = 1;
+    while (await PodcastEpisode.findOne({ slug: finalSlug })) {
+      finalSlug = `${baseSlug}-${counter}`;
+      counter++;
+    }
+
     const { contentFormat, aspectRatio } = inferContentFormatAndAspect(mediaSource, videoUrl);
 
     // Filter valid relatedVocabulary
@@ -397,7 +406,7 @@ export const createAdminEpisode = async (req, res) => {
     const newEpisode = new PodcastEpisode({
       seriesId: finalSeriesId,
       title,
-      slug: slug || generateVnSlug(title),
+      slug: finalSlug,
       episodeNumber: finalEpisodeNumber,
       contentFormat,
       mediaSource,
@@ -422,7 +431,7 @@ export const createAdminEpisode = async (req, res) => {
   } catch (error) {
     console.error('Lỗi khi tạo tập Podcast:', error);
     if (error.code === 11000) {
-      return res.status(400).json({ message: 'Số tập (episodeNumber) hoặc slug đã bị trùng trong hệ thống.' });
+      return res.status(400).json({ message: 'Số tập (episodeNumber) bị trùng trong Series bài học này.' });
     }
     res.status(500).json({ message: error.message || 'Không thể tạo tập Podcast.' });
   }
@@ -442,7 +451,14 @@ export const updateAdminEpisode = async (req, res) => {
     }
 
     if (updateData.title && !updateData.slug) {
-      updateData.slug = generateVnSlug(updateData.title);
+      let baseSlug = generateVnSlug(updateData.title);
+      let finalSlug = baseSlug;
+      let counter = 1;
+      while (await PodcastEpisode.findOne({ slug: finalSlug, _id: { $ne: id } })) {
+        finalSlug = `${baseSlug}-${counter}`;
+        counter++;
+      }
+      updateData.slug = finalSlug;
     }
 
     if (updateData.mediaSource && updateData.videoUrl) {

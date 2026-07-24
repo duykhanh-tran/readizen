@@ -152,4 +152,35 @@ podcastEpisodeSchema.pre('validate', async function() {
 });
 
 const PodcastEpisode = mongoose.model('PodcastEpisode', podcastEpisodeSchema);
+
+// Auto-cleanup legacy unique indexes and apply partial index for series episodes only
+(async () => {
+  try {
+    const collection = PodcastEpisode.collection;
+    const indexes = await collection.indexes();
+    for (const idx of indexes) {
+      if (idx.name !== '_id_' && (idx.name.includes('episodeNumber') || idx.name.includes('seriesId'))) {
+        try {
+          await collection.dropIndex(idx.name);
+          console.log(`[Database] Đã gỡ bỏ index cũ của PodcastEpisode: ${idx.name}`);
+        } catch (e) {
+          // Ignore index drop error if not exists
+        }
+      }
+    }
+    await collection.createIndex(
+      { seriesId: 1, episodeNumber: 1 },
+      {
+        unique: true,
+        partialFilterExpression: {
+          seriesId: { $type: 'objectId' },
+          episodeNumber: { $type: 'number' }
+        }
+      }
+    );
+  } catch (err) {
+    // Collection might not exist yet on fresh start
+  }
+})();
+
 export default PodcastEpisode;
